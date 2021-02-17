@@ -1,9 +1,6 @@
 package eu.de4a.connector.mock.controller;
 
-import eu.de4a.jaxb.common.AgentCVType;
-import eu.de4a.jaxb.common.DataRequestSubjectCVType;
-import eu.de4a.jaxb.common.ErrorListType;
-import eu.de4a.jaxb.common.ErrorType;
+import eu.de4a.jaxb.common.*;
 import eu.de4a.jaxb.de1.usi.ResponseForwardEvidence;
 import eu.de4a.jaxb.do1.im.ResponseExtractEvidence;
 import eu.de4a.jaxb.dr1.idk.ResponseLookupEvidenceServiceData;
@@ -42,12 +39,9 @@ public class DE4Advice {
     @Autowired
     ResponseTransferEvidence resdr1im;
 
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     private ResponseEntity<Object> handleUnmarshallingFailureException(HttpMessageNotReadableException ex, HttpServletRequest webRequest) {
-        System.out.println("uri: " + webRequest.getRequestURI());
-        log.debug("req {}", webRequest);
-        webRequest.getParameterMap().forEach((key, value) -> System.out.println("param: " + key + " -> " + value));
-
         ResponseEntity<Object> res;
         ErrorListType errorListType = new ErrorListType();
         List<ErrorType> errorList = errorListType.getError();
@@ -65,11 +59,13 @@ public class DE4Advice {
             case "/do1/usi/extractevidence":
                 eu.de4a.jaxb.do1.usi.ResponseExtractEvidence resdo1usi = new eu.de4a.jaxb.do1.usi.ResponseExtractEvidence();
                 resdo1usi.setErrorList(errorListType);
+                resdo1usi.setAck(AckType.KO);
                 res = ResponseEntity.badRequest().body(resdo1usi);
                 break;
             case "/de1/usi/forwardevidence":
                 ResponseForwardEvidence resde1usi = new ResponseForwardEvidence();
                 resde1usi.setErrorList(errorListType);
+                resde1usi.setAck(AckType.KO);
                 res = ResponseEntity.badRequest().body(resde1usi);
                 break;
             case "/dr1/idk/lookupevidenceservicedata":
@@ -88,14 +84,16 @@ public class DE4Advice {
                 resdr1im.setDomesticEvidenceList(null);
                 res = ResponseEntity.badRequest().body(resdr1im);
                 break;
-            case "dr1/usi/transferevidence":
+            case "/dr1/usi/transferevidence":
                 eu.de4a.jaxb.dr1.usi.ResponseTransferEvidence resdr1usi = new eu.de4a.jaxb.dr1.usi.ResponseTransferEvidence();
                 resdr1usi.setErrorList(errorListType);
+                resdr1usi.setAck(AckType.KO);
                 res = ResponseEntity.badRequest().body(resdr1usi);
                 break;
-            case "dt1/usi/transferevidence":
+            case "/dt1/usi/transferevidence":
                 eu.de4a.jaxb.dt1.usi.ResponseTransferEvidence resdt1usi = new eu.de4a.jaxb.dt1.usi.ResponseTransferEvidence();
                 resdt1usi.setErrorList(errorListType);
+                resdt1usi.setAck(AckType.KO);
                 res = ResponseEntity.badRequest().body(resdt1usi);
                 break;
             default:

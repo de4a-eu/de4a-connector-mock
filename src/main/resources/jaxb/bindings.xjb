@@ -22,9 +22,11 @@
           xmlns:xsd="http://www.w3.org/2001/XMLSchema"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd">
-    <globalBindings typesafeEnumMaxMembers="700">
+    <globalBindings typesafeEnumMaxMembers="700"
+                    fixedAttributeAsConstantProperty="true"
+                    underscoreBinding="asCharInWord">
         <xjc:javaType name="java.time.LocalDateTime" xmlType="xsd:dateTime"
-                      adapter="eu.de4a.connector.mock.DateAdapter"/>
+                      adapter="eu.de4a.connector.mock.DateTimeAdapter"/>
     </globalBindings>
     <bindings schemaLocation="../xml-schemas/XSD/commons-type/common-identity-types.xsd">
         <schemaBindings>
