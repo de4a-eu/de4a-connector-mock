@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2018-2020 toop.eu
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<bindings version="2.1"
+          xmlns="http://java.sun.com/xml/ns/jaxb"
+          xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+          xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd">
+    <globalBindings typesafeEnumMaxMembers="700">
+        <xjc:javaType name="java.time.LocalDateTime" xmlType="xsd:dateTime"
+                      adapter="eu.de4a.connector.mock.DateAdapter"/>
+    </globalBindings>
+    <bindings schemaLocation="../xml-schemas/XSD/commons-type/common-identity-types.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.common.id" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/commons-type/common-types.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.common" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/CCTS_CCT_SchemaModule-2.1.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.ccts" />
+        </schemaBindings>
+    </bindings>
+    <!--
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/CodeList_LanguageCode_ISO_7_04.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.codelist.lang" />
+        </schemaBindings>
+    </bindings>
+    -->
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/CodeList_MIMEMediaTypeCode_IANA_7_04.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.codelist.mimemediatype" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/CoreVocabularies-AggregateComponents-1.1.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.cv.ac" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/CoreVocabularies-BasicComponents-1.1.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.cv.bc" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/CV-Agent.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.cv.a" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/CV-CommonAggregateComponents.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.cv.cac" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/CV-CommonBasicComponents.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.cv.cbc" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/CV-DataTypes.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.cv.dt" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/dcterms.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.dc" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/eidas-LP.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.eidas.lp" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/eidas-NP.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.eidas.np" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/foaf.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.foaf" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/ISO3166-1-Country-Codes.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.codelist.country"/>
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/locn.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.locn" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/org.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.org" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/rdf.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.rdf" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/regorg.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.regorg" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/skos.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.skos" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/xsd-vocabularies/UBL-UnqualifiedDataTypes-2.1.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.vocabularies.ubl.udt" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/DE1-USI.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.de1.usi" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/DO1-IM.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.do1.im" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/DO1-USI.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.do1.usi" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/DR1-IDK.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.dr1.idk" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/DR1-IM.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.dr1.im" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/DR1-USI.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.dr1.usi" />
+        </schemaBindings>
+    </bindings>
+    <bindings schemaLocation="../xml-schemas/XSD/DT1-USI.xsd">
+        <schemaBindings>
+            <package name="eu.de4a.jaxb.dt1.usi" />
+        </schemaBindings>
+    </bindings>
+</bindings>
