@@ -73,12 +73,12 @@ public class DE4AController {
         return dr1imresp;
     }
 
-    @PostMapping("dr1/usi/transferevidence")
+    @PostMapping("/dr1/usi/transferevidence")
     public eu.de4a.jaxb.dr1.usi.ResponseTransferEvidence dr1usiresp(@Valid @RequestBody eu.de4a.jaxb.dr1.usi.RequestTransferEvidence request) {
         return dr1usiresp;
     }
 
-    @PostMapping("dt1/usi/transferevidence")
+    @PostMapping("/dt1/usi/transferevidence")
     public eu.de4a.jaxb.dt1.usi.ResponseTransferEvidence dt1usiresp(@Valid @RequestBody eu.de4a.jaxb.dt1.usi.RequestTransferEvidence request) {
         return dt1usiresp;
     }
