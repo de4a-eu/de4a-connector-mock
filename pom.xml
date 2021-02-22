@@ -69,40 +69,4 @@
         </dependency>
     </dependencies>
 
-    <!--
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                <version>0.14.0</version>
-                <executions>
-                    <execution>
-                        <id>generate</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <schemaDirectory>src/main/resources/xml-schemas/XSD</schemaDirectory>
-                    <schemaIncludes>
-                        <include>*.xsd</include>
-                        <include>DBA/*.xsd</include>
-                        <include>de4a/*.xsd</include>
-                        <include>external/*.xsd</include>
-                        <include>provided/*.xsd</include>
-                    </schemaIncludes>
-                    <schemaExcludes>
-                        <exclude>*.xs</exclude>
-                    </schemaExcludes>
-                    <bindingDirectory>src/main/resources/jaxb</bindingDirectory>
-                    <bindingIncludes>
-                        <include>*.xjb</include>
-                    </bindingIncludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    -->
 </project>
