@@ -11,6 +11,7 @@
 
     <artifactId>de4a-connector-mock</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,6 +20,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>eu.de4a</groupId>
+            <artifactId>de4a-edm</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -63,6 +69,7 @@
         </dependency>
     </dependencies>
 
+    <!--
     <build>
         <plugins>
             <plugin>
@@ -81,8 +88,11 @@
                     <schemaDirectory>src/main/resources/xml-schemas/XSD</schemaDirectory>
                     <schemaIncludes>
                         <include>*.xsd</include>
+                        <include>DBA/*.xsd</include>
+                        <include>de4a/*.xsd</include>
+                        <include>external/*.xsd</include>
+                        <include>provided/*.xsd</include>
                     </schemaIncludes>
-                    <!-- By default, nothing is excluded. -->
                     <schemaExcludes>
                         <exclude>*.xs</exclude>
                     </schemaExcludes>
@@ -94,4 +104,5 @@
             </plugin>
         </plugins>
     </build>
+    -->
 </project>
