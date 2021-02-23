@@ -9,16 +9,16 @@ import java.util.function.Function;
 public class EndpointException extends NestedRuntimeException {
 
     @Getter
-    private Function<ErrorType, String> error;
+    final private Function<ErrorType, String> errorResponseBuilder;
 
-    public EndpointException(String message, Function<ErrorType, String> error) {
+    public EndpointException(String message, Function<ErrorType, String> errorResponseBuilder) {
         super(message);
-        this.error = error;
+        this.errorResponseBuilder = errorResponseBuilder;
     }
 
-    public EndpointException(String message, Throwable cause, Function<ErrorType, String> error) {
+    public EndpointException(String message, Throwable cause, Function<ErrorType, String> errorResponseBuilder) {
         super(message, cause);
-        this.error = error;
+        this.errorResponseBuilder = errorResponseBuilder;
     }
 }
 

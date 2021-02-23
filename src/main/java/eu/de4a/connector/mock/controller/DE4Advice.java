@@ -2,6 +2,7 @@ package eu.de4a.connector.mock.controller;
 
 import eu.de4a.edm.jaxb.common.types.ErrorType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -18,6 +19,6 @@ public class DE4Advice {
         ErrorType error = new ErrorType();
         error.setCode("validation");
         error.setText(ex.getLocalizedMessage());
-        return ResponseEntity.badRequest().body(ex.getError().apply(error));
+        return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_XML).body(ex.getErrorResponseBuilder().apply(error));
     }
 }

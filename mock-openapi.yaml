@@ -1,0 +1,301 @@
+openapi: 3.0.0
+servers:
+  - url: https://de4a-dev-mock.egovlab.eu
+    description: DE4A interfaces mock
+info:
+  description: |
+    This document describes the API of the DE4A interfaces mock.
+    https://github.com/de4a-wp5/de4a-connector-mock
+  version: "0.1.0-SNAPSHOT"
+  title: "DE4A Mock"
+paths:
+  /do1/im/extractevidence:
+    post:
+      tags:
+        - DO
+      summary: Extract evidence
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/DO_IM_RequestExtractEvidence'
+      responses:
+        '200':
+          description: The extraced evidence
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DO_IM_ResponseExtractEvidence'
+        '400':
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DO_IM_ResponseExtractEvidence'
+  /do1/usi/extractevidence:
+    post:
+      tags:
+        - DO
+      summary: Extract evidence
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/DO_USI_RequestExtractEvidence'
+      responses:
+        '200':
+          description: Ack
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DO_USI_ResponseExtractEvidence'
+        '400':
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DO_USI_ResponseExtractEvidence'
+  /dr1/im/transferevidence:
+    post:
+      tags:
+        - DR
+      summary: Request for evidence
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/DR_IM_RequestTransferEvidence'
+      responses:
+        '200':
+          description: The requested evidence
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DR_IM_ResponseTransferEvidence'
+        '400':
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DR_IM_ResponseTransferEvidence'
+  /dr1/usi/transferevidence:
+    post:
+      tags:
+        - DR
+      summary: Request for evidence
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/DR_USI_RequestTransferEvidence'
+      responses:
+        '200':
+          description: Ack
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DR_USI_ResponseTransferEvidence'
+        '400':
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DR_USI_ResponseTransferEvidence'
+  /dr1/idk/lookupevidenceservicedata:
+    post:
+      tags:
+        - DR
+      summary: Lookup evidence service data
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/DR_IDK_RequestLookupEvidenceServiceData'
+      responses:
+        '200':
+          description: evidence service data
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DR_IDK_ResponseLookupEvidenceServiceData'
+        '400':
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DR_IDK_ResponseLookupEvidenceServiceData'
+  /dr1/idk/lookuproutinginformation:
+    post:
+      tags:
+        - DR
+      summary: Lookup routing information
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/DR_IDK_RequestLookupRoutingInformation'
+      responses:
+        '200':
+          description: routing information
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DR_IDK_ResponseLookupRoutingInformation'
+        '400':
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DR_IDK_ResponseLookupRoutingInformation'
+  /de1/usi/forwardevidence:
+    post:
+      tags:
+        - DE
+      summary: Forward evidence
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/DE_USI_RequestForwardEvidence'
+      responses:
+        '200':
+          description: Ack
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DE_USI_ResponseForwardEvidence'
+        '400':
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DE_USI_ResponseForwardEvidence'
+  /dt1/usi/transferevidence:
+    post:
+      tags:
+        - DT
+      summary: Transfer evidence
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/DT_USI_RequestTransferEvidence'
+      responses:
+        '200':
+          description: Ack
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DT_USI_ResponseTransferEvidence'
+        '400':
+          description: Error
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/DT_USI_ResponseTransferEvidence'
+components:
+  schemas:
+    DO_IM_RequestExtractEvidence:
+      type: object
+      description: Defined in [DO1-IM.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DO1-IM.xsd).
+      xml:
+        name: RequestExtractEvidence
+        namespace: http://www.de4a.eu/2020/data/owner/pattern/intermediate
+    DO_IM_ResponseExtractEvidence:
+      type: object
+      description: Defined in [DO1-IM.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DO1-IM.xsd).
+      xml:
+        name: ResponseExtractEvidence
+        namespace: http://www.de4a.eu/2020/data/owner/pattern/intermediate
+    DO_USI_RequestExtractEvidence:
+      type: object
+      description: Defined in [DO1-USI.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DO1-USI.xsd).
+      xml:
+        name: RequestExtractEvidence
+        namespace: http://www.de4a.eu/2020/data/owner/pattern/usi
+    DO_USI_ResponseExtractEvidence:
+      type: object
+      description: Defined in [DO1-USI.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DO1-USI.xsd).
+      xml:
+        name: ResponseExtractEvidence
+        namespace: http://www.de4a.eu/2020/data/owner/pattern/usi
+    DR_IM_RequestTransferEvidence:
+      type: object
+      description: Defined in [DR1-IM.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DR1-IM.xsd).
+      xml:
+        name: RequestTransferEvidence
+        namespace: http://www.de4a.eu/2020/data/requestor/pattern/intermediate
+    DR_IM_ResponseTransferEvidence:
+      type: object
+      description: Defined in [DR1-IM.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DR1-IM.xsd).
+      xml:
+        name: ResponseTransferEvidence
+        namespace: http://www.de4a.eu/2020/data/requestor/pattern/intermediate
+    DR_USI_RequestTransferEvidence:
+      type: object
+      description: Defined in [DR1-USI.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DR1-USI.xsd).
+      xml:
+        name: RequestTransferEvidence
+        namespace: http://www.de4a.eu/2020/data/requestor/pattern/usi
+    DR_USI_ResponseTransferEvidence:
+      type: object
+      description: Defined in [DR1-USI.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DR1-USI.xsd).
+      xml:
+        name: ResponseTransferEvidence
+        namespace: http://www.de4a.eu/2020/data/requestor/pattern/usi
+    DR_IDK_RequestLookupEvidenceServiceData:
+      type: object
+      description: Defined in [DR1-IDK.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DR1-IDK.xsd).
+      xml:
+        name: RequestLookupEvidenceServiceData
+        namespace: http://www.de4a.eu/2020/data/requestor/pattern/idk
+    DR_IDK_ResponseLookupEvidenceServiceData:
+      type: object
+      description: Defined in [DR1-IDK.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DR1-IDK.xsd).
+      xml:
+        name: ResponseLookupEvidenceServiceData
+        namespace: http://www.de4a.eu/2020/data/requestor/pattern/idk
+    DR_IDK_RequestLookupRoutingInformation:
+      type: object
+      description: Defined in [DR1-IDK.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DR1-IDK.xsd).
+      xml:
+        name: RequestLookupRoutingInformation
+        namespace: http://www.de4a.eu/2020/data/requestor/pattern/idk
+    DR_IDK_ResponseLookupRoutingInformation:
+      type: object
+      description: Defined in [DR1-IDK.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DR1-IDK.xsd).
+      xml:
+        name: ResponseLookupRoutingInformation
+        namespace: http://www.de4a.eu/2020/data/requestor/pattern/idk
+    DE_USI_RequestForwardEvidence:
+      type: object
+      description: Defined in [DE1-USI.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DE1-USI.xsd).
+      xml:
+        name: RequestForwardEvidence
+        namespace: http://www.de4a.eu/2020/data/evaluator/pattern/usi
+    DE_USI_ResponseForwardEvidence:
+      type: object
+      description: Defined in [DR1-USI.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DE1-USI.xsd).
+      xml:
+        name: ResponseForwardEvidence
+        namespace: http://www.de4a.eu/2020/data/evaluator/pattern/usi
+    DT_USI_RequestTransferEvidence:
+      type: object
+      description: Defined in [DT1-USI.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DT1-USI.xsd).
+      xml:
+        name: RequestTransferEvidence
+        namespace: http://www.de4a.eu/2020/data/transferor/pattern/usi
+    DT_USI_ResponseTransferEvidence:
+      type: object
+      description: Defined in [DT1-USI.xsd](https://github.com/de4a-wp5/de4a-commons/blob/main/de4a-edm/src/main/resources/schemas/DT1-USI.xsd).
+      xml:
+        name: ResponseTransferEvidence
+        namespace: http://www.de4a.eu/2020/data/transferor/pattern/usi
