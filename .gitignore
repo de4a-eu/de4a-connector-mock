@@ -2,4 +2,7 @@
 .gradle
 *.iml
 .project
-target
+.classpath
+.settings/
+target/
+bin/

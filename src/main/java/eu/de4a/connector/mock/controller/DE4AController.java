@@ -69,8 +69,7 @@ public class DE4AController {
         //todo: The xml errors are blocked at 4000 characters
         error.setText(sw.toString().substring(0, 4000));
         ErrorListType errorListType = new ErrorListType();
-        List<ErrorType> errorList = errorListType.getError();
-        errorList.add(error);
+        errorListType.addError(error);
         return  errorListType;
     }
 
@@ -78,8 +77,7 @@ public class DE4AController {
     public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) throws InterruptedException, ExecutionException, TimeoutException {
         var marshaller = DE4AMarshaller.doImRequestMarshaller();
         UUID errorKey = UUID.randomUUID();
-        marshaller.readExceptionCallbacks().removeAll();
-        marshaller.readExceptionCallbacks().add((ex) -> {
+        marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
         RequestExtractEvidenceType req = marshaller.read(body);
@@ -96,8 +94,7 @@ public class DE4AController {
     public ResponseEntity<String> DO1USIRequestExtractEvidence(InputStream body) throws InterruptedException, ExecutionException, TimeoutException {
         var marshaller = DE4AMarshaller.doUsiRequestMarshaller();
         UUID errorKey = UUID.randomUUID();
-        marshaller.readExceptionCallbacks().removeAll();
-        marshaller.readExceptionCallbacks().add((ex) -> {
+        marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
         eu.de4a.edm.jaxb.do_usi.RequestExtractEvidenceType req = marshaller.read(body);
@@ -115,8 +112,7 @@ public class DE4AController {
     public ResponseEntity<String> de1usiresp(InputStream body) throws InterruptedException, ExecutionException, TimeoutException {
         var marshaller = DE4AMarshaller.deUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO);
         UUID errorKey = UUID.randomUUID();
-        marshaller.readExceptionCallbacks().removeAll();
-        marshaller.readExceptionCallbacks().add((ex) -> {
+        marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
         RequestForwardEvidenceType req = marshaller.read(body);
@@ -134,8 +130,7 @@ public class DE4AController {
     public ResponseEntity<String> dr1idkevidenceresp(InputStream body) throws InterruptedException, ExecutionException, TimeoutException {
         var marshaller = DE4AMarshaller.idkRequestLookupEvidenceServiceDataMarshaller();
         UUID errorKey = UUID.randomUUID();
-        marshaller.readExceptionCallbacks().removeAll();
-        marshaller.readExceptionCallbacks().add((ex) -> {
+        marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
         RequestLookupEvidenceServiceDataType req = marshaller.read(body);
@@ -152,8 +147,7 @@ public class DE4AController {
     public ResponseEntity<String> dr1idkroutingresp(InputStream body) throws InterruptedException, ExecutionException, TimeoutException {
         var marshaller = DE4AMarshaller.idkRequestLookupRoutingInformationMarshaller();
         UUID errorKey = UUID.randomUUID();
-        marshaller.readExceptionCallbacks().removeAll();
-        marshaller.readExceptionCallbacks().add((ex) -> {
+        marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
         RequestLookupRoutingInformationType req = marshaller.read(body);
@@ -170,8 +164,7 @@ public class DE4AController {
     public ResponseEntity<String> dr1imresp(InputStream body) throws InterruptedException, ExecutionException, TimeoutException {
         var marshaller = DE4AMarshaller.drImRequestMarshaller();
         UUID errorKey = UUID.randomUUID();
-        marshaller.readExceptionCallbacks().removeAll();
-        marshaller.readExceptionCallbacks().add((ex) -> {
+        marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
         RequestTransferEvidenceType req = marshaller.read(body);
@@ -196,8 +189,7 @@ public class DE4AController {
     public ResponseEntity<String> dr1usiresp(InputStream body) throws InterruptedException, ExecutionException, TimeoutException {
         var marshaller = DE4AMarshaller.drUsiRequestMarshaller();
         UUID errorKey = UUID.randomUUID();
-        marshaller.readExceptionCallbacks().removeAll();
-        marshaller.readExceptionCallbacks().add((ex) -> {
+        marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
         eu.de4a.edm.jaxb.dr_usi.RequestTransferEvidenceType req = marshaller.read(body);
@@ -215,8 +207,7 @@ public class DE4AController {
     public ResponseEntity<String> dt1usiresp(InputStream body) throws InterruptedException, ExecutionException, TimeoutException {
         var marshaller = DE4AMarshaller.dtUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO);
         UUID errorKey = UUID.randomUUID();
-        marshaller.readExceptionCallbacks().removeAll();
-        marshaller.readExceptionCallbacks().add((ex) -> {
+        marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
         eu.de4a.edm.jaxb.dt_usi.RequestTransferEvidenceType req = marshaller.read(body);
