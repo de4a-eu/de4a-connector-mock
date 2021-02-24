@@ -14,7 +14,7 @@ import eu.de4a.edm.jaxb.idk.ResponseLookupRoutingInformationType;
 import eu.de4a.edm.jaxb.dr_im.RequestTransferEvidenceType;
 import eu.de4a.edm.jaxb.dr_im.ResponseTransferEvidenceType;
 import eu.de4a.edm.xml.de4a.DE4AMarshaller;
-import eu.de4a.edm.xml.de4a.IDE4ACanonicalEvidenceType;
+import eu.de4a.edm.xml.de4a.EDE4ACanonicalEvidenceType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -87,9 +87,9 @@ public class DE4AController {
             JAXBException exception = MarshallErrorHandler.getInstance().getError(errorKey).get(1000, TimeUnit.MILLISECONDS);
             ResponseExtractEvidenceType res = new ResponseExtractEvidenceType();
             res.setErrorList(buildErrorList(exception));
-            return ResponseEntity.badRequest().body(DE4AMarshaller.doImResponseMarshaller(IDE4ACanonicalEvidenceType.ALL_PREDEFINED).getAsString(res));
+            return ResponseEntity.badRequest().body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(res));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(IDE4ACanonicalEvidenceType.ALL_PREDEFINED).getAsString(do1imresp));
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(do1imresp));
     }
 
     @PostMapping("/do1/usi/extractevidence")
@@ -113,7 +113,7 @@ public class DE4AController {
 
     @PostMapping("/de1/usi/forwardevidence")
     public ResponseEntity<String> de1usiresp(InputStream body) throws InterruptedException, ExecutionException, TimeoutException {
-        var marshaller = DE4AMarshaller.deUsiRequestMarshaller(IDE4ACanonicalEvidenceType.ALL_PREDEFINED);
+        var marshaller = DE4AMarshaller.deUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO);
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().removeAll();
         marshaller.readExceptionCallbacks().add((ex) -> {
@@ -187,9 +187,9 @@ public class DE4AController {
             res.setDataOwner(dr1imresp.getDataOwner());
             res.setDataRequestSubject(dr1imresp.getDataRequestSubject());
             res.setCanonicalEvidenceId(dr1imresp.getCanonicalEvidenceId());
-            return ResponseEntity.badRequest().body(DE4AMarshaller.drImResponseMarshaller(IDE4ACanonicalEvidenceType.ALL_PREDEFINED).getAsString(res));
+            return ResponseEntity.badRequest().body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(res));
         }
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(IDE4ACanonicalEvidenceType.ALL_PREDEFINED).getAsString(dr1imresp));
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(dr1imresp));
     }
 
     @PostMapping("/dr1/usi/transferevidence")
@@ -213,7 +213,7 @@ public class DE4AController {
 
     @PostMapping("/dt1/usi/transferevidence")
     public ResponseEntity<String> dt1usiresp(InputStream body) throws InterruptedException, ExecutionException, TimeoutException {
-        var marshaller = DE4AMarshaller.dtUsiRequestMarshaller(IDE4ACanonicalEvidenceType.ALL_PREDEFINED);
+        var marshaller = DE4AMarshaller.dtUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO);
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().removeAll();
         marshaller.readExceptionCallbacks().add((ex) -> {
