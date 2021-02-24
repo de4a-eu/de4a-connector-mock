@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 public class DE4Advice {
 
 
+    /*
     @ExceptionHandler(EndpointException.class)
     private ResponseEntity<String> handleUnmarshallingFailureException(EndpointException ex, HttpServletRequest webRequest) {
         ErrorType error = new ErrorType();
@@ -21,4 +22,6 @@ public class DE4Advice {
         error.setText(ex.getLocalizedMessage());
         return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_XML).body(ex.getErrorResponseBuilder().apply(error));
     }
+
+     */
 }
