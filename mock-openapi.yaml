@@ -29,10 +29,6 @@ paths:
                 $ref: '#/components/schemas/DO_IM_ResponseExtractEvidence'
         '400':
           description: Error
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DO_IM_ResponseExtractEvidence'
   /do1/usi/extractevidence:
     post:
       tags:
@@ -53,10 +49,6 @@ paths:
                 $ref: '#/components/schemas/DO_USI_ResponseExtractEvidence'
         '400':
           description: Error
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DO_USI_ResponseExtractEvidence'
   /dr1/im/transferevidence:
     post:
       tags:
@@ -77,10 +69,6 @@ paths:
                 $ref: '#/components/schemas/DR_IM_ResponseTransferEvidence'
         '400':
           description: Error
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DR_IM_ResponseTransferEvidence'
   /dr1/usi/transferevidence:
     post:
       tags:
@@ -101,10 +89,6 @@ paths:
                 $ref: '#/components/schemas/DR_USI_ResponseTransferEvidence'
         '400':
           description: Error
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DR_USI_ResponseTransferEvidence'
   /dr1/idk/lookupevidenceservicedata:
     post:
       tags:
@@ -125,10 +109,6 @@ paths:
                 $ref: '#/components/schemas/DR_IDK_ResponseLookupEvidenceServiceData'
         '400':
           description: Error
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DR_IDK_ResponseLookupEvidenceServiceData'
   /dr1/idk/lookuproutinginformation:
     post:
       tags:
@@ -149,10 +129,6 @@ paths:
                 $ref: '#/components/schemas/DR_IDK_ResponseLookupRoutingInformation'
         '400':
           description: Error
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DR_IDK_ResponseLookupRoutingInformation'
   /de1/usi/forwardevidence:
     post:
       tags:
@@ -173,10 +149,6 @@ paths:
                 $ref: '#/components/schemas/DE_USI_ResponseForwardEvidence'
         '400':
           description: Error
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DE_USI_ResponseForwardEvidence'
   /dt1/usi/transferevidence:
     post:
       tags:
@@ -197,10 +169,6 @@ paths:
                 $ref: '#/components/schemas/DT_USI_ResponseTransferEvidence'
         '400':
           description: Error
-          content:
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/DT_USI_ResponseTransferEvidence'
 components:
   schemas:
     DO_IM_RequestExtractEvidence:

@@ -1,14 +1,17 @@
 package eu.de4a.connector.mock.controller;
 
-import org.springframework.core.NestedRuntimeException;
+import lombok.Getter;
 
-public class MarshallException extends NestedRuntimeException {
+import java.util.UUID;
 
-    public MarshallException(String message) {
-        super(message);
+public class MarshallException extends RuntimeException {
+
+    @Getter
+    private UUID errorUUID;
+
+    public MarshallException(UUID errorUUID) {
+        super();
+        this.errorUUID = errorUUID;
     }
 
-    public MarshallException(String message, Throwable cause) {
-        super(message, cause);
-    }
 }
