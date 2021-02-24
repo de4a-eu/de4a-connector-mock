@@ -82,6 +82,7 @@ public class DE4AController {
         });
         RequestExtractEvidenceType req = marshaller.read(body);
         if (req == null) {
+            // TODO [ph] I suggest to return a badRequest only with the error message but not XML payload, because that cannot be filled in real-life
             JAXBException exception = MarshallErrorHandler.getInstance().getError(errorKey).get(1000, TimeUnit.MILLISECONDS);
             ResponseExtractEvidenceType res = new ResponseExtractEvidenceType();
             res.setErrorList(buildErrorList(exception));
@@ -99,6 +100,7 @@ public class DE4AController {
         });
         eu.de4a.edm.jaxb.do_usi.RequestExtractEvidenceType req = marshaller.read(body);
         if (req == null) {
+            // TODO [ph] I suggest to return a badRequest only with the error message but not XML payload, because that cannot be filled in real-life
             JAXBException exception = MarshallErrorHandler.getInstance().getError(errorKey).get(1000, TimeUnit.MILLISECONDS);
             var res = new eu.de4a.edm.jaxb.do_usi.ResponseExtractEvidenceType();
             res.setErrorList(buildErrorList(exception));
@@ -117,6 +119,7 @@ public class DE4AController {
         });
         RequestForwardEvidenceType req = marshaller.read(body);
         if (req == null) {
+            // TODO [ph] I suggest to return a badRequest only with the error message but not XML payload, because that cannot be filled in real-life
             JAXBException exception = MarshallErrorHandler.getInstance().getError(errorKey).get(1000, TimeUnit.MILLISECONDS);
             var res = new ResponseForwardEvidenceType();
             res.setErrorList(buildErrorList(exception));
@@ -135,6 +138,7 @@ public class DE4AController {
         });
         RequestLookupEvidenceServiceDataType req = marshaller.read(body);
         if (req == null) {
+            // TODO [ph] I suggest to return a badRequest only with the error message but not XML payload, because that cannot be filled in real-life
             JAXBException exception = MarshallErrorHandler.getInstance().getError(errorKey).get(1000, TimeUnit.MILLISECONDS);
             var res = new ResponseLookupEvidenceServiceDataType();
             res.setErrorList(buildErrorList(exception));
@@ -152,6 +156,7 @@ public class DE4AController {
         });
         RequestLookupRoutingInformationType req = marshaller.read(body);
         if (req == null) {
+            // TODO [ph] I suggest to return a badRequest only with the error message but not XML payload, because that cannot be filled in real-life
             JAXBException exception = MarshallErrorHandler.getInstance().getError(errorKey).get(1000, TimeUnit.MILLISECONDS);
             var res = new ResponseLookupRoutingInformationType();
             res.setError(buildErrorList(exception).getError().stream().findFirst().get());
@@ -169,6 +174,7 @@ public class DE4AController {
         });
         RequestTransferEvidenceType req = marshaller.read(body);
         if (req == null) {
+            // TODO [ph] I suggest to return a badRequest only with the error message but not XML payload, because that cannot be filled in real-life
             JAXBException exception = MarshallErrorHandler.getInstance().getError(errorKey).get(1000, TimeUnit.MILLISECONDS);
             var res = new ResponseTransferEvidenceType();
             res.setErrorList(buildErrorList(exception));
@@ -194,6 +200,7 @@ public class DE4AController {
         });
         eu.de4a.edm.jaxb.dr_usi.RequestTransferEvidenceType req = marshaller.read(body);
         if (req == null) {
+            // TODO [ph] I suggest to return a badRequest only with the error message but not XML payload, because that cannot be filled in real-life
             JAXBException exception = MarshallErrorHandler.getInstance().getError(errorKey).get(1000, TimeUnit.MILLISECONDS);
             var res = new eu.de4a.edm.jaxb.dr_usi.ResponseTransferEvidenceType();
             res.setErrorList(buildErrorList(exception));
@@ -212,6 +219,7 @@ public class DE4AController {
         });
         eu.de4a.edm.jaxb.dt_usi.RequestTransferEvidenceType req = marshaller.read(body);
         if (req == null) {
+            // TODO [ph] I suggest to return a badRequest only with the error message but not XML payload, because that cannot be filled in real-life
             JAXBException exception = MarshallErrorHandler.getInstance().getError(errorKey).get(1000, TimeUnit.MILLISECONDS);
             var res = new eu.de4a.edm.jaxb.dt_usi.ResponseTransferEvidenceType();
             res.setErrorList(buildErrorList(exception));
