@@ -23,7 +23,7 @@ public class TestResponsesConfig {
 
     @Bean
     public eu.de4a.edm.jaxb.dr_im.ResponseTransferEvidenceType getDR1IMresponse() throws IOException, MarshallException {
-        Resource xml = new ClassPathResource("/xml-schemas/examples/DR1-IM-response.xml");
+        Resource xml = new ClassPathResource("T4.2-examples/DR1-IM-T42-response.xml");
         return DE4AMarshaller.drImResponseMarshaller(IDE4ACanonicalEvidenceType.ALL_PREDEFINED).read(xml.getInputStream());
     }
 
@@ -47,7 +47,7 @@ public class TestResponsesConfig {
 
     @Bean
     public ResponseExtractEvidenceType DO1IMresponse() throws IOException, MarshallException {
-        Resource xml = new ClassPathResource("/xml-schemas/examples/DO1-IM-response.xml");
+        Resource xml = new ClassPathResource("T4.2-examples/DO1-IM-T42-response.xml");
         return DE4AMarshaller.doImResponseMarshaller(IDE4ACanonicalEvidenceType.ALL_PREDEFINED).read(xml.getInputStream());
     }
 

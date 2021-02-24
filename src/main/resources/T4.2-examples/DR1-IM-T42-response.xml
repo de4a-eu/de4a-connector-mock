@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:ResponseTransferEvidence xmlns:cct="urn:un:unece:uncefact:data:specification:CoreComponentTypeSchemaModule:2" xmlns:clmIANAMIMEMediaType="urn:un:unece:uncefact:codelist:specification:IANAMIMEMediaType:2003" xmlns:isoc="http://www.de4a.eu/2020/commons/country/iso3166-1" xmlns:p="http://www.de4a.eu/2020/data/requestor/pattern/intermediate" xmlns:p1="http://www.de4a.eu/2020/commons/type" xmlns:p2="http://www.de4a.eu/2020/commons/identity/type" xmlns:p3="http://eidas.europa.eu/attributes/naturalperson" xmlns:p4="http://eidas.europa.eu/attributes/legalperson" xmlns:p5="https://data.europe.eu/semanticassets/ns/cv/common/cbc_v2.0.0#" xmlns:p6="https://data.europe.eu/semanticassets/ns/cv/common/dataTypes-2.0.0#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.de4a.eu/2020/data/requestor/pattern/intermediate ../XSD/DR1-IM.xsd ">
+  <p:RequestId>p:RequestId</p:RequestId>
+  <p:SpecificationId>p:SpecificationId</p:SpecificationId>
+  <p:TimeStamp>2001-12-31T12:00:00</p:TimeStamp>
+  <p:ProcedureId>p:ProcedureId</p:ProcedureId>
+  <p:DataEvaluator>
+    <p5:id AssuranceLevelAgencyID="" AssuranceLevelAgencyName="" AssuranceLevelCodeListID="" AssuranceLevelCodeListVerionID="" AssuranceLevelValue="" schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="">p5:id</p5:id>
+    <p5:name AssuranceLevelAgencyID="" AssuranceLevelAgencyName="" AssuranceLevelCodeListID="" AssuranceLevelCodeListVerionID="" AssuranceLevelValue="" languageID="EN" languageLocaleID="">p5:name</p5:name>
+  </p:DataEvaluator>
+  <p:DataOwner>
+    <p5:id AssuranceLevelAgencyID="" AssuranceLevelAgencyName="" AssuranceLevelCodeListID="" AssuranceLevelCodeListVerionID="" AssuranceLevelValue="" schemeAgencyID="" schemeAgencyName="" schemeDataURI="http://tempuri.org" schemeID="" schemeName="" schemeURI="http://tempuri.org" schemeVersionID="">p5:id</p5:id>
+    <p5:name AssuranceLevelAgencyID="" AssuranceLevelAgencyName="" AssuranceLevelCodeListID="" AssuranceLevelCodeListVerionID="" AssuranceLevelValue="" languageID="EN" languageLocaleID="">p5:name</p5:name>
+  </p:DataOwner>
+  <p:DataRequestSubject>
+    <p1:DataSubjectPerson>
+      <p2:Identifier>p2:Identifier</p2:Identifier>
+      <p2:GivenName p3:LatinScript="true">p2:GivenName</p2:GivenName>
+      <p2:FamilyName p3:LatinScript="true">p2:FamilyName</p2:FamilyName>
+      <p2:DateOfBirth>2001-01-01</p2:DateOfBirth>
+    </p1:DataSubjectPerson>
+    <p1:DataSubjectRepresentative>
+      <p2:Identifier>p2:Identifier</p2:Identifier>
+      <p2:GivenName p3:LatinScript="true">p2:GivenName</p2:GivenName>
+      <p2:FamilyName p3:LatinScript="true">p2:FamilyName</p2:FamilyName>
+      <p2:DateOfBirth>2001-01-01</p2:DateOfBirth>
+    </p1:DataSubjectRepresentative>
+  </p:DataRequestSubject>
+  <p:CanonicalEvidenceId>p:CanonicalEvidenceId</p:CanonicalEvidenceId>
+  <p:CanonicalEvidence>
+    <LegalEntity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="doing_Business_abroad_XSD_v0.4%202.xsd">
+      <CompanyName xml:lang="sv-se">
+        <LegalEntityName>Företag Ett AB</LegalEntityName>
+      </CompanyName>
+      <CompanyType>ab</CompanyType>
+      <CompanyStatus>economically active</CompanyStatus>
+      <CompanyActivity>
+        <ActivityDescription>Bolaget ska arbeta med it-konsultverksamhet, systemutveckling samt tekniska lösningar för idrottsevenemang. Bolaget ska även arbeta med uthyrning av entreprenadmaskiner samt äga och förvalta fast och lös egendom och därmed förenlig verksamhet.</ActivityDescription>
+      </CompanyActivity>
+      <RegistrationDate>2018-08-31</RegistrationDate>
+      <CompanyEUID>SEBOLREG.5591674170</CompanyEUID>
+      <CompanyContactData>
+        <Email>person.ett@foretagett.se</Email>
+      </CompanyContactData>
+      <RegisteredAddress xml:lang="sv-se">
+        <Thoroughfare>Storgatan</Thoroughfare>
+        <LocationDesignator>10</LocationDesignator>
+        <PostCode>85546</PostCode>
+        <PostName>Sundsvall</PostName>
+        <AdminUnitL1>Västernorrland</AdminUnitL1>
+        <AdminUnitL2>Sverige</AdminUnitL2>
+      </RegisteredAddress>
+      <PostalAddress xml:lang="sv-se">
+        <Thoroughfare>Storgatan</Thoroughfare>
+        <LocationDesignator>10</LocationDesignator>
+        <PostCode>85546</PostCode>
+        <PostName>Sundsvall</PostName>
+        <AdminUnitL1>Västernorrland</AdminUnitL1>
+        <AdminUnitL2>Sverige</AdminUnitL2>
+      </PostalAddress>
+    </LegalEntity>
+
+  </p:CanonicalEvidence>
+</p:ResponseTransferEvidence>
