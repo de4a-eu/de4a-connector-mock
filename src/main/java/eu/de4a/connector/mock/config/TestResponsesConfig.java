@@ -7,6 +7,7 @@ import eu.de4a.edm.jaxb.idk.ResponseLookupEvidenceServiceDataType;
 import eu.de4a.edm.jaxb.idk.ResponseLookupRoutingInformationType;
 import eu.de4a.edm.jaxb.dr_usi.ResponseTransferEvidenceType;
 import eu.de4a.edm.xml.de4a.DE4AMarshaller;
+import eu.de4a.edm.xml.de4a.IDE4ACanonicalEvidenceType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,7 @@ public class TestResponsesConfig {
     @Bean
     public eu.de4a.edm.jaxb.dr_im.ResponseTransferEvidenceType getDR1IMresponse() throws IOException, MarshallException {
         Resource xml = new ClassPathResource("/xml-schemas/examples/DR1-IM-response.xml");
-        return DE4AMarshaller.drImResponseMarshaller().read(xml.getInputStream());
+        return DE4AMarshaller.drImResponseMarshaller(IDE4ACanonicalEvidenceType.ALL_PREDEFINED).read(xml.getInputStream());
     }
 
     @Bean
@@ -47,7 +48,7 @@ public class TestResponsesConfig {
     @Bean
     public ResponseExtractEvidenceType DO1IMresponse() throws IOException, MarshallException {
         Resource xml = new ClassPathResource("/xml-schemas/examples/DO1-IM-response.xml");
-        return DE4AMarshaller.doImResponseMarshaller().read(xml.getInputStream());
+        return DE4AMarshaller.doImResponseMarshaller(IDE4ACanonicalEvidenceType.ALL_PREDEFINED).read(xml.getInputStream());
     }
 
     @Bean
