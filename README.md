@@ -28,6 +28,8 @@ curl --request POST \
 - /dt1/usi/transferevidence
 
 ***example***
+
+The path to the request assumes it is run from project root
 ```
 curl --request POST \
 --url https://de4a-dev-mock.egovlab.eu/do1/im/extractevidence \
