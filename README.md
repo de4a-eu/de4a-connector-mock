@@ -1,12 +1,12 @@
 *DE4A-connector-mock*
 
 **Install**
-- (until [de4a-commons](https://github.com/de4a-wp5/de4a-commons) is on maven central) install the [de4a-commons](https://github.com/de4a-wp5/de4a-commons) project locally
-- ``mvn clean package`` to build and package into a jar
+- (until [de4a-commons](https://github.com/de4a-wp5/de4a-commons) is on maven central) install the [de4a-commons](https://github.com/de4a-wp5/de4a-commons) project locally.
+- ``mvn clean package`` to build and package into a runnable jar.
 
 **Deployment**
 
-The project is deployed on https://de4a-dev-mock.egovlab.eu
+The project is deployed at https://de4a-dev-mock.egovlab.eu
 
 The endpoints can be tested using a simple curl command.
 ```
