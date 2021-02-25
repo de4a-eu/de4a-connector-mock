@@ -1,16 +1,9 @@
 package eu.de4a.connector.mock.controller;
 
-import eu.de4a.edm.jaxb.de_usi.RequestForwardEvidenceType;
-import eu.de4a.edm.jaxb.de_usi.ResponseForwardEvidenceType;
-import eu.de4a.edm.jaxb.do_im.RequestExtractEvidenceType;
-import eu.de4a.edm.jaxb.do_im.ResponseExtractEvidenceType;
-import eu.de4a.edm.jaxb.idk.RequestLookupEvidenceServiceDataType;
-import eu.de4a.edm.jaxb.idk.RequestLookupRoutingInformationType;
-import eu.de4a.edm.jaxb.idk.ResponseLookupEvidenceServiceDataType;
-import eu.de4a.edm.jaxb.idk.ResponseLookupRoutingInformationType;
-import eu.de4a.edm.jaxb.dr_im.RequestTransferEvidenceType;
-import eu.de4a.edm.jaxb.dr_im.ResponseTransferEvidenceType;
+import eu.de4a.edm.jaxb.common.types.*;
+import eu.de4a.edm.jaxb.t42.LegalEntityType;
 import eu.de4a.edm.xml.de4a.DE4AMarshaller;
+import eu.de4a.edm.xml.de4a.DE4AResponseDocumentHelper;
 import eu.de4a.edm.xml.de4a.EDE4ACanonicalEvidenceType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,22 +23,11 @@ import java.util.UUID;
 public class DE4AController {
 
     @Autowired
-    ResponseExtractEvidenceType do1imresp;
+    LegalEntityType t42Evidence;
     @Autowired
-    eu.de4a.edm.jaxb.do_usi.ResponseExtractEvidenceType do1usiresp;
+    EvidenceServiceType evidenceServiceType;
     @Autowired
-    ResponseForwardEvidenceType de1usiresp;
-    @Autowired
-    ResponseLookupEvidenceServiceDataType dr1idkevidenceresp;
-    @Autowired
-    ResponseLookupRoutingInformationType dr1idkroutingresp;
-    @Autowired
-    ResponseTransferEvidenceType dr1imresp;
-    @Autowired
-    eu.de4a.edm.jaxb.dr_usi.ResponseTransferEvidenceType dr1usiresp;
-    @Autowired
-    eu.de4a.edm.jaxb.dt_usi.ResponseTransferEvidenceType dt1usiresp;
-
+    IssuingAuthorityType issuingAuthorityType;
 
     @PostMapping("/do1/im/extractevidence")
     public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) {
@@ -54,11 +36,15 @@ public class DE4AController {
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
-        RequestExtractEvidenceType req = marshaller.read(body);
+        RequestExtractEvidenceIMType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(do1imresp));
+        var res = DE4AResponseDocumentHelper.createResponseExtractEvidence(req);
+        CanonicalEvidenceType ce = new CanonicalEvidenceType();
+        ce.setAny(t42Evidence);
+        res.setCanonicalEvidence(ce);
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(res));
     }
 
     @PostMapping("/do1/usi/extractevidence")
@@ -68,11 +54,17 @@ public class DE4AController {
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
-        eu.de4a.edm.jaxb.do_usi.RequestExtractEvidenceType req = marshaller.read(body);
+        RequestExtractEvidenceUSIType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(do1usiresp));
+        ResponseErrorType res = DE4AResponseDocumentHelper.createResponseError(true);
+        res.setErrorList(new ErrorListType());
+        ErrorType error = new ErrorType();
+        error.setCode("asdf");
+        error.setText("asdf");
+        res.getErrorList().getError().add(error);
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
     }
 
     @PostMapping("/de1/usi/forwardevidence")
@@ -86,7 +78,13 @@ public class DE4AController {
         if (req == null) {
             throw new MarshallException(errorKey);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.deUsiResponseMarshaller().getAsString(de1usiresp));
+        ResponseErrorType res = DE4AResponseDocumentHelper.createResponseError(true);
+        res.setErrorList(new ErrorListType());
+        ErrorType error = new ErrorType();
+        error.setCode("asdf");
+        error.setText("asdf");
+        res.getErrorList().getError().add(error);
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.deUsiResponseMarshaller().getAsString(res));
     }
 
     @PostMapping("/dr1/idk/lookupevidenceservicedata")
@@ -100,7 +98,9 @@ public class DE4AController {
         if (req == null) {
             throw new MarshallException(errorKey);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.idkResponseLookupEvidenceServiceDataMarshaller().getAsString(dr1idkevidenceresp));
+        ResponseLookupEvidenceServiceDataType res = new ResponseLookupEvidenceServiceDataType();
+        res.setEvidenceService(evidenceServiceType);
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.idkResponseLookupEvidenceServiceDataMarshaller().getAsString(res));
     }
 
     @PostMapping("/dr1/idk/lookuproutinginformation")
@@ -114,7 +114,9 @@ public class DE4AController {
         if (req == null) {
             throw new MarshallException(errorKey);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.idkResponseLookupRoutingInformationMarshaller().getAsString(dr1idkroutingresp));
+        ResponseLookupRoutingInformationType res = new ResponseLookupRoutingInformationType();
+        res.setIssuingAuthority(issuingAuthorityType);
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.idkResponseLookupRoutingInformationMarshaller().getAsString(res));
     }
 
     @PostMapping("/dr1/im/transferevidence")
@@ -124,11 +126,15 @@ public class DE4AController {
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
-        RequestTransferEvidenceType req = marshaller.read(body);
+        RequestTransferEvidenceIMType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(dr1imresp));
+        var res = DE4AResponseDocumentHelper.createResponseTransferEvidence(req);
+        CanonicalEvidenceType ce = new CanonicalEvidenceType();
+        ce.setAny(t42Evidence);
+        res.setCanonicalEvidence(ce);
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(res));
     }
 
     @PostMapping("/dr1/usi/transferevidence")
@@ -138,11 +144,17 @@ public class DE4AController {
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
-        eu.de4a.edm.jaxb.dr_usi.RequestTransferEvidenceType req = marshaller.read(body);
+        RequestTransferEvidenceUSIDRType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drUsiResponseMarshaller().getAsString(dr1usiresp));
+        var res = DE4AResponseDocumentHelper.createResponseError(true);
+        res.setErrorList(new ErrorListType());
+        ErrorType error = new ErrorType();
+        error.setCode("asdf");
+        error.setText("asdf");
+        res.getErrorList().getError().add(error);
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drUsiResponseMarshaller().getAsString(res));
     }
 
     @PostMapping("/dt1/usi/transferevidence")
@@ -152,11 +164,17 @@ public class DE4AController {
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
-        eu.de4a.edm.jaxb.dt_usi.RequestTransferEvidenceType req = marshaller.read(body);
+        RequestTransferEvidenceUSIDTType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.dtUsiResponseMarshaller().getAsString(dt1usiresp));
+        var res = DE4AResponseDocumentHelper.createResponseError(true);
+        res.setErrorList(new ErrorListType());
+        ErrorType error = new ErrorType();
+        error.setCode("asdf");
+        error.setText("asdf");
+        res.getErrorList().getError().add(error);
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.dtUsiResponseMarshaller().getAsString(res));
     }
 
 }
