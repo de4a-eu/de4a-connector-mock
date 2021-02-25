@@ -23,49 +23,49 @@ public class TestResponsesConfig {
 
     @Bean
     public eu.de4a.edm.jaxb.dr_im.ResponseTransferEvidenceType getDR1IMresponse() throws IOException, MarshallException {
-        Resource xml = new ClassPathResource("T4.2-examples/DR1-IM-T42-response.xml");
+        Resource xml = new ClassPathResource("examples/T4.2-examples/DR1-IM-T42-response.xml");
         return DE4AMarshaller.drImResponseMarshaller(IDE4ACanonicalEvidenceType.ALL_PREDEFINED).read(xml.getInputStream());
     }
 
     @Bean
     public ResponseTransferEvidenceType DR1USIresponse() throws IOException, MarshallException {
-        Resource xml = new ClassPathResource("/xml-schemas/examples/DR1-USI-response.xml");
+        Resource xml = new ClassPathResource("/examples/DR1-USI-response.xml");
         return DE4AMarshaller.drUsiResponseMarshaller().read(xml.getInputStream());
     }
 
     @Bean
     public eu.de4a.edm.jaxb.do_usi.ResponseExtractEvidenceType DO1USIresponse() throws IOException, MarshallException {
-        Resource xml = new ClassPathResource("/xml-schemas/examples/DO1-USI-response.xml");
+        Resource xml = new ClassPathResource("/examples/DO1-USI-response.xml");
         return DE4AMarshaller.doUsiResponseMarshaller().read(xml.getInputStream());
     }
 
     @Bean
     public ResponseForwardEvidenceType DE1USIresponse() throws IOException, MarshallException {
-        Resource xml = new ClassPathResource("/xml-schemas/examples/DE1-USI-response.xml");
+        Resource xml = new ClassPathResource("/examples/DE1-USI-response.xml");
         return DE4AMarshaller.deUsiResponseMarshaller().read(xml.getInputStream());
     }
 
     @Bean
     public ResponseExtractEvidenceType DO1IMresponse() throws IOException, MarshallException {
-        Resource xml = new ClassPathResource("T4.2-examples/DO1-IM-T42-response.xml");
+        Resource xml = new ClassPathResource("examples/T4.2-examples/DO1-IM-T42-response.xml");
         return DE4AMarshaller.doImResponseMarshaller(IDE4ACanonicalEvidenceType.ALL_PREDEFINED).read(xml.getInputStream());
     }
 
     @Bean
     public eu.de4a.edm.jaxb.dt_usi.ResponseTransferEvidenceType DT1USIresponse() throws IOException, MarshallException {
-        Resource xml = new ClassPathResource("/xml-schemas/examples/DT1-USI-response.xml");
+        Resource xml = new ClassPathResource("/examples/DT1-USI-response.xml");
         return DE4AMarshaller.dtUsiResponseMarshaller().read(xml.getInputStream());
     }
 
     @Bean
     public ResponseLookupEvidenceServiceDataType DR1IDKresponseevidence() throws IOException, MarshallException {
-        Resource xml = new ClassPathResource("/xml-schemas/examples/DR-DT1-IDK-response-evidence.xml");
+        Resource xml = new ClassPathResource("/examples/DR-DT1-IDK-response-evidence.xml");
         return DE4AMarshaller.idkResponseLookupEvidenceServiceDataMarshaller().read(xml.getInputStream());
     }
 
     @Bean
     public ResponseLookupRoutingInformationType DR1IDKresponserouting() throws IOException, MarshallException {
-        Resource xml = new ClassPathResource("/xml-schemas/examples/DR-DT1-IDK-response-routing.xml");
+        Resource xml = new ClassPathResource("/examples/DR-DT1-IDK-response-routing.xml");
         return DE4AMarshaller.idkResponseLookupRoutingInformationMarshaller().read(xml.getInputStream());
     }
 

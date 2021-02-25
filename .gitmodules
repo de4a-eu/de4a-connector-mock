@@ -1,3 +1,0 @@
-[submodule "src/main/resources/xml-schemas"]
-	path = src/main/resources/xml-schemas
-	url = https://github.com/de4a-wp5/xml-schemas.git
