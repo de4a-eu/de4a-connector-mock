@@ -5,6 +5,7 @@ import eu.de4a.edm.jaxb.t42.LegalEntityType;
 import eu.de4a.edm.xml.de4a.DE4AMarshaller;
 import eu.de4a.edm.xml.de4a.DE4AResponseDocumentHelper;
 import eu.de4a.edm.xml.de4a.EDE4ACanonicalEvidenceType;
+import eu.de4a.edm.xml.de4a.t42.DE4AT42Marshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,18 +34,16 @@ public class DE4AController {
     public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) {
         var marshaller = DE4AMarshaller.doImRequestMarshaller();
         UUID errorKey = UUID.randomUUID();
-        marshaller.readExceptionCallbacks().set((ex) -> {
-            MarshallErrorHandler.getInstance().postError(errorKey, ex);
-        });
+        marshaller.readExceptionCallbacks().set((ex) -> MarshallErrorHandler.getInstance().postError(errorKey, ex));
         RequestExtractEvidenceIMType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
         var res = DE4AResponseDocumentHelper.createResponseExtractEvidence(req);
         CanonicalEvidenceType ce = new CanonicalEvidenceType();
-        ce.setAny(t42Evidence);
+        ce.setAny(DE4AT42Marshaller.legalEntity().getAsDocument(t42Evidence).getDocumentElement());
         res.setCanonicalEvidence(ce);
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(res));
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.ALL_PREDEFINED).getAsString(res));
     }
 
     @PostMapping("/do1/usi/extractevidence")
@@ -132,7 +131,7 @@ public class DE4AController {
         }
         var res = DE4AResponseDocumentHelper.createResponseTransferEvidence(req);
         CanonicalEvidenceType ce = new CanonicalEvidenceType();
-        ce.setAny(t42Evidence);
+        ce.setAny(DE4AT42Marshaller.legalEntity().getAsDocument(t42Evidence).getDocumentElement());
         res.setCanonicalEvidence(ce);
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(res));
     }

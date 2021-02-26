@@ -7,7 +7,7 @@ import java.util.UUID;
 public class MarshallException extends RuntimeException {
 
     @Getter
-    private UUID errorUUID;
+    final private UUID errorUUID;
 
     public MarshallException(UUID errorUUID) {
         super();
