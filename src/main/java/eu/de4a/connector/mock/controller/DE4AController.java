@@ -43,7 +43,7 @@ public class DE4AController {
         CanonicalEvidenceType ce = new CanonicalEvidenceType();
         ce.setAny(DE4AT42Marshaller.legalEntity().getAsDocument(t42Evidence).getDocumentElement());
         res.setCanonicalEvidence(ce);
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.ALL_PREDEFINED).getAsString(res));
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(res));
     }
 
     @PostMapping("/do1/usi/extractevidence")
