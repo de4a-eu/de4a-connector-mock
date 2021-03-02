@@ -22,7 +22,7 @@
     <dependencies>
         <dependency>
             <groupId>eu.de4a</groupId>
-            <artifactId>de4a-edm</artifactId>
+            <artifactId>de4a-iem</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
