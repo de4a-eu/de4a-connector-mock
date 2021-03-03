@@ -125,7 +125,7 @@ public class DE4AController {
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
-        RequestTransferEvidenceIMType req = marshaller.read(body);
+        RequestTransferEvidenceUSIIMDRType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
@@ -143,7 +143,7 @@ public class DE4AController {
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
-        RequestTransferEvidenceUSIDRType req = marshaller.read(body);
+        RequestTransferEvidenceUSIIMDRType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
