@@ -67,7 +67,7 @@ public class DE4AController {
             ce.setAny(canonicalEvidence);
             res.setCanonicalEvidence(ce);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(res));
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
     }
 
     @PostMapping("/do1/usi/extractevidence")
@@ -87,7 +87,7 @@ public class DE4AController {
 
     @PostMapping("/de1/usi/forwardevidence")
     public ResponseEntity<String> de1usiresp(InputStream body) throws MarshallException {
-        var marshaller = DE4AMarshaller.deUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO);
+        var marshaller = DE4AMarshaller.deUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04);
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
@@ -157,7 +157,7 @@ public class DE4AController {
             ce.setAny(canonicalEvidence);
             res.setCanonicalEvidence(ce);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(res));
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
     }
 
     @PostMapping("/dr1/usi/transferevidence")
@@ -177,7 +177,7 @@ public class DE4AController {
 
     @PostMapping("/dt1/usi/transferevidence")
     public ResponseEntity<String> dt1usiresp(InputStream body) throws MarshallException {
-        var marshaller = DE4AMarshaller.dtUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO);
+        var marshaller = DE4AMarshaller.dtUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04);
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
