@@ -2,9 +2,9 @@ package eu.de4a.connector.mock.config;
 
 import eu.de4a.iem.jaxb.common.types.EvidenceServiceType;
 import eu.de4a.iem.jaxb.common.types.IssuingAuthorityType;
-import eu.de4a.iem.jaxb.t42.LegalEntityType;
+import eu.de4a.iem.jaxb.t42.v0_4.LegalEntityType;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
-import eu.de4a.iem.xml.de4a.t42.DE4AT42Marshaller;
+import eu.de4a.iem.xml.de4a.t42.v0_4.DE4AT42Marshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
