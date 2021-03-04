@@ -20,12 +20,6 @@ public class TestResponsesConfig {
 
 
     @Bean
-    public LegalEntityType getT42CanonicalEvidence() throws IOException {
-        Resource xml = new ClassPathResource("examples/T4.2-examples/LegalEntity-ett-bolag.xml");
-        return DE4AT42Marshaller.legalEntity().read(xml.getInputStream());
-    }
-
-    @Bean
     public IssuingAuthorityType getIssuingAuthorityType() throws IOException {
         Resource xml = new ClassPathResource("examples/DR-DT1-IDK-response-routing.xml");
         var res = DE4AMarshaller.idkResponseLookupRoutingInformationMarshaller().read(xml.getInputStream());

@@ -1,11 +1,10 @@
 package eu.de4a.connector.mock.controller;
 
+import eu.de4a.connector.mock.CannonicalEvidenceExamples;
 import eu.de4a.iem.jaxb.common.types.*;
-import eu.de4a.iem.jaxb.t42.LegalEntityType;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
 import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
 import eu.de4a.iem.xml.de4a.EDE4ACanonicalEvidenceType;
-import eu.de4a.iem.xml.de4a.t42.DE4AT42Marshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.w3c.dom.Element;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
@@ -24,14 +25,27 @@ import java.util.UUID;
 public class DE4AController {
 
     @Autowired
-    LegalEntityType t42Evidence;
-    @Autowired
     EvidenceServiceType evidenceServiceType;
     @Autowired
     IssuingAuthorityType issuingAuthorityType;
 
+    //todo: use a correct error code
+    public static final String NO_SUCH_EVIDENCE = "de4a-404";
+
+    private Element getCanonicalEvidence(String EUID) throws IOException{
+        if (EUID.equals(CannonicalEvidenceExamples.T42_SE.getEUID())) {
+            return CannonicalEvidenceExamples.T42_SE.getDocumentElement();
+        } else if (EUID.equals(CannonicalEvidenceExamples.T42_NL.getEUID())) {
+            return CannonicalEvidenceExamples.T42_NL.getDocumentElement();
+        } else if (EUID.equals(CannonicalEvidenceExamples.T42_RO.getEUID())) {
+            return CannonicalEvidenceExamples.T42_RO.getDocumentElement();
+        } else {
+            return null;
+        }
+    }
+
     @PostMapping("/do1/im/extractevidence")
-    public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) {
+    public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) throws IOException {
         var marshaller = DE4AMarshaller.doImRequestMarshaller();
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> MarshallErrorHandler.getInstance().postError(errorKey, ex));
@@ -40,14 +54,24 @@ public class DE4AController {
             throw new MarshallException(errorKey);
         }
         var res = DE4AResponseDocumentHelper.createResponseExtractEvidence(req);
-        CanonicalEvidenceType ce = new CanonicalEvidenceType();
-        ce.setAny(DE4AT42Marshaller.legalEntity().getAsDocument(t42Evidence).getDocumentElement());
-        res.setCanonicalEvidence(ce);
+        Element canonicalEvidence = getCanonicalEvidence(req.getCanonicalEvidenceId());
+        if (canonicalEvidence == null) {
+            ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(
+                    DE4AResponseDocumentHelper.createError(
+                            NO_SUCH_EVIDENCE,
+                            String.format("No evidence with EUID '%s' found", req.getCanonicalEvidenceId())));
+            res.setErrorList(errorListType);
+        } else {
+            CanonicalEvidenceType ce = new CanonicalEvidenceType();
+            ce.setAny(canonicalEvidence);
+            res.setCanonicalEvidence(ce);
+        }
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(res));
     }
 
     @PostMapping("/do1/usi/extractevidence")
-    public ResponseEntity<String> DO1USIRequestExtractEvidence(InputStream body) throws MarshallException {
+    public ResponseEntity<String> DO1USIRequestExtractEvidence(InputStream body) throws MarshallException, IOException {
         var marshaller = DE4AMarshaller.doUsiRequestMarshaller();
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> {
@@ -58,11 +82,6 @@ public class DE4AController {
             throw new MarshallException(errorKey);
         }
         ResponseErrorType res = DE4AResponseDocumentHelper.createResponseError(true);
-        res.setErrorList(new ErrorListType());
-        ErrorType error = new ErrorType();
-        error.setCode("asdf");
-        error.setText("asdf");
-        res.getErrorList().getError().add(error);
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
     }
 
@@ -78,11 +97,6 @@ public class DE4AController {
             throw new MarshallException(errorKey);
         }
         ResponseErrorType res = DE4AResponseDocumentHelper.createResponseError(true);
-        res.setErrorList(new ErrorListType());
-        ErrorType error = new ErrorType();
-        error.setCode("asdf");
-        error.setText("asdf");
-        res.getErrorList().getError().add(error);
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.deUsiResponseMarshaller().getAsString(res));
     }
 
@@ -119,7 +133,7 @@ public class DE4AController {
     }
 
     @PostMapping("/dr1/im/transferevidence")
-    public ResponseEntity<String> dr1imresp(InputStream body) throws MarshallException {
+    public ResponseEntity<String> dr1imresp(InputStream body) throws MarshallException, IOException {
         var marshaller = DE4AMarshaller.drImRequestMarshaller();
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> {
@@ -130,9 +144,19 @@ public class DE4AController {
             throw new MarshallException(errorKey);
         }
         var res = DE4AResponseDocumentHelper.createResponseTransferEvidence(req);
-        CanonicalEvidenceType ce = new CanonicalEvidenceType();
-        ce.setAny(DE4AT42Marshaller.legalEntity().getAsDocument(t42Evidence).getDocumentElement());
-        res.setCanonicalEvidence(ce);
+        Element canonicalEvidence = getCanonicalEvidence(req.getCanonicalEvidenceId());
+        if (canonicalEvidence == null) {
+            ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(
+                    DE4AResponseDocumentHelper.createError(
+                            NO_SUCH_EVIDENCE,
+                            String.format("No evidence with EUID '%s' found", req.getCanonicalEvidenceId())));
+            res.setErrorList(errorListType);
+        } else {
+            CanonicalEvidenceType ce = new CanonicalEvidenceType();
+            ce.setAny(canonicalEvidence);
+            res.setCanonicalEvidence(ce);
+        }
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO).getAsString(res));
     }
 
@@ -148,11 +172,6 @@ public class DE4AController {
             throw new MarshallException(errorKey);
         }
         var res = DE4AResponseDocumentHelper.createResponseError(true);
-        res.setErrorList(new ErrorListType());
-        ErrorType error = new ErrorType();
-        error.setCode("asdf");
-        error.setText("asdf");
-        res.getErrorList().getError().add(error);
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drUsiResponseMarshaller().getAsString(res));
     }
 
@@ -168,11 +187,6 @@ public class DE4AController {
             throw new MarshallException(errorKey);
         }
         var res = DE4AResponseDocumentHelper.createResponseError(true);
-        res.setErrorList(new ErrorListType());
-        ErrorType error = new ErrorType();
-        error.setCode("asdf");
-        error.setText("asdf");
-        res.getErrorList().getError().add(error);
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.dtUsiResponseMarshaller().getAsString(res));
     }
 
