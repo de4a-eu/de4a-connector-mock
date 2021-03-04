@@ -2,9 +2,9 @@ package eu.de4a.connector.mock.config;
 
 import eu.de4a.iem.jaxb.common.types.EvidenceServiceType;
 import eu.de4a.iem.jaxb.common.types.IssuingAuthorityType;
-import eu.de4a.iem.jaxb.t42.LegalEntityType;
+import eu.de4a.iem.jaxb.t42.v0_4.LegalEntityType;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
-import eu.de4a.iem.xml.de4a.t42.DE4AT42Marshaller;
+import eu.de4a.iem.xml.de4a.t42.v0_4.DE4AT42Marshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,12 +18,6 @@ import java.io.IOException;
 @Slf4j
 public class TestResponsesConfig {
 
-
-    @Bean
-    public LegalEntityType getT42CanonicalEvidence() throws IOException {
-        Resource xml = new ClassPathResource("examples/T4.2-examples/LegalEntity-ett-bolag.xml");
-        return DE4AT42Marshaller.legalEntity().read(xml.getInputStream());
-    }
 
     @Bean
     public IssuingAuthorityType getIssuingAuthorityType() throws IOException {
