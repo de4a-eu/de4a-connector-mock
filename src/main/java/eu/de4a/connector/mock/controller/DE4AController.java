@@ -1,6 +1,7 @@
 package eu.de4a.connector.mock.controller;
 
-import eu.de4a.connector.mock.CannonicalEvidenceExamples;
+import eu.de4a.connector.mock.CanonicalEvidenceExamples;
+import eu.de4a.iem.jaxb.common.idtypes.LegalEntityIdentifierType;
 import eu.de4a.iem.jaxb.common.types.*;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
 import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
@@ -31,14 +32,15 @@ public class DE4AController {
 
     //todo: use a correct error code
     public static final String NO_SUCH_EVIDENCE = "de4a-404";
+    public static final String WRONG_DATA_SUBJECT_ID_TYPE = "de4a-400";
 
-    private Element getCanonicalEvidence(String EUID) throws IOException{
-        if (EUID.equals(CannonicalEvidenceExamples.T42_SE.getEUID())) {
-            return CannonicalEvidenceExamples.T42_SE.getDocumentElement();
-        } else if (EUID.equals(CannonicalEvidenceExamples.T42_NL.getEUID())) {
-            return CannonicalEvidenceExamples.T42_NL.getDocumentElement();
-        } else if (EUID.equals(CannonicalEvidenceExamples.T42_RO.getEUID())) {
-            return CannonicalEvidenceExamples.T42_RO.getDocumentElement();
+    private Element getCanonicalEvidence(String eIDASLegalEntityIdentifier) throws IOException{
+        if (CanonicalEvidenceExamples.T42_SE.isEIDASLegalIdentifier(eIDASLegalEntityIdentifier)) {
+            return CanonicalEvidenceExamples.T42_SE.getDocumentElement();
+        } else if (CanonicalEvidenceExamples.T42_NL.isEIDASLegalIdentifier(eIDASLegalEntityIdentifier)) {
+            return CanonicalEvidenceExamples.T42_NL.getDocumentElement();
+        } else if (CanonicalEvidenceExamples.T42_RO.isEIDASLegalIdentifier(eIDASLegalEntityIdentifier)) {
+            return CanonicalEvidenceExamples.T42_RO.getDocumentElement();
         } else {
             return null;
         }
@@ -54,13 +56,26 @@ public class DE4AController {
             throw new MarshallException(errorKey);
         }
         var res = DE4AResponseDocumentHelper.createResponseExtractEvidence(req);
-        Element canonicalEvidence = getCanonicalEvidence(req.getCanonicalEvidenceId());
+        LegalEntityIdentifierType legalId = req.getDataRequestSubject().getDataSubjectCompany();
+        if (legalId == null) {
+            ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(
+                    DE4AResponseDocumentHelper.createError(
+                            WRONG_DATA_SUBJECT_ID_TYPE,
+                            "DataRequestSubject must be 'DataSubjectCompany'"
+                    )
+            );
+            res.setErrorList(errorListType);
+            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
+        }
+        String eIDASLegalIdentifier = legalId.getLegalEntityIdentifier();
+        Element canonicalEvidence = getCanonicalEvidence(eIDASLegalIdentifier);
         if (canonicalEvidence == null) {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
                             NO_SUCH_EVIDENCE,
-                            String.format("No evidence with EUID '%s' found", req.getCanonicalEvidenceId())));
+                            String.format("No evidence with LegalEntityIdentifier '%s' found", eIDASLegalIdentifier)));
             res.setErrorList(errorListType);
         } else {
             CanonicalEvidenceType ce = new CanonicalEvidenceType();
@@ -144,13 +159,26 @@ public class DE4AController {
             throw new MarshallException(errorKey);
         }
         var res = DE4AResponseDocumentHelper.createResponseTransferEvidence(req);
-        Element canonicalEvidence = getCanonicalEvidence(req.getCanonicalEvidenceId());
+        LegalEntityIdentifierType legalId = req.getDataRequestSubject().getDataSubjectCompany();
+        if (legalId == null) {
+            ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(
+                    DE4AResponseDocumentHelper.createError(
+                            WRONG_DATA_SUBJECT_ID_TYPE,
+                            "DataRequestSubject must be 'DataSubjectCompany'"
+                    )
+            );
+            res.setErrorList(errorListType);
+            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
+        }
+        String eIDASLegalIdentifier = legalId.getLegalEntityIdentifier();
+        Element canonicalEvidence = getCanonicalEvidence(eIDASLegalIdentifier);
         if (canonicalEvidence == null) {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
                             NO_SUCH_EVIDENCE,
-                            String.format("No evidence with EUID '%s' found", req.getCanonicalEvidenceId())));
+                            String.format("No evidence with LegalEntityIdentifier '%s' found", eIDASLegalIdentifier)));
             res.setErrorList(errorListType);
         } else {
             CanonicalEvidenceType ce = new CanonicalEvidenceType();
