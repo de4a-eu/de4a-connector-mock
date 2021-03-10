@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.Arrays;
 
 public enum DataOwner {
-    COC_NL("", "Chamber of Commerce of Netherlands", "NL", PilotUseCase.T42),
+    COC_NL("iso6523-actorid-upis::9991:SE990000106", "Chamber of Commerce of Netherlands", "NL", PilotUseCase.T42),
     //todo: correct DO ids
     V_SE("asdf", "VERKSAMT.SE", "SE", PilotUseCase.T42),
     ONRC_RO("qwer", "ONRC", "RO", PilotUseCase.T42);
