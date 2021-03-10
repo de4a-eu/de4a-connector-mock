@@ -20,7 +20,7 @@ public enum CanonicalEvidenceExamples {
     T42_RO("J40/12487/1998", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, DE4AT42Marshaller.legalEntity());
 
     @Getter
-    final private String registrationNumber;
+    final private String identifier;
     @Getter
     final private Resource resource;
     @Getter
@@ -30,12 +30,12 @@ public enum CanonicalEvidenceExamples {
     private Element documentElement;
     private Pattern eIDASIdentifierPattern;
 
-    private CanonicalEvidenceExamples(String registrationNumber, Resource resource, DataOwner dataOwner, GenericJAXBMarshaller marshaller) {
-        this.registrationNumber = registrationNumber;
+    private CanonicalEvidenceExamples(String identifier, Resource resource, DataOwner dataOwner, GenericJAXBMarshaller marshaller) {
+        this.identifier = identifier;
         this.resource = resource;
         this.dataOwner = dataOwner;
         this.marshaller = marshaller;
-        this.eIDASIdentifierPattern = Pattern.compile(String.format("^%s/[A-Z]{2}/%s$", dataOwner.getCountry(), registrationNumber));
+        this.eIDASIdentifierPattern = Pattern.compile(String.format("^%s/[A-Z]{2}/%s$", dataOwner.getCountry(), identifier));
     }
 
     public Element getDocumentElement() {

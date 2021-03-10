@@ -3,13 +3,13 @@ package eu.de4a.connector.mock;
 import eu.de4a.iem.jaxb.common.types.DataRequestSubjectCVType;
 import lombok.Getter;
 
-public enum PilotUseCase {
+public enum Pilot {
     T42(DataRequestSubjectRestrictions.LEGAL_ENTITY_REQUIRED);
 
     @Getter
     private DataRequestSubjectRestrictions dataRequestSubjectRestrictions;
 
-    private PilotUseCase(DataRequestSubjectRestrictions dataRequestSubjectRestrictions) {
+    private Pilot(DataRequestSubjectRestrictions dataRequestSubjectRestrictions) {
         this.dataRequestSubjectRestrictions = dataRequestSubjectRestrictions;
     }
 

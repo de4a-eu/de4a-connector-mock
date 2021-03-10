@@ -55,18 +55,18 @@ public class DE4AController {
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
         }
-        if (!dataOwner.getPilotUseCase().validDataRequestSubject(req.getDataRequestSubject())) {
+        if (!dataOwner.getPilot().validDataRequestSubject(req.getDataRequestSubject())) {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
                             DE4A_BAD_REQUEST,
-                            String.format("%s for requests to %s", dataOwner.getPilotUseCase().restrictionDescription(), dataOwner.toString())
+                            String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
                     )
             );
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
         }
-        String eIDASIdentifier = dataOwner.getPilotUseCase().getEIDASIdentifier(req.getDataRequestSubject());
+        String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(req.getDataRequestSubject());
         Element canonicalEvidence = CanonicalEvidenceExamples.getDocumentElement(dataOwner, eIDASIdentifier);
         if (canonicalEvidence == null) {
             ErrorListType errorListType = new ErrorListType();
@@ -169,18 +169,18 @@ public class DE4AController {
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
         }
-        if (!dataOwner.getPilotUseCase().validDataRequestSubject(req.getDataRequestSubject())) {
+        if (!dataOwner.getPilot().validDataRequestSubject(req.getDataRequestSubject())) {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
                             DE4A_BAD_REQUEST,
-                            String.format("%s for requests to %s", dataOwner.getPilotUseCase().restrictionDescription(), dataOwner.toString())
+                            String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
                     )
             );
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
         }
-        String eIDASIdentifier = dataOwner.getPilotUseCase().getEIDASIdentifier(req.getDataRequestSubject());
+        String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(req.getDataRequestSubject());
         Element canonicalEvidence = CanonicalEvidenceExamples.getDocumentElement(dataOwner, eIDASIdentifier);
         if (canonicalEvidence == null) {
             ErrorListType errorListType = new ErrorListType();
