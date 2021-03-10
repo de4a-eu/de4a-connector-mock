@@ -15,14 +15,12 @@ import java.util.regex.Pattern;
 @Slf4j
 public enum CanonicalEvidenceExamples {
 
-    T42_SE("5591674170", "SE", new ClassPathResource("examples/T4.2-examples/sample company info SE -2.xml"),  DataOwner.V_SE, DE4AT42Marshaller.legalEntity()),
-    T42_NL("90000471", "NL", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, DE4AT42Marshaller.legalEntity()),
-    T42_RO("12487", "RO", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, DE4AT42Marshaller.legalEntity());
+    T42_SE("5591674170", new ClassPathResource("examples/T4.2-examples/sample company info SE -2.xml"),  DataOwner.V_SE, DE4AT42Marshaller.legalEntity()),
+    T42_NL("90000471", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, DE4AT42Marshaller.legalEntity()),
+    T42_RO("J40/12487/1998", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, DE4AT42Marshaller.legalEntity());
 
     @Getter
     final private String registrationNumber;
-    @Getter
-    final private String country;
     @Getter
     final private Resource resource;
     @Getter
@@ -32,13 +30,12 @@ public enum CanonicalEvidenceExamples {
     private Element documentElement;
     private Pattern eIDASIdentifierPattern;
 
-    private CanonicalEvidenceExamples(String registrationNumber, String country, Resource resource, DataOwner dataOwner, GenericJAXBMarshaller marshaller) {
+    private CanonicalEvidenceExamples(String registrationNumber, Resource resource, DataOwner dataOwner, GenericJAXBMarshaller marshaller) {
         this.registrationNumber = registrationNumber;
-        this.country = country;
         this.resource = resource;
         this.dataOwner = dataOwner;
         this.marshaller = marshaller;
-        this.eIDASIdentifierPattern = Pattern.compile(String.format("^%s/[A-Z]{2}/%s$", country, registrationNumber));
+        this.eIDASIdentifierPattern = Pattern.compile(String.format("^%s/[A-Z]{2}/%s$", dataOwner.getCountry(), registrationNumber));
     }
 
     public Element getDocumentElement() {

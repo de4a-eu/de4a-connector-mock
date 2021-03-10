@@ -60,7 +60,7 @@ public class DE4AController {
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
                             DE4A_BAD_REQUEST,
-                            String.format("%s for requests to DataOwner %s", dataOwner.getPilotUseCase().restrictionDescription(), dataOwner.getName())
+                            String.format("%s for requests to %s", dataOwner.getPilotUseCase().restrictionDescription(), dataOwner.toString())
                     )
             );
             res.setErrorList(errorListType);
@@ -73,7 +73,7 @@ public class DE4AController {
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
                             DE4A_NOT_FOUND,
-                            String.format("No evidence with eIDASIdentifier '%s' found for DataOwner %s", eIDASIdentifier, dataOwner.getName())));
+                            String.format("No evidence with eIDASIdentifier '%s' found for %s", eIDASIdentifier, dataOwner.toString())));
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
         }
@@ -174,7 +174,7 @@ public class DE4AController {
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
                             DE4A_BAD_REQUEST,
-                            String.format("%s for requests to DataOwner %s", dataOwner.getPilotUseCase().restrictionDescription(), dataOwner.getName())
+                            String.format("%s for requests to %s", dataOwner.getPilotUseCase().restrictionDescription(), dataOwner.toString())
                     )
             );
             res.setErrorList(errorListType);
@@ -187,7 +187,7 @@ public class DE4AController {
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
                             DE4A_NOT_FOUND,
-                            String.format("No evidence with eIDASIdentifier '%s' found for DataOwner %s", eIDASIdentifier, dataOwner.getName())));
+                            String.format("No evidence with eIDASIdentifier '%s' found for %s", eIDASIdentifier, dataOwner.toString())));
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
         }
