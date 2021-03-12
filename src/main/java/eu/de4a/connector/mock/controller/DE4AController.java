@@ -1,7 +1,8 @@
 package eu.de4a.connector.mock.controller;
 
-import eu.de4a.connector.mock.CanonicalEvidenceExamples;
-import eu.de4a.connector.mock.DataOwner;
+import eu.de4a.connector.mock.exampledata.CanonicalEvidenceExamples;
+import eu.de4a.connector.mock.exampledata.DataOwner;
+import eu.de4a.connector.mock.exampledata.EvidenceID;
 import eu.de4a.iem.jaxb.common.types.*;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
 import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
@@ -66,14 +67,26 @@ public class DE4AController {
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
         }
+        EvidenceID evidenceID = EvidenceID.selectEvidenceId(req.getCanonicalEvidenceId());
+        if (evidenceID == null) {
+            ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(
+                    DE4AResponseDocumentHelper.createError(
+                            DE4A_NOT_FOUND,
+                            String.format("no known evidence id '%s'", req.getCanonicalEvidenceId())
+                    )
+            );
+            res.setErrorList(errorListType);
+            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
+        }
         String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(req.getDataRequestSubject());
-        Element canonicalEvidence = CanonicalEvidenceExamples.getDocumentElement(dataOwner, eIDASIdentifier);
+        Element canonicalEvidence = CanonicalEvidenceExamples.getDocumentElement(dataOwner, evidenceID, eIDASIdentifier);
         if (canonicalEvidence == null) {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
                             DE4A_NOT_FOUND,
-                            String.format("No evidence with eIDASIdentifier '%s' found for %s", eIDASIdentifier, dataOwner.toString())));
+                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
         }
@@ -180,8 +193,20 @@ public class DE4AController {
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
         }
+        EvidenceID evidenceID = EvidenceID.selectEvidenceId(req.getCanonicalEvidenceId());
+        if (evidenceID == null) {
+            ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(
+                    DE4AResponseDocumentHelper.createError(
+                            DE4A_NOT_FOUND,
+                            String.format("no known evidence id '%s'", req.getCanonicalEvidenceId())
+                    )
+            );
+            res.setErrorList(errorListType);
+            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04).getAsString(res));
+        }
         String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(req.getDataRequestSubject());
-        Element canonicalEvidence = CanonicalEvidenceExamples.getDocumentElement(dataOwner, eIDASIdentifier);
+        Element canonicalEvidence = CanonicalEvidenceExamples.getDocumentElement(dataOwner, evidenceID, eIDASIdentifier);
         if (canonicalEvidence == null) {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(

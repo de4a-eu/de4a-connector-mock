@@ -1,6 +1,7 @@
 package eu.de4a.connector.mock;
 
 import com.helger.jaxb.GenericJAXBMarshaller;
+import eu.de4a.connector.mock.exampledata.CanonicalEvidenceExamples;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

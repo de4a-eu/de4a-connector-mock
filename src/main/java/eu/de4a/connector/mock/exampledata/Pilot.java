@@ -1,4 +1,4 @@
-package eu.de4a.connector.mock;
+package eu.de4a.connector.mock.exampledata;
 
 import eu.de4a.iem.jaxb.common.types.DataRequestSubjectCVType;
 import lombok.Getter;

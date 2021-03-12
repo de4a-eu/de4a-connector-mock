@@ -1,4 +1,4 @@
-package eu.de4a.connector.mock;
+package eu.de4a.connector.mock.exampledata;
 
 import com.helger.jaxb.GenericJAXBMarshaller;
 import eu.de4a.iem.xml.de4a.t42.v0_4.DE4AT42Marshaller;
@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
 @Slf4j
 public enum CanonicalEvidenceExamples {
 
-    T42_SE("5591674170", new ClassPathResource("examples/T4.2-examples/sample company info SE -2.xml"),  DataOwner.V_SE, DE4AT42Marshaller.legalEntity()),
-    T42_NL("90000471", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, DE4AT42Marshaller.legalEntity()),
-    T42_RO("J40/12487/1998", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, DE4AT42Marshaller.legalEntity());
+    T42_SE("5591674170", new ClassPathResource("examples/T4.2-examples/sample company info SE -2.xml"),  DataOwner.V_SE, EvidenceID.COMPANY_ID, DE4AT42Marshaller.legalEntity()),
+    T42_NL("90000471", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, EvidenceID.COMPANY_ID, DE4AT42Marshaller.legalEntity()),
+    T42_RO("J40/12487/1998", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, EvidenceID.COMPANY_ID, DE4AT42Marshaller.legalEntity());
 
     @Getter
     final private String identifier;
@@ -26,14 +26,17 @@ public enum CanonicalEvidenceExamples {
     @Getter
     final private DataOwner dataOwner;
     @Getter
+    final private EvidenceID evidenceID;
+    @Getter
     final private GenericJAXBMarshaller marshaller;
     private Element documentElement;
     private Pattern eIDASIdentifierPattern;
 
-    private CanonicalEvidenceExamples(String identifier, Resource resource, DataOwner dataOwner, GenericJAXBMarshaller marshaller) {
+    private CanonicalEvidenceExamples(String identifier, Resource resource, DataOwner dataOwner, EvidenceID evidenceID, GenericJAXBMarshaller marshaller) {
         this.identifier = identifier;
         this.resource = resource;
         this.dataOwner = dataOwner;
+        this.evidenceID = evidenceID;
         this.marshaller = marshaller;
         this.eIDASIdentifierPattern = Pattern.compile(String.format("^%s/[A-Z]{2}/%s$", dataOwner.getCountry(), identifier));
     }
@@ -55,9 +58,10 @@ public enum CanonicalEvidenceExamples {
         return eIDASIdentifierPattern.matcher(eIDASIdentifier).find();
     }
 
-    public static Element getDocumentElement(DataOwner dataOwner, String eIDASIdentifier) {
+    public static Element getDocumentElement(DataOwner dataOwner, EvidenceID evidenceID, String eIDASIdentifier) {
         return Arrays.stream(CanonicalEvidenceExamples.values())
                 .filter(canonicalEvidenceExamples -> canonicalEvidenceExamples.dataOwner.equals(dataOwner))
+                .filter(canonicalEvidenceExamples -> canonicalEvidenceExamples.evidenceID.equals(evidenceID))
                 .filter(canonicalEvidenceExamples -> canonicalEvidenceExamples.isEIDASIdentifier(eIDASIdentifier))
                 .findFirst()
                 .map(CanonicalEvidenceExamples::getDocumentElement)
