@@ -8,35 +8,37 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 
 @Slf4j
 public class CanonicalEvidenceExamplesTest {
 
-    private static <T> void _testReadWrite (CanonicalEvidenceExamples example) throws IOException
+    private static <T> void _testReadWrite (CanonicalEvidenceExamples example)
     {
-        File aFile = example.getResource().getFile();
-        GenericJAXBMarshaller aMarshaller = example.getMarshaller();
-        Assertions.assertTrue(aFile.exists(), () -> "Test file does not exists " + aFile.getAbsolutePath ());
+        try {
+            File aFile = example.getResource().getFile();
+            GenericJAXBMarshaller aMarshaller = example.getMarshaller();
+            Assertions.assertTrue(aFile.exists(), () -> "Test file does not exists " + aFile.getAbsolutePath());
 
-        final T aRead = (T) aMarshaller.read (aFile);
-        Assertions.assertNotNull (aRead, "Failed to read " + aFile.getAbsolutePath ());
+            final T aRead = (T) aMarshaller.read(aFile);
+            Assertions.assertNotNull(aRead, "Failed to read " + aFile.getAbsolutePath());
 
-        final byte [] aBytes = aMarshaller.getAsBytes (aRead);
-        Assertions.assertNotNull (aBytes, "Failed to re-write " + aFile.getAbsolutePath ());
+            final byte[] aBytes = aMarshaller.getAsBytes(aRead);
+            Assertions.assertNotNull(aBytes, "Failed to re-write " + aFile.getAbsolutePath());
 
-        if (true)
-        {
-            aMarshaller.setFormattedOutput (true);
-            log.info (aMarshaller.getAsString (aRead));
+            if (true) {
+                aMarshaller.setFormattedOutput(true);
+                log.info(aMarshaller.getAsString(aRead));
+            }
+        } catch (IOException ex) {
+            Assertions.fail(ex);
         }
     }
 
     @Test
-    public void testCanonicalEvidenceExamplesT42 () throws IOException
+    public void testCanonicalEvidenceExamples()
     {
-        _testReadWrite (CanonicalEvidenceExamples.T42_SE);
-        _testReadWrite (CanonicalEvidenceExamples.T42_NL);
-        _testReadWrite (CanonicalEvidenceExamples.T42_RO);
+        Arrays.stream(CanonicalEvidenceExamples.values()).forEach(CanonicalEvidenceExamplesTest::_testReadWrite);
     }
 }
