@@ -43,7 +43,7 @@ public enum CanonicalEvidenceExamples {
 
     public Element getDocumentElement() {
         if (documentElement == null) {
-            try {
+            try { // this is tested for all CanonicalEvidences in CanonicalEvidenceExamplesTest. It should not ever fail.
                 documentElement = marshaller.getAsDocument(marshaller.read(resource.getInputStream())).getDocumentElement();
             } catch (IOException ex) {
                 log.error("resource {} can't be marshalled, {}", resource.getFilename(), ex.getMessage());
