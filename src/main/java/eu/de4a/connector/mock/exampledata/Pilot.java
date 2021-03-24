@@ -28,9 +28,9 @@ public enum Pilot {
 
     public String getEIDASIdentifier(DataRequestSubjectCVType dataRequestSubjectCVType) {
         if (dataRequestSubjectRestrictions == DataRequestSubjectRestrictions.LEGAL_ENTITY_REQUIRED) {
-            return dataRequestSubjectCVType.getDataSubjectCompany().getLegalEntityIdentifier();
+            return dataRequestSubjectCVType.getDataSubjectCompany().getLegalPersonIdentifier();
         } else { // DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED
-            return dataRequestSubjectCVType.getDataSubjectPerson().getIdentifier();
+            return dataRequestSubjectCVType.getDataSubjectPerson().getPersonIdentifier();
         }
     }
 

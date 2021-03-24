@@ -1,6 +1,6 @@
 package eu.de4a.connector.mock.exampledata;
 
-import eu.de4a.iem.jaxb.common.types.AgentCVType;
+import eu.de4a.iem.jaxb.common.types.AgentType;
 import lombok.Getter;
 
 import java.util.Arrays;
@@ -11,7 +11,7 @@ public enum DataOwner {
     ONRC_RO("iso6523-actorid-upis::9991:RO000000006", "(ORNC) - OFICIUL NATIONAL AL REGISTRULUI COMERTULUI", "RO", Pilot.T42);
 
     @Getter
-    final private String id;
+    final private String urn;
     @Getter
     final private String name;
     @Getter
@@ -19,16 +19,16 @@ public enum DataOwner {
     @Getter
     final private Pilot pilot;
 
-    private DataOwner(String id, String name, String country, Pilot pilot) {
-        this.id = id;
+    private DataOwner(String urn, String name, String country, Pilot pilot) {
+        this.urn = urn;
         this.name = name;
         this.country = country;
         this.pilot = pilot;
     }
 
-    public static DataOwner selectDataOwner(AgentCVType dataOwnerType) {
+    public static DataOwner selectDataOwner(AgentType dataOwnerType) {
         return Arrays.stream(DataOwner.values())
-                .filter(dataOwner -> dataOwnerType.getIdValue().equals(dataOwner.getId()))
+                .filter(dataOwner -> dataOwnerType.getAgentUrn().equals(dataOwner.getUrn()))
                 .findFirst()
                 .orElseGet(() -> null);
     }
@@ -36,7 +36,7 @@ public enum DataOwner {
     @Override
     public String toString() {
         return "DataOwner{" +
-                "id='" + id + '\'' +
+                "id='" + urn + '\'' +
                 ", name='" + name + '\'' +
                 ", country='" + country + '\'' +
                 '}';

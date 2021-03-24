@@ -22,8 +22,6 @@ curl --request POST \
 - /do1/usi/extractevidence
 - /dr1/im/transferevidence
 - /dr1/usi/transferevidence
-- /dr1/idk/lookupevidenceservicedata
-- /dr1/idk/lookuproutinginformation
 - /de1/usi/forwardevidence
 - /dt1/usi/transferevidence
 
@@ -36,3 +34,14 @@ curl --request POST \
 --header 'Content-Type: application/xml' \
 --data '@src/main/resources/examples/DO1-IM-request.xml'
 ```
+
+**Change-log**
+
+- 2021-03-24 
+  - Updated to the latest xml-schema [definition](https://github.com/de4a-wp5/xml-schemas/tree/ef08001696bac65cbf71c84726d3e0aa48a8579a). 
+  - Changed the T4.2 Canonical Evidence from v0.4 to v0.5  
+  - Changed EvidenceId from 'CompanyInfo' to 'CompanyRegistration'
+  - Removed the old IDK related endpoints.
+  - Updated examples
+
+    

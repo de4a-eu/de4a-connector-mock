@@ -1,7 +1,7 @@
 package eu.de4a.connector.mock.exampledata;
 
 import com.helger.jaxb.GenericJAXBMarshaller;
-import eu.de4a.iem.xml.de4a.t42.v0_4.DE4AT42Marshaller;
+import eu.de4a.iem.xml.de4a.t42.v0_5.DE4AT42Marshaller;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
 @Slf4j
 public enum CanonicalEvidenceExamples {
 
-    T42_SE("5591674170", new ClassPathResource("examples/T4.2-examples/sample company info SE -2.xml"),  DataOwner.V_SE, EvidenceID.COMPANY_INFO, DE4AT42Marshaller.legalEntity()),
-    T42_NL("90000471", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, EvidenceID.COMPANY_INFO, DE4AT42Marshaller.legalEntity()),
-    T42_RO("J40/12487/1998", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, EvidenceID.COMPANY_INFO, DE4AT42Marshaller.legalEntity());
+    T42_SE("5591674170", new ClassPathResource("examples/T4.2-examples/sample company info SE -2.xml"),  DataOwner.V_SE, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity()),
+    T42_NL("90000471", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity()),
+    T42_RO("J40/12487/1998", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity());
 
     @Getter
     final private String identifier;

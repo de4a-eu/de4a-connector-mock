@@ -9,7 +9,6 @@ import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
 import eu.de4a.iem.xml.de4a.EDE4ACanonicalEvidenceType;
 import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +24,6 @@ import java.util.UUID;
 @Slf4j
 @RequestMapping(consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
 public class DE4AController {
-
-    @Autowired
-    EvidenceServiceType evidenceServiceType;
-    @Autowired
-    IssuingAuthorityType issuingAuthorityType;
 
     //todo: use a correct error code
     public static final String DE4A_NOT_FOUND = "de4a-404";
@@ -51,7 +45,7 @@ public class DE4AController {
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
                             DE4A_NOT_FOUND,
-                            String.format("no known data owners with id %s", req.getDataOwner().getIdValue())
+                            String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
                     )
             );
             res.setErrorList(errorListType);
@@ -68,13 +62,13 @@ public class DE4AController {
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
         }
-        EvidenceID evidenceID = EvidenceID.selectEvidenceId(req.getCanonicalEvidenceId());
+        EvidenceID evidenceID = EvidenceID.selectEvidenceId(req.getCanonicalEvidenceTypeId());
         if (evidenceID == null) {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
                             DE4A_NOT_FOUND,
-                            String.format("no known evidence id '%s'", req.getCanonicalEvidenceId())
+                            String.format("no known evidence type id '%s'", req.getCanonicalEvidenceTypeId())
                     )
             );
             res.setErrorList(errorListType);
@@ -128,38 +122,6 @@ public class DE4AController {
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.deUsiResponseMarshaller().getAsString(res));
     }
 
-    @PostMapping("/dr1/idk/lookupevidenceservicedata")
-    public ResponseEntity<String> dr1idkevidenceresp(InputStream body) throws MarshallException {
-        var marshaller = DE4AMarshaller.idkRequestLookupEvidenceServiceDataMarshaller();
-        UUID errorKey = UUID.randomUUID();
-        marshaller.readExceptionCallbacks().set((ex) -> {
-            MarshallErrorHandler.getInstance().postError(errorKey, ex);
-        });
-        RequestLookupEvidenceServiceDataType req = marshaller.read(body);
-        if (req == null) {
-            throw new MarshallException(errorKey);
-        }
-        ResponseLookupEvidenceServiceDataType res = new ResponseLookupEvidenceServiceDataType();
-        res.setEvidenceService(evidenceServiceType);
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.idkResponseLookupEvidenceServiceDataMarshaller().getAsString(res));
-    }
-
-    @PostMapping("/dr1/idk/lookuproutinginformation")
-    public ResponseEntity<String> dr1idkroutingresp(InputStream body) throws MarshallException {
-        var marshaller = DE4AMarshaller.idkRequestLookupRoutingInformationMarshaller();
-        UUID errorKey = UUID.randomUUID();
-        marshaller.readExceptionCallbacks().set((ex) -> {
-            MarshallErrorHandler.getInstance().postError(errorKey, ex);
-        });
-        RequestLookupRoutingInformationType req = marshaller.read(body);
-        if (req == null) {
-            throw new MarshallException(errorKey);
-        }
-        ResponseLookupRoutingInformationType res = new ResponseLookupRoutingInformationType();
-        res.setIssuingAuthority(issuingAuthorityType);
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.idkResponseLookupRoutingInformationMarshaller().getAsString(res));
-    }
-
     @PostMapping("/dr1/im/transferevidence")
     public ResponseEntity<String> dr1imresp(InputStream body) throws MarshallException {
         var marshaller = DE4AMarshaller.drImRequestMarshaller();
@@ -178,7 +140,7 @@ public class DE4AController {
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
                             DE4A_NOT_FOUND,
-                            String.format("no known data owners with id %s", req.getDataOwner().getIdValue())
+                            String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
                     )
             );
             res.setErrorList(errorListType);
@@ -195,13 +157,13 @@ public class DE4AController {
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
         }
-        EvidenceID evidenceID = EvidenceID.selectEvidenceId(req.getCanonicalEvidenceId());
+        EvidenceID evidenceID = EvidenceID.selectEvidenceId(req.getCanonicalEvidenceTypeId());
         if (evidenceID == null) {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
                             DE4A_NOT_FOUND,
-                            String.format("no known evidence id '%s'", req.getCanonicalEvidenceId())
+                            String.format("no known evidence type id '%s'", req.getCanonicalEvidenceTypeId())
                     )
             );
             res.setErrorList(errorListType);
