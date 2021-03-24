@@ -22,8 +22,6 @@ curl --request POST \
 - /do1/usi/extractevidence
 - /dr1/im/transferevidence
 - /dr1/usi/transferevidence
-- /dr1/idk/lookupevidenceservicedata
-- /dr1/idk/lookuproutinginformation
 - /de1/usi/forwardevidence
 - /dt1/usi/transferevidence
 
@@ -36,3 +34,5 @@ curl --request POST \
 --header 'Content-Type: application/xml' \
 --data '@src/main/resources/examples/DO1-IM-request.xml'
 ```
+
+ [Change-log](CHANGELOG.md)   

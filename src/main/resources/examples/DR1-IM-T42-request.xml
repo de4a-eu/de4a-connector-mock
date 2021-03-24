@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:RequestTransferEvidence xmlns:cct="urn:un:unece:uncefact:data:specification:CoreComponentTypeSchemaModule:2" xmlns:clmIANAMIMEMediaType="urn:un:unece:uncefact:codelist:specification:IANAMIMEMediaType:2003" xmlns:isoc="http://www.de4a.eu/2020/commons/country/iso3166-1" xmlns:p="http://www.de4a.eu/2020/data/requestor/pattern/intermediate" xmlns:p1="http://www.de4a.eu/2020/commons/type" xmlns:p2="http://www.de4a.eu/2020/commons/identity/type" xmlns:p3="http://eidas.europa.eu/attributes/naturalperson" xmlns:p4="http://eidas.europa.eu/attributes/legalperson" xmlns:p5="https://data.europe.eu/semanticassets/ns/cv/common/cbc_v2.0.0#" xmlns:p6="https://data.europe.eu/semanticassets/ns/cv/common/dataTypes-2.0.0#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.de4a.eu/2020/data/requestor/pattern/intermediate ../XSD/DR1-IM.xsd ">
+    <p1:RequestId>1e4799f5-0136-410c-a27d-80825a9851aa</p1:RequestId>
+    <p1:SpecificationId>p1:SpecificationId</p1:SpecificationId>
+    <p1:TimeStamp>2001-12-31T12:00:00</p1:TimeStamp>
+    <p1:ProcedureId>p1:ProcedureId</p1:ProcedureId>
+    <p1:DataEvaluator>
+        <p1:AgentUrn>bla</p1:AgentUrn>
+        <p1:AgentName>foo</p1:AgentName>
+    </p1:DataEvaluator>
+    <p1:DataOwner>
+        <p1:AgentUrn>iso6523-actorid-upis::9991:SE000000013</p1:AgentUrn>
+        <p1:AgentName>foo2</p1:AgentName>
+    </p1:DataOwner>
+    <p1:DataRequestSubject>
+        <p1:DataSubjectCompany>
+            <p2:LegalPersonIdentifier>SE/NL/5591674170</p2:LegalPersonIdentifier>
+            <p2:LegalName>p2:FirstName</p2:LegalName>
+        </p1:DataSubjectCompany>
+    </p1:DataRequestSubject>
+    <p1:RequestGrounds>
+        <p1:ExplicitRequest>SDGR14</p1:ExplicitRequest>
+    </p1:RequestGrounds>
+    <p1:CanonicalEvidenceTypeId>CompanyRegistration</p1:CanonicalEvidenceTypeId>
+</p:RequestTransferEvidence>
