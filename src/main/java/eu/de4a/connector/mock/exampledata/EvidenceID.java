@@ -5,10 +5,10 @@ import lombok.Getter;
 import java.util.Arrays;
 
 public enum EvidenceID {
-    COMPANY_ID("CompanyInfo");
+    COMPANY_INFO("CompanyInfo");
 
     @Getter
-    private String id;
+    private final String id;
 
     private EvidenceID(String id) {
         this.id = id;

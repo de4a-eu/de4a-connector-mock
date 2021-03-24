@@ -15,9 +15,9 @@ import java.util.regex.Pattern;
 @Slf4j
 public enum CanonicalEvidenceExamples {
 
-    T42_SE("5591674170", new ClassPathResource("examples/T4.2-examples/sample company info SE -2.xml"),  DataOwner.V_SE, EvidenceID.COMPANY_ID, DE4AT42Marshaller.legalEntity()),
-    T42_NL("90000471", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, EvidenceID.COMPANY_ID, DE4AT42Marshaller.legalEntity()),
-    T42_RO("J40/12487/1998", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, EvidenceID.COMPANY_ID, DE4AT42Marshaller.legalEntity());
+    T42_SE("5591674170", new ClassPathResource("examples/T4.2-examples/sample company info SE -2.xml"),  DataOwner.V_SE, EvidenceID.COMPANY_INFO, DE4AT42Marshaller.legalEntity()),
+    T42_NL("90000471", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, EvidenceID.COMPANY_INFO, DE4AT42Marshaller.legalEntity()),
+    T42_RO("J40/12487/1998", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, EvidenceID.COMPANY_INFO, DE4AT42Marshaller.legalEntity());
 
     @Getter
     final private String identifier;
@@ -30,7 +30,7 @@ public enum CanonicalEvidenceExamples {
     @Getter
     final private GenericJAXBMarshaller marshaller;
     private Element documentElement;
-    private Pattern eIDASIdentifierPattern;
+    private final Pattern eIDASIdentifierPattern;
 
     private CanonicalEvidenceExamples(String identifier, Resource resource, DataOwner dataOwner, EvidenceID evidenceID, GenericJAXBMarshaller marshaller) {
         this.identifier = identifier;
@@ -43,7 +43,7 @@ public enum CanonicalEvidenceExamples {
 
     public Element getDocumentElement() {
         if (documentElement == null) {
-            try {
+            try { // this is tested for all CanonicalEvidences in CanonicalEvidenceExamplesTest. It should not ever fail.
                 documentElement = marshaller.getAsDocument(marshaller.read(resource.getInputStream())).getDocumentElement();
             } catch (IOException ex) {
                 log.error("resource {} can't be marshalled, {}", resource.getFilename(), ex.getMessage());
