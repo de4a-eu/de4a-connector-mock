@@ -25,7 +25,7 @@ public class DTController {
     @PostMapping("${dt.endpoint.usi}")
     public ResponseEntity<String> dt1usiresp(InputStream body) throws MarshallException {
         //todo: check dataowner and use CanonicalEvidenceType from Pilot enum.
-        var marshaller = DE4AMarshaller.dtUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04);
+        var marshaller = DE4AMarshaller.dtUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V05);
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);

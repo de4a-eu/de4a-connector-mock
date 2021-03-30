@@ -26,7 +26,7 @@ public class DEController {
     @PostMapping("${de.endpoint.usi}")
     public ResponseEntity<String> de1usiresp(InputStream body) throws MarshallException {
         //todo: check dataowner and use CanonicalEvidenceType from Pilot enum.
-        var marshaller = DE4AMarshaller.deUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V04);
+        var marshaller = DE4AMarshaller.deUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V05);
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
