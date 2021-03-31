@@ -16,7 +16,7 @@ curl --request POST \
 --data '@/path/request/data'
 ```
 
-***endpoints***
+***Endpoints***
 
 - /do1/im/extractevidence
 - /do1/usi/extractevidence
@@ -25,7 +25,7 @@ curl --request POST \
 - /de1/usi/forwardevidence
 - /dt1/usi/transferevidence
 
-***example***
+***Example***
 
 The path to the request assumes it is run from project root
 ```
@@ -34,5 +34,9 @@ curl --request POST \
 --header 'Content-Type: application/xml' \
 --data '@src/main/resources/examples/DO1-IM-request.xml'
 ```
+
+***Configuration***
+
+The mock is configured in the [application.properties](src/main/resources/application.properties) file.
 
  [Change-log](CHANGELOG.md)   

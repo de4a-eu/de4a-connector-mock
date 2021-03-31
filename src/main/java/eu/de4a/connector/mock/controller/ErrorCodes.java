@@ -1,0 +1,16 @@
+package eu.de4a.connector.mock.controller;
+
+import lombok.Getter;
+
+public enum ErrorCodes {
+    DE4A_NOT_FOUND("de4a-404"),
+    DE4A_BAD_REQUEST("de4a-400"),
+    DE4A_ERROR("de4a-500");
+    //todo: use a correct error code
+
+    @Getter
+    private String code;
+    ErrorCodes(String code) {
+        this.code = code;
+    }
+}

@@ -21,5 +21,5 @@
     <p1:RequestGrounds>
         <p1:ExplicitRequest>SDGR14</p1:ExplicitRequest>
     </p1:RequestGrounds>
-    <p1:CanonicalEvidenceTypeId>CompanyRegistration</p1:CanonicalEvidenceTypeId>
+    <p1:CanonicalEvidenceTypeId>urn:de4a-eu:CanonicalEvidenceType::CompanyRegistration</p1:CanonicalEvidenceTypeId>
 </p:RequestExtractEvidence>
