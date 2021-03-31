@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 public class DE4Advice {
 
     @ExceptionHandler(MarshallException.class)
-    private static ResponseEntity<String> handleUnmarshallingFailureException(MarshallException marshallException) {
+    private ResponseEntity<String> handleUnmarshallingFailureException(MarshallException marshallException) {
         JAXBException exception;
         try {
             exception = MarshallErrorHandler.getInstance().getError(marshallException.getErrorUUID()).get(1000, TimeUnit.MILLISECONDS);
