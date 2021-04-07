@@ -20,7 +20,7 @@ public class Helper {
         req.setDataRequestSubject(drRequest.getDataRequestSubject());
         req.setRequestGrounds(drRequest.getRequestGrounds());
         req.setCanonicalEvidenceTypeId(drRequest.getCanonicalEvidenceTypeId());
-        req.setServiceInputParameters(drRequest.getServiceInputParameters());
+        req.setAdditionalParameters(drRequest.getAdditionalParameters());
         return req;
     }
 
