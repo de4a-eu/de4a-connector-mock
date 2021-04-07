@@ -1,5 +1,9 @@
 **Change-log**
 
+- 2021-04-07
+  
+    - Added support to build to war instead of jar
+
 - 2021-03-31
     - Split the interfaces into profiles, allowing them to be run separately.
     - Made the endpoint paths configurable

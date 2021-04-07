@@ -4,6 +4,9 @@
 - (until [de4a-commons](https://github.com/de4a-wp5/de4a-commons) is on maven central) install the [de4a-commons](https://github.com/de4a-wp5/de4a-commons) project locally.
 - ``mvn clean package`` to build and package into a runnable jar.
 
+To build a war instead build and package with the `war` profile 
+`mvn clean package -P war`
+
 **Deployment**
 
 The project is deployed at https://de4a-dev-mock.egovlab.eu
