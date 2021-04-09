@@ -1,5 +1,6 @@
 package eu.de4a.connector.mock.controller;
 
+import com.helger.commons.error.level.EErrorLevel;
 import eu.de4a.connector.mock.exampledata.CanonicalEvidenceExamples;
 import eu.de4a.connector.mock.exampledata.DataOwner;
 import eu.de4a.connector.mock.exampledata.EvidenceID;
@@ -7,6 +8,7 @@ import eu.de4a.iem.jaxb.common.types.*;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
 import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
 import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
+import eu.de4a.kafkaclient.DE4AKafkaClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -35,6 +37,9 @@ public class DOController {
         if (req == null) {
             throw new MarshallException(errorKey);
         }
+
+        DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Receiving RequestExtractEvidence, requestId: %s", req.getRequestId()));
+
         var res = DE4AResponseDocumentHelper.createResponseExtractEvidence(req);
         DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
         if (dataOwner == null) {
@@ -85,6 +90,9 @@ public class DOController {
         CanonicalEvidenceType ce = new CanonicalEvidenceType();
         ce.setAny(canonicalEvidence);
         res.setCanonicalEvidence(ce);
+
+        DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Responding to RequestExtractEvidence, requestId: %s", req.getRequestId()));
+
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
     }
 

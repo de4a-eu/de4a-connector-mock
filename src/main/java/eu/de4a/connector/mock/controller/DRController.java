@@ -1,5 +1,6 @@
 package eu.de4a.connector.mock.controller;
 
+import com.helger.commons.error.level.EErrorLevel;
 import eu.de4a.connector.mock.Helper;
 import eu.de4a.connector.mock.exampledata.CanonicalEvidenceExamples;
 import eu.de4a.connector.mock.exampledata.DataOwner;
@@ -11,6 +12,7 @@ import eu.de4a.iem.jaxb.common.types.RequestTransferEvidenceUSIIMDRType;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
 import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
 import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
+import eu.de4a.kafkaclient.DE4AKafkaClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -71,6 +73,8 @@ public class DRController {
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsString(res));
         }
+
+        DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Received RequestTransferEvidence, requestId: %s", req.getRequestId()));
 
         // if set to forward, sends a request to the do for getting the CanonicalEvidence
         if (forwardIM) {
@@ -138,6 +142,8 @@ public class DRController {
             res.setErrorList(doImResp.getErrorList());
             res.setCanonicalEvidence(doImResp.getCanonicalEvidence());
 
+            DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Responding to RequestTransferEvidence, requestId: %s", req.getRequestId()));
+
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
         }
 
@@ -179,6 +185,9 @@ public class DRController {
         CanonicalEvidenceType ce = new CanonicalEvidenceType();
         ce.setAny(canonicalEvidence);
         res.setCanonicalEvidence(ce);
+
+        DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Responding to RequestTransferEvidence, requestId: %s", req.getRequestId()));
+
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
     }
 
