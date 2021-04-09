@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LegalEntity xmlns:xml="http://www.w3.org/XML/1998/namespace"
-             xmlns="urn:de4a:dba:canonical-evidence:v0.5"
+             xmlns="urn:eu-de4a:xsd:CanonicalEvidenceType::CompanyRegistration:v0.6"
              xmlns:cvb="http://www.w3.org/ns/corevocabulary/BasicComponents">
     <CompanyName>
         <cvb:LegalEntityLegalName>ELVILA SA</cvb:LegalEntityLegalName>

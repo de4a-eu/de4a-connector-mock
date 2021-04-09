@@ -1,7 +1,11 @@
 **Change-log**
 
+- 2021-04-09 
+    - Support for Kafka logging
+    - Changed the T4.2 Canonical Evidence from v0.5 to v0.6
+
 - 2021-04-07
-  
+    - Updated to support the latest version of de4a-iem
     - Added support to build to war instead of jar
 
 - 2021-03-31
