@@ -43,12 +43,12 @@ import java.util.concurrent.TimeoutException;
 @Profile("dr")
 public class DRController {
 
-    @Value("${dr.forward.enable:false}")
+    @Value("${mock.dr.forward.enable:false}")
     private boolean forwardIM;
-    @Value("${dr.forward.do.im:set-some-url}")
+    @Value("${mock.dr.forward.do.im:set-some-url}")
     private String forwardIMUrl;
 
-    @PostMapping("${dr.endpoint.im}")
+    @PostMapping("${mock.dr.endpoint.im}")
     public ResponseEntity<String> dr1imresp(InputStream body) throws MarshallException {
         var marshaller = DE4AMarshaller.drImRequestMarshaller();
         UUID errorKey = UUID.randomUUID();
@@ -191,7 +191,7 @@ public class DRController {
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
     }
 
-    @PostMapping("${dr.endpoint.usi}")
+    @PostMapping("${mock.dr.endpoint.usi}")
     public ResponseEntity<String> dr1usiresp(InputStream body) throws MarshallException {
         var marshaller = DE4AMarshaller.drUsiRequestMarshaller();
         UUID errorKey = UUID.randomUUID();

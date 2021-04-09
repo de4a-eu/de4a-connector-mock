@@ -22,7 +22,7 @@ import java.util.UUID;
 @Profile("dt")
 public class DTController {
 
-    @PostMapping("${dt.endpoint.usi}")
+    @PostMapping("${mock.dt.endpoint.usi}")
     public ResponseEntity<String> dt1usiresp(InputStream body) throws MarshallException {
         //todo: check dataowner and use CanonicalEvidenceType from Pilot enum.
         var marshaller = DE4AMarshaller.dtUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V05);

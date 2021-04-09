@@ -28,7 +28,7 @@ import java.util.UUID;
 @Profile("do")
 public class DOController {
 
-    @PostMapping("${do.endpoint.im}")
+    @PostMapping("${mock.do.endpoint.im}")
     public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) {
         var marshaller = DE4AMarshaller.doImRequestMarshaller();
         UUID errorKey = UUID.randomUUID();
@@ -96,7 +96,7 @@ public class DOController {
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
     }
 
-    @PostMapping("${do.endpoint.usi}")
+    @PostMapping("${mock.do.endpoint.usi}")
     public ResponseEntity<String> DO1USIRequestExtractEvidence(InputStream body) throws MarshallException {
         var marshaller = DE4AMarshaller.doUsiRequestMarshaller();
         UUID errorKey = UUID.randomUUID();

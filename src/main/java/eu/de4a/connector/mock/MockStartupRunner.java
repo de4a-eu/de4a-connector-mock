@@ -11,7 +11,7 @@ public class MockStartupRunner implements ApplicationRunner {
 
     @Value("${mock.kafka.enabled:false}")
     private boolean kafka_enabled;
-    @Value("${mock.kafka.url:''}")
+    @Value("${mock.kafka.url:'de4a-dev-kafka.egovlab.eu:9092'}")
     private String kafka_url;
     @Value("${mock.kafka.topic:'de4a-mock'}")
     private String kafka_topic;
