@@ -6,7 +6,7 @@ import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
 import lombok.Getter;
 
 public enum Pilot {
-    T42(DataRequestSubjectRestrictions.LEGAL_ENTITY_REQUIRED, EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V05);
+    T42(DataRequestSubjectRestrictions.LEGAL_ENTITY_REQUIRED, EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V06);
 
     @Getter
     private final DataRequestSubjectRestrictions dataRequestSubjectRestrictions;
