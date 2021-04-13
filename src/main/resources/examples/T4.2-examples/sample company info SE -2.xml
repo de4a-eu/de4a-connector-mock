@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LegalEntity xmlns="urn:de4a:dba:canonical-evidence:v0.5"
+<LegalEntity xmlns="urn:eu-de4a:xsd:CanonicalEvidenceType::CompanyRegistration:v0.6"
              xmlns:cvb="http://www.w3.org/ns/corevocabulary/BasicComponents">
     <CompanyName>
         <cvb:LegalEntityLegalName languageID="sv-se">Företag Ett AB</cvb:LegalEntityLegalName>

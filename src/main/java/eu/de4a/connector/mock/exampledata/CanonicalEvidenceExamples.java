@@ -1,7 +1,7 @@
 package eu.de4a.connector.mock.exampledata;
 
 import com.helger.jaxb.GenericJAXBMarshaller;
-import eu.de4a.iem.xml.de4a.t42.v0_5.DE4AT42Marshaller;
+import eu.de4a.iem.xml.de4a.t42.v0_6.DE4AT42Marshaller;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
