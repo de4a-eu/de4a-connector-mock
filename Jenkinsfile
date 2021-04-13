@@ -34,6 +34,27 @@ pipeline {
             // TODO: add pushing to a future de4a maven repo?
             // TODO: add building a release on a tag and push to GitHub?
         }
+        stage('Docker') {
+            when{
+                branch 'main'
+            }
+            agent { label 'master' }
+            environment {
+                VERSION=readMavenPom().getVersion()
+            }
+            steps {
+                script{
+                    def img
+                    if (env.BRANCH_NAME == 'main') {
+                        img = docker.build('de4a/connector-mock','--build-arg VERSION=$VERSION .')
+                        docker.withRegistry('','docker-hub-token') {
+                            img.push('latest')
+                            img.push('$VERSION')
+                        }
+                    }
+                }
+            }
+        }
     }
     post {
         failure {
