@@ -1,5 +1,7 @@
 **Change-log**
 
+- 2021-04-15
+    - Change the DataOwner id to separate mock ids from real ids
 - 2021-04-09 
     - Support for Kafka logging
     - Changed the T4.2 Canonical Evidence from v0.5 to v0.6
