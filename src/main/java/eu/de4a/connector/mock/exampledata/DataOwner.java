@@ -6,9 +6,9 @@ import lombok.Getter;
 import java.util.Arrays;
 
 public enum DataOwner {
-    COC_NL("iso6523-actorid-upis::9991:NL990000106", "(KVK) Chamber of Commerce of Netherlands", "NL", Pilot.T42),
-    V_SE("iso6523-actorid-upis::9991:SE000000013", "(BVE) BOLAGSVERKET (Companies Registration Office)", "SE", Pilot.T42),
-    ONRC_RO("iso6523-actorid-upis::9991:RO000000006", "(ORNC) - OFICIUL NATIONAL AL REGISTRULUI COMERTULUI", "RO", Pilot.T42);
+    COC_NL("iso6523-actorid-upis::9999:NL990000106", "(KVK) Chamber of Commerce of Netherlands", "NL", Pilot.T42),
+    V_SE("iso6523-actorid-upis::9999:SE000000013", "(BVE) BOLAGSVERKET (Companies Registration Office)", "SE", Pilot.T42),
+    ONRC_RO("iso6523-actorid-upis::9999:RO000000006", "(ORNC) - OFICIUL NATIONAL AL REGISTRULUI COMERTULUI", "RO", Pilot.T42);
 
     @Getter
     final private String urn;
