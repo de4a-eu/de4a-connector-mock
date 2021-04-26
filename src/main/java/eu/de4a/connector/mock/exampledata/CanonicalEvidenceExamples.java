@@ -39,7 +39,7 @@ public enum CanonicalEvidenceExamples {
         this.dataOwner = dataOwner;
         this.evidenceID = evidenceID;
         this.marshaller = marshaller;
-        this.eIDASIdentifierPattern = Pattern.compile(String.format("^%s/[A-Z]{2}/%s$", dataOwner.getCountry(), identifier));
+        this.eIDASIdentifierPattern = Pattern.compile(String.format("^%s/[A-Z]{2}/%s$", Pattern.quote(dataOwner.getCountry()), Pattern.quote(identifier)));
     }
 
     public Element getDocumentElement() {
