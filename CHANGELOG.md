@@ -1,5 +1,7 @@
 **Change-log**
 
+- 2021-04-26
+    - Added the Austrian example CanonicalEvidence for DBA pilot
 - 2021-04-15
     - Change the DataOwner id to separate mock ids from real ids
 - 2021-04-09 
