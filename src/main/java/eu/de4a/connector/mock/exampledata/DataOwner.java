@@ -29,7 +29,7 @@ public enum DataOwner {
 
     public static DataOwner selectDataOwner(AgentType dataOwnerType) {
         return Arrays.stream(DataOwner.values())
-                .filter(dataOwner -> dataOwnerType.getAgentUrn().equals(dataOwner.getUrn()))
+                .filter(dataOwner -> dataOwnerType.getAgentUrn().equalsIgnoreCase(dataOwner.getUrn()))
                 .findFirst()
                 .orElseGet(() -> null);
     }

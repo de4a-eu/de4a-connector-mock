@@ -10,6 +10,7 @@ import org.w3c.dom.Element;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -18,7 +19,7 @@ public enum CanonicalEvidenceExamples {
     T42_SE("5591674170", new ClassPathResource("examples/T4.2-examples/sample company info SE -2.xml"),  DataOwner.V_SE, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity()),
     T42_NL("90000471", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity()),
     T42_RO("J40/12487/1998", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity()),
-    T42_AT("???", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo AT.xml"),  DataOwner.ONRC_RO, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity());
+    T42_AT("???", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo AT.xml"),  DataOwner.DMDW_AT, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity());
 
     @Getter
     final private String identifier;
@@ -39,7 +40,7 @@ public enum CanonicalEvidenceExamples {
         this.dataOwner = dataOwner;
         this.evidenceID = evidenceID;
         this.marshaller = marshaller;
-        this.eIDASIdentifierPattern = Pattern.compile(String.format("^%s/[A-Z]{2}/%s$", Pattern.quote(dataOwner.getCountry()), Pattern.quote(identifier)));
+        this.eIDASIdentifierPattern = Pattern.compile(String.format("^%s/[A-Z]{2}/%s$", Pattern.quote(dataOwner.getCountry().toUpperCase(Locale.ROOT)), Pattern.quote(identifier.toUpperCase(Locale.ROOT))));
     }
 
     public Element getDocumentElement() {
@@ -56,6 +57,7 @@ public enum CanonicalEvidenceExamples {
     }
 
     public boolean isEIDASIdentifier(String eIDASIdentifier) {
+        log.debug("Pattern: {}", eIDASIdentifierPattern.pattern());
         return eIDASIdentifierPattern.matcher(eIDASIdentifier).find();
     }
 
@@ -63,7 +65,7 @@ public enum CanonicalEvidenceExamples {
         return Arrays.stream(CanonicalEvidenceExamples.values())
                 .filter(canonicalEvidenceExamples -> canonicalEvidenceExamples.dataOwner.equals(dataOwner))
                 .filter(canonicalEvidenceExamples -> canonicalEvidenceExamples.evidenceID.equals(evidenceID))
-                .filter(canonicalEvidenceExamples -> canonicalEvidenceExamples.isEIDASIdentifier(eIDASIdentifier))
+                .filter(canonicalEvidenceExamples -> canonicalEvidenceExamples.isEIDASIdentifier(eIDASIdentifier.toUpperCase(Locale.ROOT)))
                 .findFirst()
                 .map(CanonicalEvidenceExamples::getDocumentElement)
                 .orElseGet(() -> null);
