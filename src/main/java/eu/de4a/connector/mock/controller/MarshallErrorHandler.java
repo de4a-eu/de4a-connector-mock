@@ -10,8 +10,6 @@ public class MarshallErrorHandler {
     private static MarshallErrorHandler instance;
 
     final private ConcurrentHashMap<UUID, JAXBException> errorHashMap;
-    // Makes sure it only try to query for missing errors when a new errors has been added
-    private Object contLock;
 
     private MarshallErrorHandler() {
         this.errorHashMap = new ConcurrentHashMap<>();
@@ -26,7 +24,6 @@ public class MarshallErrorHandler {
 
     public void postError(UUID key, JAXBException ex) {
         errorHashMap.put(key, ex);
-        contLock.notifyAll();
     }
 
     public CompletableFuture<JAXBException> getError(UUID key) throws InterruptedException{
@@ -38,7 +35,6 @@ public class MarshallErrorHandler {
                 errorHashMap.remove(key);
                 return CompletableFuture.completedFuture(ex);
             }
-            contLock.wait();
         }
     }
 }

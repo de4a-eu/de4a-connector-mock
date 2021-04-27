@@ -15,32 +15,41 @@ const EvidenceStatus = {
   Error: 'Error',
 }
 
+String.prototype.format = function () {
+  var formatted = this;
+  for (var prop in arguments[0]) {
+    var regexp = new RegExp('\\{' + prop + '\\}', 'gi');
+    formatted = formatted.replace(regexp, arguments[0][prop]);
+  }
+  return formatted;
+};
 
 const App = () => {
   
   const [evidence, setEvidence] = useState({})
-  const [evidenceStatus, setEvidenceStatus] = useState(EvidenceStatus.Unanswered)
+  const [evidenceStatus, setEvidenceStatus] = useState(EvidenceStatus.FetchingEvidence)
 
   const search = useLocation().search
   const requestId = new URLSearchParams(search).get('requestId')
   
-  const acceptEvidence = () => axios.get('evidence/{requestId}/accept')
+  const acceptEvidence = () => axios.get(DO_CONST['previewAcceptEndpoint'].format({requestId: requestId}))
       .then(response => setEvidenceStatus(EvidenceStatus.Accepted))
       .catch(error => {
         setEvidenceStatus(EvidenceStatus.Error)
         console.log(error)
       })
 
-  const rejectEvidence = () => axios.get('evidence/{requestId}/reject')
+  const rejectEvidence = () => axios.get(DO_CONST['previewRejectEndpoint'].format({requestId: requestId}))
       .then(response => setEvidenceStatus(EvidenceStatus.Rejected))
       .catch(error => {
         setEvidenceStatus(EvidenceStatus.Error)
         console.log(error)
       })
   
-  const fetchEvidence = () => axios.get('evidence/{requestId}')
+  const fetchEvidence = () => axios.get(DO_CONST['previewEndpoint'].format({requestId: requestId}))
       .then(response => {
         setEvidence(response.data)
+        setEvidenceStatus(EvidenceStatus.Unanswered)
         console.log(response)
       })
       .catch(error => {
@@ -54,6 +63,7 @@ const App = () => {
   
   useEffect(() => {
     console.log("reloading")
+    console.log("doConfig: ", DO_CONST)
   }, [evidenceStatus])
 
   const renderSwitch = (evidenceStatus) => {

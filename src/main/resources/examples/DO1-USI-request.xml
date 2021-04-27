@@ -22,7 +22,7 @@
     <p1:DataSubjectRepresentative>
       <p2:PersonIdentifier>p2:Identifier</p2:PersonIdentifier>
       <p2:FirstName p3:LatinScript="true">p2:GivenName</p2:FirstName>
-      <p2:FamilyName p3:LatinScript="true">p2:FamilyName</p2:FamilyName>
+      <p2:FamilyName p3:LatinScript="true">p3:FamilyName</p2:FamilyName>
       <p2:DateOfBirth>2001-01-01</p2:DateOfBirth>
     </p1:DataSubjectRepresentative>
   </p1:DataRequestSubject>

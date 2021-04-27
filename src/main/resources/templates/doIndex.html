@@ -9,6 +9,13 @@
 some text
 <div id="do-root"></div>
 
+<script th:inline="javascript">
+    window.DO_CONST = {
+        "previewEndpoint": [[${doConfig.previewEvidenceRequest}]],
+        "previewAcceptEndpoint": [[${doConfig.previewEvidenceAccept}]],
+        "previewRejectEndpoint": [[${doConfig.previewEvidenceReject}]],
+    }
+</script>
 <script src="/built/bundle.js"></script>
 
 </body>
