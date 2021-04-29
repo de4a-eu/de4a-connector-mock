@@ -3,8 +3,15 @@ import { useLocation } from "react-router-dom"
 import Containter from 'react-bootstrap/Container'
 import axios from "axios";
 import ClipLoader from 'react-spinners/ClipLoader'
+import translate from 'translate-js'
+import trans_en from './translate/en'
 
 import Preview from "./Preview"
+
+translate.add(trans_en, 'en')
+translate.whenUndefined = (key, locale) => {
+  return `${key}:undefined:${locale}`
+}
 
 const EvidenceStatus = {
   Accepted: 'Accepted',
@@ -15,38 +22,39 @@ const EvidenceStatus = {
   Error: 'Error',
 }
 
-String.prototype.format = function () {
-  var formatted = this;
-  for (var prop in arguments[0]) {
+const format = (str, args) => {
+  console.log("args", args)
+  var formatted = str;
+  for (var prop in args) {
     var regexp = new RegExp('\\{' + prop + '\\}', 'gi');
-    formatted = formatted.replace(regexp, arguments[0][prop]);
+    formatted = formatted.replace(regexp, args[prop]);
   }
   return formatted;
-};
+}
 
 const App = () => {
   
-  const [evidence, setEvidence] = useState({})
+  const [evidence, setEvidence] = useState("")
   const [evidenceStatus, setEvidenceStatus] = useState(EvidenceStatus.FetchingEvidence)
 
   const search = useLocation().search
   const requestId = new URLSearchParams(search).get('requestId')
   
-  const acceptEvidence = () => axios.get(DO_CONST['previewAcceptEndpoint'].format({requestId: requestId}))
+  const acceptEvidence = () => axios.get(format(window.DO_CONST['previewAcceptEndpoint'], {requestId: requestId}))
       .then(response => setEvidenceStatus(EvidenceStatus.Accepted))
       .catch(error => {
         setEvidenceStatus(EvidenceStatus.Error)
         console.log(error)
       })
 
-  const rejectEvidence = () => axios.get(DO_CONST['previewRejectEndpoint'].format({requestId: requestId}))
+  const rejectEvidence = () => axios.get(format(window.DO_CONST['previewRejectEndpoint'], {requestId: requestId}))
       .then(response => setEvidenceStatus(EvidenceStatus.Rejected))
       .catch(error => {
         setEvidenceStatus(EvidenceStatus.Error)
         console.log(error)
       })
   
-  const fetchEvidence = () => axios.get(DO_CONST['previewEndpoint'].format({requestId: requestId}))
+  const fetchEvidence = () => axios.get(format(window.DO_CONST['previewEndpoint'], {requestId: requestId}))
       .then(response => {
         setEvidence(response.data)
         setEvidenceStatus(EvidenceStatus.Unanswered)
@@ -59,11 +67,10 @@ const App = () => {
   
   useEffect(() => {
     fetchEvidence();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   
   useEffect(() => {
-    console.log("reloading")
-    console.log("doConfig: ", DO_CONST)
   }, [evidenceStatus])
 
   const renderSwitch = (evidenceStatus) => {
@@ -76,12 +83,13 @@ const App = () => {
         else
           return <p>no evidence found for request with id: {requestId}</p>
       case EvidenceStatus.Unanswered:
-        return <Preview evidence={evidence} acceptEvidence={acceptEvidence} rejectEvidence={rejectEvidence} />
+        return <Preview evidence={evidence} evidenceRoot="//*[local-name() = 'CanonicalEvidence']" evidenceIgnore={[]} acceptEvidence={acceptEvidence} rejectEvidence={rejectEvidence} translate={translate}/>
       case EvidenceStatus.Accepted:
         return <p>Evidence accepted</p>
       case EvidenceStatus.Rejected:
         return <p>Evidence rejected</p>
       case EvidenceStatus.Error:
+      default:
         return <p>Error occured</p>
     }
   }
