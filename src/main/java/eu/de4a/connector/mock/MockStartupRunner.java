@@ -15,6 +15,8 @@ public class MockStartupRunner implements ApplicationRunner {
     private String kafka_url;
     @Value("${mock.kafka.topic:'de4a-mock'}")
     private String kafka_topic;
+    @Value("${mock.kafka.http:false}")
+    private boolean kafka_http;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -22,5 +24,6 @@ public class MockStartupRunner implements ApplicationRunner {
         DE4AKafkaSettings.setKafkaEnabled(kafka_enabled);
         DE4AKafkaSettings.setLoggingEnabled(kafka_enabled);
         DE4AKafkaSettings.setKafkaTopic(kafka_topic);
+	DE4AKafkaSettings.setKafkaHttp(kafka_http);	
     }
 }
