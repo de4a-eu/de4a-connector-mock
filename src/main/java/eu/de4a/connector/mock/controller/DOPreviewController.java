@@ -28,7 +28,7 @@ public class DOPreviewController {
     DOConfig doConfig;
 
 
-    @RequestMapping(value = "${mock.do.preview.endpoint}/index")
+    @RequestMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.endpoint.index}")
     public String doIndex(Model model) {
         model.addAttribute("doConfig", doConfig);
         return "doIndex";
@@ -40,10 +40,9 @@ public class DOPreviewController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping(value = "${mock.do.preview.endpoint}/${mock.do.preview.evidence.get.endpoint}", produces = MediaType.APPLICATION_XML_VALUE)
+    @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.get.endpoint}", produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> getEvidence(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
         RequestTransferEvidenceUSIDTType request;
-        log.debug("doConfig timeout: {}", doConfig.getPreviewEvidenceTimeout());
         request = previewStorage.getRequest(requestId).get();
         DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
         return ResponseEntity
@@ -52,7 +51,7 @@ public class DOPreviewController {
                         dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(request));
     }
 
-    @GetMapping(value = "${mock.do.preview.endpoint}/${mock.do.preview.evidence.accept.endpoint}")
+    @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.accept.endpoint}")
     public ResponseEntity<Object> acceptEvidence(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
         RequestTransferEvidenceUSIDTType request;
         request = previewStorage.getRequest(requestId).get();
@@ -69,7 +68,7 @@ public class DOPreviewController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "${mock.do.preview.endpoint}/${mock.do.preview.evidence.reject.endpoint}")
+    @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.reject.endpoint}")
     public ResponseEntity<Object> rejectEvidence(@PathVariable String requestId) {
         previewStorage.removePreview(requestId);
         return ResponseEntity.ok().build();

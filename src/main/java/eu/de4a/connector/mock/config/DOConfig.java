@@ -8,14 +8,11 @@ import java.io.Serializable;
 public class DOConfig implements Serializable {
 
     @Getter
-    @Value("${mock.do.preview.endpoint}")
+    @Value("${mock.do.preview.endpoint.base}")
     private String previewEndpoint;
     @Getter
     @Value("${mock.do.preview.evidence.get.endpoint}")
     private String previewEvidenceRequest;
-    @Getter
-    @Value("${mock.do.preview.evidence.timeout}")
-    private long previewEvidenceTimeout;
     @Getter
     @Value("${mock.do.preview.evidence.accept.endpoint}")
     private String previewEvidenceAccept;
