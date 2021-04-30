@@ -2,6 +2,7 @@ package eu.de4a.connector.mock.controller;
 
 import com.helger.commons.error.level.EErrorLevel;
 import eu.de4a.connector.mock.Helper;
+import eu.de4a.connector.mock.config.DOConfig;
 import eu.de4a.connector.mock.exampledata.CanonicalEvidenceExamples;
 import eu.de4a.connector.mock.exampledata.DataOwner;
 import eu.de4a.connector.mock.exampledata.EvidenceID;
@@ -12,11 +13,11 @@ import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
 import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
 import eu.de4a.kafkaclient.DE4AKafkaClient;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,6 +30,8 @@ import org.w3c.dom.Element;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -39,8 +42,8 @@ import java.util.function.Consumer;
 @Profile("do")
 public class DOController {
 
-    @Value("${mock.do.preview.dt.url}")
-    private static String dtUrl;
+    @Autowired
+    private DOConfig doConfig;
     @Autowired
     private TaskScheduler taskScheduler;
     @Autowired
@@ -179,7 +182,7 @@ public class DOController {
         RequestTransferEvidenceUSIDTType dtRequest = Helper.buildDtUsiRequest(req, ce, null);
 
         if (canonicalEvidence.getUsiAutoResponse().useAutoResp()) {
-            taskScheduler.scheduleWithFixedDelay(() -> sendDTRequest(dtRequest, log::error), canonicalEvidence.getUsiAutoResponse().getWait());
+            taskScheduler.scheduleWithFixedDelay(() -> sendDTRequest(doConfig.getPreviewDTUrl(), dtRequest, log::error), canonicalEvidence.getUsiAutoResponse().getWait());
         } else {
             previewStorage.addRequestToPreview(dtRequest);
         }
@@ -189,26 +192,39 @@ public class DOController {
 
 
 
-    public static CompletableFuture<Boolean> sendDTRequest(RequestTransferEvidenceUSIDTType request, Consumer<String> onFailure) {
+    public static CompletableFuture<Boolean> sendDTRequest(String recipient, RequestTransferEvidenceUSIDTType request, Consumer<String> onFailure) {
         DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
         HttpResponse dtResp;
         try {
-            dtResp = Request.Post(dtUrl)
-                    .bodyString(DE4AMarshaller.dtUsiRequestMarshaller(dataOwner.getPilot().getCanonicalEvidenceType())
-                            .getAsString(request), ContentType.APPLICATION_XML)
+            dtResp = Request.Post(recipient)
+                    .bodyStream(DE4AMarshaller.dtUsiRequestMarshaller(dataOwner.getPilot().getCanonicalEvidenceType())
+                            .getAsInputStream(request), ContentType.APPLICATION_XML)
                     .execute().returnResponse();
         } catch (IOException ex) {
             onFailure.accept(String.format("Failed to send request to dt: %s", ex.getMessage()));
             return CompletableFuture.completedFuture(false);
         }
         if (dtResp.getStatusLine().getStatusCode() != 200) {
-            onFailure.accept(String.format("Request sent to dt got status code %s, request: %s", dtResp.getStatusLine().getStatusCode(),
+            onFailure.accept(String.format("Request sent to dt got status code %s, request %s body: %s \n return body: %s", dtResp.getStatusLine().getStatusCode(),
+                    recipient,
                     DE4AMarshaller
                             .dtUsiRequestMarshaller(dataOwner.getPilot().getCanonicalEvidenceType())
-                            .getAsString(request)));
+                            .getAsString(request),
+                    responseBodyToString(dtResp)));
+            return CompletableFuture.completedFuture(false);
         }
 
         return CompletableFuture.completedFuture(true);
     }
 
+
+    public static String responseBodyToString(HttpResponse response) {
+        StringWriter stringWriter = new StringWriter();
+        try {
+            IOUtils.copy(response.getEntity().getContent(), stringWriter, StandardCharsets.UTF_8);
+        } catch (IOException ex) {
+            return "";
+        }
+        return stringWriter.toString();
+    }
 }

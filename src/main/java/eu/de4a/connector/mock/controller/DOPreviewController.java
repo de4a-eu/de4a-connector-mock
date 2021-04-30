@@ -27,7 +27,8 @@ public class DOPreviewController {
     @Autowired
     DOConfig doConfig;
 
-    @RequestMapping(value = "${mock.do.preview.endpoint}")
+
+    @RequestMapping(value = "${mock.do.preview.endpoint}/index")
     public String doIndex(Model model) {
         model.addAttribute("doConfig", doConfig);
         return "doIndex";
@@ -56,13 +57,13 @@ public class DOPreviewController {
         RequestTransferEvidenceUSIDTType request;
         request = previewStorage.getRequest(requestId).get();
         try {
-            Boolean success = DOController.sendDTRequest(request, log::error).get();
+            Boolean success = DOController.sendDTRequest(doConfig.getPreviewDTUrl(), request, log::error).get();
             if (!success) {
-                ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
+                return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
             }
         } catch (InterruptedException | ExecutionException ex) {
             log.debug("request inteupted: {}", ex.getMessage());
-            ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("request interupted");
+            return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("request interupted");
         }
         previewStorage.removePreview(requestId);
         return ResponseEntity.ok().build();
