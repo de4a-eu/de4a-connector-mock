@@ -32,8 +32,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util..TimeUnit;
 import java.util.function.Consumer;
 
 @RestController
@@ -182,7 +184,7 @@ public class DOController {
         RequestTransferEvidenceUSIDTType dtRequest = Helper.buildDtUsiRequest(req, ce, null);
 
         if (canonicalEvidence.getUsiAutoResponse().useAutoResp()) {
-            taskScheduler.scheduleWithFixedDelay(() -> sendDTRequest(doConfig.getPreviewDTUrl(), dtRequest, log::error), canonicalEvidence.getUsiAutoResponse().getWait());
+            taskScheduler.schedule(() -> sendDTRequest(doConfig.getPreviewDTUrl(), dtRequest, log::error), Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
         } else {
             previewStorage.addRequestToPreview(dtRequest);
         }
@@ -213,6 +215,7 @@ public class DOController {
                     responseBodyToString(dtResp)));
             return CompletableFuture.completedFuture(false);
         }
+        log.debug("Successfully sent dt request with id: {}", request.getRequestId());
 
         return CompletableFuture.completedFuture(true);
     }
