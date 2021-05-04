@@ -191,18 +191,4 @@ public class DRController {
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
     }
 
-    @PostMapping("${mock.dr.endpoint.usi}")
-    public ResponseEntity<String> dr1usiresp(InputStream body) throws MarshallException {
-        var marshaller = DE4AMarshaller.drUsiRequestMarshaller();
-        UUID errorKey = UUID.randomUUID();
-        marshaller.readExceptionCallbacks().set((ex) -> {
-            MarshallErrorHandler.getInstance().postError(errorKey, ex);
-        });
-        RequestTransferEvidenceUSIIMDRType req = marshaller.read(body);
-        if (req == null) {
-            throw new MarshallException(errorKey);
-        }
-        var res = DE4AResponseDocumentHelper.createResponseError(true);
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drUsiResponseMarshaller().getAsString(res));
-    }
 }
