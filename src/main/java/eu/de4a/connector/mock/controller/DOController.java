@@ -141,6 +141,7 @@ public class DOController {
                     )
             );
             res.setErrorList(errorListType);
+            res.setAck(AckType.KO);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
         }
         if (!dataOwner.getPilot().validDataRequestSubject(req.getDataRequestSubject())) {
@@ -152,6 +153,7 @@ public class DOController {
                     )
             );
             res.setErrorList(errorListType);
+            res.setAck(AckType.KO);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
         }
         EvidenceID evidenceID = EvidenceID.selectEvidenceId(req.getCanonicalEvidenceTypeId());
@@ -164,6 +166,7 @@ public class DOController {
                     )
             );
             res.setErrorList(errorListType);
+            res.setAck(AckType.KO);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
         }
         String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(req.getDataRequestSubject());
@@ -175,6 +178,7 @@ public class DOController {
                             ErrorCodes.DE4A_NOT_FOUND.getCode(),
                             String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
             res.setErrorList(errorListType);
+            res.setAck(AckType.KO);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
         }
         CanonicalEvidenceType ce = new CanonicalEvidenceType();

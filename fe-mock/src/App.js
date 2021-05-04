@@ -44,8 +44,10 @@ const App = () => {
   
   const acceptEvidence = () => axios.get(format(window.DO_CONST['previewAcceptEndpoint'], {requestId: requestId}))
       .then(response => {
-        setEvidenceStatus(EvidenceStatus.Accepted)
-        window.location.replace(`${backUrl}?accept=true`);
+          setEvidenceStatus(EvidenceStatus.Accepted)
+          const url = new URL(backUrl)
+          url.searchParams.append('accept', 'true')
+          window.location.replace(url.toString());
       })
       .catch(error => {
         setEvidenceStatus(EvidenceStatus.Error)
@@ -53,8 +55,10 @@ const App = () => {
 
   const rejectEvidence = () => axios.get(format(window.DO_CONST['previewRejectEndpoint'], {requestId: requestId}))
       .then(response => {
-        setEvidenceStatus(EvidenceStatus.Rejected)
-        window.location.replace(`${backUrl}?accept=false`);
+          setEvidenceStatus(EvidenceStatus.Rejected)
+          const url = new URL(backUrl)
+          url.searchParams.append('accept', 'false')
+          window.location.replace(url.toString());
       })
       .catch(error => {
         setEvidenceStatus(EvidenceStatus.Error)
