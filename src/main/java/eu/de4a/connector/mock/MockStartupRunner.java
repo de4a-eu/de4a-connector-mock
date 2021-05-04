@@ -27,7 +27,7 @@ public class MockStartupRunner implements ApplicationRunner {
         DE4AKafkaSettings.setKafkaTopic(kafka_topic);
 	DE4AKafkaSettings.setKafkaHttp(kafka_http);
 	if(kafka_http){
-	    // TODO Maybe add some relevant settings but leaving this out for now
+	    // TODO Maybe add some relevant settings but leaving this out for now. Proxy settings would be releveant for instance...
 	    DE4AKafkaSettings.setHttpClientSetting(new HttpClientSettings());
 	}
     }
