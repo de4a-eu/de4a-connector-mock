@@ -38,17 +38,24 @@ const App = () => {
   const [evidenceStatus, setEvidenceStatus] = useState(EvidenceStatus.FetchingEvidence)
 
   const search = useLocation().search
-  const requestId = new URLSearchParams(search).get('requestId')
+  const urlParams = new URLSearchParams(search)
+  const requestId = urlParams.get('requestId')
+  const backUrl = urlParams.get('backUrl')
   
   const acceptEvidence = () => axios.get(format(window.DO_CONST['previewAcceptEndpoint'], {requestId: requestId}))
-      .then(response => setEvidenceStatus(EvidenceStatus.Accepted))
+      .then(response => {
+        setEvidenceStatus(EvidenceStatus.Accepted)
+        window.location.replace(`${backUrl}?accept=true`);
+      })
       .catch(error => {
         setEvidenceStatus(EvidenceStatus.Error)
-        console.log(error)
       })
 
   const rejectEvidence = () => axios.get(format(window.DO_CONST['previewRejectEndpoint'], {requestId: requestId}))
-      .then(response => setEvidenceStatus(EvidenceStatus.Rejected))
+      .then(response => {
+        setEvidenceStatus(EvidenceStatus.Rejected)
+        window.location.replace(`${backUrl}?accept=false`);
+      })
       .catch(error => {
         setEvidenceStatus(EvidenceStatus.Error)
         console.log(error)
