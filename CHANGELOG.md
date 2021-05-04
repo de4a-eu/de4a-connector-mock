@@ -1,5 +1,8 @@
 **Change-log**
 
+- 2021-05-04
+    - The USI transfer evidence endpoint is not used for the connector acting as dr during a request.
+  Removed the DR usi transfer evidence endpoint from the mock.
 - 2021-04-26
     - Added the Austrian example CanonicalEvidence for DBA pilot
 - 2021-04-15
