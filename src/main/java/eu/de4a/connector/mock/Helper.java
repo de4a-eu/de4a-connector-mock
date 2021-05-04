@@ -37,6 +37,15 @@ public class Helper {
         return req;
     }
 
+    public static RequestForwardEvidenceType buildDeUriRequest(RequestTransferEvidenceUSIDTType dtRequest) {
+        RequestForwardEvidenceType req = new RequestForwardEvidenceType();
+        req.setRequestId(dtRequest.getRequestId());
+        req.setTimeStamp(LocalDateTime.now());
+        req.setCanonicalEvidence(dtRequest.getCanonicalEvidence());
+        req.setDomesticEvidenceList(dtRequest.getDomesticEvidenceList());
+        return req;
+    }
+
     public static String getStackTrace(Exception ex) {
         StringWriter stringWriter = new StringWriter();
         ex.printStackTrace(new PrintWriter(stringWriter));

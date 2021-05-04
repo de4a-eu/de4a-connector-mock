@@ -1,6 +1,9 @@
 package eu.de4a.connector.mock.controller;
 
 import com.helger.commons.error.level.EErrorLevel;
+import eu.de4a.connector.mock.Helper;
+import eu.de4a.connector.mock.exampledata.DataOwner;
+import eu.de4a.iem.jaxb.common.types.RequestForwardEvidenceType;
 import eu.de4a.iem.jaxb.common.types.RequestTransferEvidenceUSIDTType;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
 import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
@@ -25,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 @RestController
 @Slf4j
@@ -55,24 +60,41 @@ public class DTController {
         DE4AKafkaClient.send(EErrorLevel.INFO,
                 String.format("Receiving USI RequestTransferEvidence, requestId: %s", req.getRequestId() ));
 
-        /*
         if (forwardUSI) {
-
-            HttpResponse deResponse;
-            String deRespBody;
-            try {
-                deResponse = Request.Post(forwardUSIUrl)
-                        .bodyStream(marshaller.getAsInputStream(req), ContentType.APPLICATION_XML)
-                        .execute().returnResponse();
-                deRespBody = IOUtils.toString(deResponse.getEntity().getContent(), StandardCharsets.UTF_8);
-            } catch (IOException ex) {
-
+            RequestForwardEvidenceType deRequest = Helper.buildDeUriRequest(req);
+            DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
+            if (dataOwner == null) {
+                log.error("no such data owner, how the hell did this happen?!");
             }
+            sendDERequest(forwardUSIUrl, deRequest, dataOwner, log::error);
         }
-         */
 
         var res = DE4AResponseDocumentHelper.createResponseError(true);
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.dtUsiResponseMarshaller().getAsString(res));
     }
 
+    public static CompletableFuture<Boolean> sendDERequest(String recipient, RequestForwardEvidenceType request, DataOwner dataOwner, Consumer<String> onFailure) {
+        HttpResponse deResp;
+        try {
+            deResp = Request.Post(recipient)
+                    .bodyStream(DE4AMarshaller.deUsiRequestMarshaller(dataOwner.getPilot().getCanonicalEvidenceType())
+                            .getAsInputStream(request), ContentType.APPLICATION_XML)
+                    .execute().returnResponse();
+        } catch (IOException ex) {
+            onFailure.accept(String.format("Failed to send request to de: %s", ex.getMessage()));
+            return CompletableFuture.completedFuture(false);
+        }
+        if (deResp.getStatusLine().getStatusCode() != 200) {
+            onFailure.accept(String.format("Request sent to dt got status code %s, request %s body: %s \n return body: %s", deResp.getStatusLine().getStatusCode(),
+                    recipient,
+                    DE4AMarshaller
+                            .deUsiRequestMarshaller(dataOwner.getPilot().getCanonicalEvidenceType())
+                            .getAsString(request),
+                    DOController.responseBodyToString(deResp)));
+            return CompletableFuture.completedFuture(false);
+        }
+        log.debug("Successfully sent de request with id: {}", request.getRequestId());
+
+        return CompletableFuture.completedFuture(true);
+    }
 }
