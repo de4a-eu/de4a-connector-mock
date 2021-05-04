@@ -188,6 +188,9 @@ public class DOController {
             previewStorage.addRequestToPreview(dtRequest);
         }
 
+        DE4AKafkaClient.send(EErrorLevel.INFO, () ->
+                String.format("Receiving USI RequestExtractEvidence, requestId: %s", req.getRequestId()));
+
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
     }
 

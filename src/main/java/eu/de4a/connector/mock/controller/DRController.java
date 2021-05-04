@@ -89,11 +89,10 @@ public class DRController {
                 doRespBody = IOUtils.toString(doResponse.getEntity().getContent(), StandardCharsets.UTF_8);
                 if (doResponse.getStatusLine().getStatusCode() != 200) {
                     ErrorListType errorListType = new ErrorListType();
+                    String errorString = String.format("error sending request to do (at %s): %s \n%s", forwardIMUrl, doResponse.getStatusLine().toString(), doRespBody);
                     errorListType.addError(
                             DE4AResponseDocumentHelper.createError(
-                                    ErrorCodes.DE4A_ERROR.getCode(),
-                                    String.format("error sending request to do (at %s): %s \n%s", forwardIMUrl, doResponse.getStatusLine().toString(), doRespBody)
-                                            .substring(0,4000)
+                                    ErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
                             )
                     );
                     res.setErrorList(errorListType);
@@ -103,10 +102,10 @@ public class DRController {
             } catch (IOException ex) {
                 log.error("dr forward to do exception: {}", ex.getLocalizedMessage());
                 ErrorListType errorListType = new ErrorListType();
+                String errorString = String.format("error sending request to do: %s \n%s", ex.getLocalizedMessage(), Helper.getStackTrace(ex));
                 errorListType.addError(
                         DE4AResponseDocumentHelper.createError(
-                                ErrorCodes.DE4A_ERROR.getCode(),
-                                String.format("error sending request to do: %s \n%s", ex.getLocalizedMessage(), Helper.getStackTrace(ex)).substring(0,4000)
+                                ErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
                         )
                 );
                 res.setErrorList(errorListType);
@@ -128,11 +127,11 @@ public class DRController {
                     errorMessage = "";
                 }
                 ErrorListType errorListType = new ErrorListType();
+                String errorString = String.format("could not unmarshall response from do%s", errorMessage);
                 errorListType.addError(
                         DE4AResponseDocumentHelper.createError(
-                                ErrorCodes.DE4A_ERROR.getCode(),
-                                String.format("could not unmarshall response from do%s", errorMessage)
-                                        .substring(0,4000)
+                                ErrorCodes.DE4A_ERROR.getCode(), errorString
+                                        .substring(0, Math.min(4000, errorMessage.length()))
                         )
                 );
                 res.setErrorList(errorListType);

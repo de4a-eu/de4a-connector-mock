@@ -1,10 +1,12 @@
 package eu.de4a.connector.mock.controller;
 
+import com.helger.commons.error.level.EErrorLevel;
 import eu.de4a.iem.jaxb.common.types.RequestTransferEvidenceUSIDTType;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
 import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
 import eu.de4a.iem.xml.de4a.EDE4ACanonicalEvidenceType;
 import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
+import eu.de4a.kafkaclient.DE4AKafkaClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -38,6 +40,9 @@ public class DTController {
         if (req == null) {
             throw new MarshallException(errorKey);
         }
+        DE4AKafkaClient.send(EErrorLevel.INFO,
+                String.format("Receiving USI RequestTransferEvidence, requestId: %s", req.getRequestId() ));
+
         var res = DE4AResponseDocumentHelper.createResponseError(true);
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.dtUsiResponseMarshaller().getAsString(res));
     }
