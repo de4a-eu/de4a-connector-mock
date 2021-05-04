@@ -213,12 +213,11 @@ public class DOController {
             return CompletableFuture.completedFuture(false);
         }
         if (dtResp.getStatusLine().getStatusCode() != 200) {
-            onFailure.accept(String.format("Request sent to dt got status code %s, request %s body: %s \n return body: %s", dtResp.getStatusLine().getStatusCode(),
+            onFailure.accept(String.format("Request sent to dt got status code %s, request %s body: %s", dtResp.getStatusLine().getStatusCode(),
                     recipient,
                     DE4AMarshaller
                             .dtUsiRequestMarshaller(dataOwner.getPilot().getCanonicalEvidenceType())
-                            .getAsString(request),
-                    responseBodyToString(dtResp)));
+                            .getAsString(request) ));
             return CompletableFuture.completedFuture(false);
         }
         log.debug("Successfully sent dt request with id: {}", request.getRequestId());

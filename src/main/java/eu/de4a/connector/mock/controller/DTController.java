@@ -84,13 +84,12 @@ public class DTController {
             onFailure.accept(String.format("Failed to send request to de: %s", ex.getMessage()));
             return CompletableFuture.completedFuture(false);
         }
-        if (deResp.getStatusLine().getStatusCode() != 200) {
-            onFailure.accept(String.format("Request sent to dt got status code %s, request %s body: %s \n return body: %s", deResp.getStatusLine().getStatusCode(),
+        if (deResp.getStatusLine().getStatusCode() < 200 && deResp.getStatusLine().getStatusCode() >= 300) { // not a 2XX status code
+            onFailure.accept(String.format("Request sent to de got status code %s, request %s body: %s", deResp.getStatusLine().getStatusCode(),
                     recipient,
                     DE4AMarshaller
                             .deUsiRequestMarshaller(dataOwner.getPilot().getCanonicalEvidenceType())
-                            .getAsString(request),
-                    DOController.responseBodyToString(deResp)));
+                            .getAsString(request)));
             return CompletableFuture.completedFuture(false);
         }
         log.debug("Successfully sent de request with id: {}", request.getRequestId());
