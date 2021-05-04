@@ -5,13 +5,16 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
     
     const parser = new DOMParser()
     const xmlEvidence = parser.parseFromString( evidence, "application/xml")
+    const xmlNS = xmlEvidence.createNSResolver(xmlEvidence)
     const xmlRoot = xmlEvidence.evaluate(
         evidenceRoot, 
-        xmlEvidence, 
-        xmlEvidence.createNSResolver(xmlEvidence), 
-        XPathResult.ANY_UNORDERED_NODE_TYPE, 
+        xmlEvidence,
+        xmlNS,
+        XPathResult.ANY_UNORDERED_NODE_TYPE,
         null).singleNodeValue
-    
+
+    console.log("xmlRoot", xmlRoot)
+
     const printNode = (node) => {
         return <Row className='evidenceHeading'>
             <Col>
@@ -69,7 +72,65 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
                 </Col>
             </Row>
         },
+        "title" : (node) => {
+            return handleTextChild(node)
+        },
+        "name" : (node) => {
+            return handleTextChild(node)
+        },
+        "givenNames" : (node) => {
+            return handleTextChild(node)
+        },
+        "familyName" : (node) => {
+            return handleTextChild(node)
+        },
+        "mainFieldOfStudy" : (node) => {
+            const attUri = node.getAttribute("uri")
+            if (attUri && attUri !== "") {
+                return <Row className='evidenceField'>
+                    <Col>
+                        <p>{translate(`canonicalEvidenceFields.${node.localName}`)}</p>
+                    </Col>
+                    <Col>
+                        <p>{attUri}</p>
+                    </Col>
+                </Row>
+            } else {
+                return <Row className='evidenceField'>
+                    <Col>
+                        <p>{translate(`canonicalEvidenceFields.${node.localName}`)}</p>
+                    </Col>
+                    <Col>
+                        <p>{node.firstChild.innerHTML}</p>
+                    </Col>
+                </Row>
+            }
+        }
     }
+
+    const handleTextChild = (node) => {
+        if (node.childElementCount === 1
+            && node.firstChild.localName === "text") {
+                return <Row className='evidenceField'>
+                    <Col>
+                        <p>{translate(`canonicalEvidenceFields.${node.localName}`)}</p>
+                    </Col>
+                    <Col>
+                        <p>{node.firstChild.innerHTML}</p>
+                    </Col>
+                </Row>
+        } else if (node.childElementCount === 0) {
+            return printLeaf(node)
+        } else {
+            return <Fragment>
+                {printNode(node)}
+                {Array.from(node.childNodes)
+                    .filter((child) => !(child.localName in evidenceIgnore))
+                    .map((child, i) => <Fragment key={i}> {parseNode(child)} </Fragment>)}
+            </Fragment>
+        }
+    }
+
     const addressMap = {
         "Thoroughfare": "street",
         "LocationDesignator": "no",

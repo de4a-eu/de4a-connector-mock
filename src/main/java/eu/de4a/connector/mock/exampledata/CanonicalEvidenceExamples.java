@@ -1,6 +1,7 @@
 package eu.de4a.connector.mock.exampledata;
 
 import com.helger.jaxb.GenericJAXBMarshaller;
+import eu.de4a.iem.xml.de4a.t41.v2021_04_13.DE4AT41Marshaller;
 import eu.de4a.iem.xml.de4a.t42.v0_6.DE4AT42Marshaller;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +19,19 @@ import java.util.stream.Stream;
 public enum CanonicalEvidenceExamples {
 
     T42_SE("5591674170", new ClassPathResource("examples/T4.2-examples/sample company info SE -2.xml"),  DataOwner.V_SE, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
-    T42_NL("90000471", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.IMMEDIATE),
-    T42_RO("J40/12487/1998", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(),  USIAutoResponse.DELAY_5_SEC),
-    T42_AT("???", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo AT.xml"),  DataOwner.DMDW_AT, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF);
+    T42_NL("90000471", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
+    T42_RO("J40/12487/1998", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(),  USIAutoResponse.OFF),
+    T42_AT("???", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo AT.xml"),  DataOwner.DMDW_AT, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
+    T41_PT("123456789", new ClassPathResource("examples/T4.1-examples/SA-UC1-11-02-2021-example-PT.xml"), DataOwner.UL_PT, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.OFF),
+    T41_SI("123456", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-SI.xml"), DataOwner.MIZS_SI, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.OFF),
+    T41_PT_A("123456789A", new ClassPathResource("examples/T4.1-examples/SA-UC1-11-02-2021-example-PT.xml"), DataOwner.UL_PT, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.IMMEDIATE),
+    T41_SI_A("123456A", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-SI.xml"), DataOwner.MIZS_SI, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.IMMEDIATE),
+    T41_PT_B("123456789B", new ClassPathResource("examples/T4.1-examples/SA-UC1-11-02-2021-example-PT.xml"), DataOwner.UL_PT, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_5_SEC),
+    T41_SI_B("123456B", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-SI.xml"), DataOwner.MIZS_SI, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_5_SEC),
+    T41_PT_C("123456789C", new ClassPathResource("examples/T4.1-examples/SA-UC1-11-02-2021-example-PT.xml"), DataOwner.UL_PT, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_40_SEC),
+    T41_SI_C("123456C", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-SI.xml"), DataOwner.MIZS_SI, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_40_SEC),
+    T41_PT_D("123456789D", new ClassPathResource("examples/T4.1-examples/SA-UC1-11-02-2021-example-PT.xml"), DataOwner.UL_PT, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_240_SEC),
+    T41_SI_D("123456D", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-SI.xml"), DataOwner.MIZS_SI, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_240_SEC);
 
     @Getter
     final private String identifier;

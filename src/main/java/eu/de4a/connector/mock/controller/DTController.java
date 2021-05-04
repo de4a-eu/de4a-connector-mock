@@ -4,6 +4,7 @@ import eu.de4a.iem.jaxb.common.types.RequestTransferEvidenceUSIDTType;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
 import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
 import eu.de4a.iem.xml.de4a.EDE4ACanonicalEvidenceType;
+import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
@@ -25,7 +26,10 @@ public class DTController {
     @PostMapping("${mock.dt.endpoint.usi}")
     public ResponseEntity<String> dt1usiresp(InputStream body) throws MarshallException {
         //todo: check dataowner and use CanonicalEvidenceType from Pilot enum.
-        var marshaller = DE4AMarshaller.dtUsiRequestMarshaller(EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V06);
+        var marshaller = DE4AMarshaller.dtUsiRequestMarshaller(
+                IDE4ACanonicalEvidenceType.multiple(
+                        EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V06,
+                        EDE4ACanonicalEvidenceType.T41_UC1_2021_04_13));
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
