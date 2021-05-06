@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sa:HigherEducationDiploma
+        xmlns:cvb="http://www.w3.org/ns/corevocabulary/BasicComponents"
+        xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2"
+        xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+        xmlns:sa="urn:eu-de4a:xsd:CanonicalEvidenceType::HigherEducationEvidence:v1.0"
+        xmlns:edci="http://data.europa.eu/europass/model/credentials#"
+        xmlns:cred="http://data.europa.eu/europass/model/credentials/w3c#"
+        xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+        id="urn:credential:ef3b1a56-e668-4397-8dfd-c6a35f970c73">
+    <edci:identifier spatialID="ES">0124738434</edci:identifier>
+    <edci:title>
+        <edci:text lang="en" content-type="text/plain">Diploma on Computer Engineering</edci:text>
+    </edci:title>
+    <sa:degree lang="en" content-type="text/plain">Master on Computer Science Engineering</sa:degree>
+    <sa:country>http://publications.europa.eu/resource/authority/country/ESP</sa:country>
+    <sa:institutionName lang="en" content-type="text/plain">Jaume I University</sa:institutionName>
+    <sa:studyProgramme lang="en" content-type="text/plain">Computer Science Engineering</sa:studyProgramme>
+    <sa:mainFieldOfStudy uri="http://data.europa.eu/snb/isced-f/0610"></sa:mainFieldOfStudy>
+    <sa:modeOfStudy>http://data.europa.eu/europass/learningScheduleType/fullTime</sa:modeOfStudy>
+    <sa:durationOfEducation>P5Y</sa:durationOfEducation>
+    <sa:scope schemeID="http://data.europa.eu/europass/educationalCreditPointSystem/ects">300</sa:scope>
+    <sa:dateOfIssue>2008-07-22</sa:dateOfIssue>
+    <sa:placeOfIssue>
+        <edci:name>
+            <edci:text lang="en" content-type="text/plain">Castellon</edci:text>
+        </edci:name>
+    </sa:placeOfIssue>
+    <sa:holderOfAchievement id="urn:person:ef3b1a56-e668-4397-8dfd-c6a35f970c74">
+        <edci:nationalId spatialID="http://publications.europa.eu/resource/authority/country/ES">53377873W</edci:nationalId>
+        <edci:givenNames>
+            <edci:text lang="en" content-type="text/plain">Francisco Jose </edci:text>
+        </edci:givenNames>
+        <edci:familyName>
+            <edci:text lang="en" content-type="text/plain">Arago Monzonis</edci:text>
+        </edci:familyName>
+        <edci:dateOfBirth>1984-07-24</edci:dateOfBirth>
+    </sa:holderOfAchievement>
+</sa:HigherEducationDiploma>
