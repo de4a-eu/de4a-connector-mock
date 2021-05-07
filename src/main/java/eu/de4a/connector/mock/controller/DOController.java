@@ -184,7 +184,7 @@ public class DOController {
         CanonicalEvidenceType ce = new CanonicalEvidenceType();
         ce.setAny(canonicalEvidence.getDocumentElement());
 
-        RequestTransferEvidenceUSIDTType dtRequest = Helper.buildDtUsiRequest(req, ce, null);
+        RequestTransferEvidenceUSIDTType dtRequest = Helper.buildDtUsiRequest(req, ce, null, null);
 
         if (canonicalEvidence.getUsiAutoResponse().useAutoResp()) {
             taskScheduler.schedule(() -> sendDTRequest(doConfig.getPreviewDTUrl(), dtRequest, log::error), Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));

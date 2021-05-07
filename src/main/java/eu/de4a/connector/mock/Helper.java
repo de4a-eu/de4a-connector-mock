@@ -23,7 +23,7 @@ public class Helper {
         return req;
     }
 
-    public static RequestTransferEvidenceUSIDTType buildDtUsiRequest(RequestExtractEvidenceUSIType doRequest, CanonicalEvidenceType canonicalEvidence, DomesticsEvidencesType domesticEvidences) {
+    public static RequestTransferEvidenceUSIDTType buildDtUsiRequest(RequestExtractEvidenceUSIType doRequest, CanonicalEvidenceType canonicalEvidence, DomesticsEvidencesType domesticEvidences, ErrorListType errorListType) {
         RequestTransferEvidenceUSIDTType req = new RequestTransferEvidenceUSIDTType();
         req.setRequestId(doRequest.getRequestId());
         req.setSpecificationId(doRequest.getSpecificationId());
@@ -34,6 +34,7 @@ public class Helper {
         req.setDataRequestSubject(doRequest.getDataRequestSubject());
         req.setCanonicalEvidence(canonicalEvidence);
         req.setDomesticEvidenceList(domesticEvidences);
+        req.setErrorList(errorListType);
         return req;
     }
 
@@ -43,6 +44,7 @@ public class Helper {
         req.setTimeStamp(LocalDateTime.now());
         req.setCanonicalEvidence(dtRequest.getCanonicalEvidence());
         req.setDomesticEvidenceList(dtRequest.getDomesticEvidenceList());
+        req.setErrorList(dtRequest.getErrorList());
         return req;
     }
 
