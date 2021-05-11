@@ -12,6 +12,9 @@ pipeline {
                     image 'maven:3-adoptopenjdk-11'
                     args '-v $HOME/.m2:/root/.m2 --network docker-ci_default'
                 }
+                environment {
+                    HOME = '.'
+                }
             }
             steps {
                 sh 'mvn clean test sonar:sonar -Dsonar.host.url=http://sonarqube:9000/sonarqube -Dsonar.login=$SONAR_TOKEN'
@@ -26,6 +29,9 @@ pipeline {
                 docker {
                     image 'maven:3-adoptopenjdk-11'
                     args '-v $HOME/.m2:/root/.m2 --network docker-ci_default'
+                }
+                environment {
+                    HOME = '.'
                 }
             }
             steps {
