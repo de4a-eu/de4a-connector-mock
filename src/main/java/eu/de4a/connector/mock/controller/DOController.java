@@ -1,11 +1,14 @@
 package eu.de4a.connector.mock.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helger.commons.error.level.EErrorLevel;
 import eu.de4a.connector.mock.Helper;
 import eu.de4a.connector.mock.config.DOConfig;
 import eu.de4a.connector.mock.exampledata.CanonicalEvidenceExamples;
 import eu.de4a.connector.mock.exampledata.DataOwner;
 import eu.de4a.connector.mock.exampledata.EvidenceID;
+import eu.de4a.connector.mock.preview.PreviewMessage;
 import eu.de4a.connector.mock.preview.PreviewStorage;
 import eu.de4a.iem.jaxb.common.types.*;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
@@ -22,12 +25,14 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Element;
 
+import java.beans.SimpleBeanInfo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -49,6 +54,10 @@ public class DOController {
     private TaskScheduler taskScheduler;
     @Autowired
     private PreviewStorage previewStorage;
+    @Autowired
+    private SimpMessagingTemplate websocketMessaging;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @PostMapping("${mock.do.endpoint.im}")
     public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) {
@@ -190,6 +199,16 @@ public class DOController {
             taskScheduler.schedule(() -> sendDTRequest(doConfig.getPreviewDTUrl(), dtRequest, log::error), Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
         } else {
             previewStorage.addRequestToPreview(dtRequest);
+            String message;
+            try {
+                message = objectMapper.writeValueAsString(new PreviewMessage(PreviewMessage.Action.ADD, dtRequest.getRequestId()));
+            } catch (JsonProcessingException ex) {
+                message = "{}";
+                log.error("json error");
+            }
+            String endpoint = String.format("%s%s", doConfig.getPreviewBaseEndpoint(), doConfig.getWebsocketMessagesEndpoint());
+            log.debug("sending websocket message {}: {}", endpoint, message);
+            websocketMessaging.convertAndSend(endpoint, message);
         }
 
         DE4AKafkaClient.send(EErrorLevel.INFO, () ->

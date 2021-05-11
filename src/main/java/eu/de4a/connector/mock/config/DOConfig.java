@@ -2,14 +2,16 @@ package eu.de4a.connector.mock.config;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 
 import java.io.Serializable;
 
+@Profile("do")
 public class DOConfig implements Serializable {
 
     @Getter
     @Value("${mock.do.preview.endpoint.base}")
-    private String previewEndpoint;
+    private String previewBaseEndpoint;
     @Getter
     @Value("${mock.do.preview.evidence.get.endpoint}")
     private String previewEvidenceRequest;
@@ -22,5 +24,14 @@ public class DOConfig implements Serializable {
     @Getter
     @Value("${mock.do.preview.dt.url}")
     private String previewDTUrl;
+    @Getter
+    @Value("${mock.do.preview.endpoint.websocket.mess}")
+    private String websocketMessagesEndpoint;
+    @Getter
+    @Value("${mock.do.preview.endpoint.websocket.socket}")
+    private String websocketSocketEndpoint;
+    @Getter
+    @Value("${mock.do.preview.evidence.requestId.all.endpoint}")
+    private String previewRequestIdsEndpoint;
 
 }
