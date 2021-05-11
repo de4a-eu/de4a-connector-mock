@@ -1,5 +1,8 @@
 pipeline {
     agent none
+    environment {
+        HOME = '.'
+    }
     stages {
         stage('Test') {
             when {
@@ -11,9 +14,6 @@ pipeline {
                 docker {
                     image 'maven:3-adoptopenjdk-11'
                     args '-v $HOME/.m2:/root/.m2 --network docker-ci_default'
-                }
-                environment {
-                    HOME = '.'
                 }
             }
             steps {
@@ -29,9 +29,6 @@ pipeline {
                 docker {
                     image 'maven:3-adoptopenjdk-11'
                     args '-v $HOME/.m2:/root/.m2 --network docker-ci_default'
-                }
-                environment {
-                    HOME = '.'
                 }
             }
             steps {
