@@ -10,11 +10,11 @@ pipeline {
             agent {
                 docker {
                     image 'maven:3-adoptopenjdk-11'
-                    args '-v $HOME/.m2:/root/.m2 -u 999:1000 -e MAVEN_CONFIG=/var/maven/.m2 --network docker-ci_default'
+                    args '-v $HOME/.m2:/root/.m2 --network docker-ci_default'
                 }
             }
             steps {
-                sh 'mvn clean test sonar:sonar -X -Duser.home=/var/maven -Dsonar.host.url=http://sonarqube:9000/sonarqube -Dsonar.login=$SONAR_TOKEN'
+                sh 'mvn clean test sonar:sonar -X -Dsonar.host.url=http://sonarqube:9000/sonarqube -Dsonar.login=$SONAR_TOKEN'
             }
         }
 
