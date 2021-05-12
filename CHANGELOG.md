@@ -1,5 +1,15 @@
 **Change-log**
 
+- 2021-05-11
+  - Updated the DO preview mock to support handle preview when not given requestId, and use return url from request object.
+- 2021-05-06
+  - Updated to DE4A-Commons 0.1.3
+- 2021-05-04
+  - First version of the DO preview mock
+  - The USI transfer evidence endpoint is not used for the connector acting as dr during a request.
+  Removed the DR usi transfer evidence endpoint from the mock.
+- 2021-04-26
+    - Added the Austrian example CanonicalEvidence for DBA pilot
 - 2021-04-15
     - Change the DataOwner id to separate mock ids from real ids
 - 2021-04-09 

@@ -1,7 +1,6 @@
 package eu.de4a.connector.mock;
 
-import eu.de4a.iem.jaxb.common.types.RequestExtractEvidenceIMType;
-import eu.de4a.iem.jaxb.common.types.RequestTransferEvidenceUSIIMDRType;
+import eu.de4a.iem.jaxb.common.types.*;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -21,6 +20,31 @@ public class Helper {
         req.setRequestGrounds(drRequest.getRequestGrounds());
         req.setCanonicalEvidenceTypeId(drRequest.getCanonicalEvidenceTypeId());
         req.setAdditionalParameters(drRequest.getAdditionalParameters());
+        return req;
+    }
+
+    public static RequestTransferEvidenceUSIDTType buildDtUsiRequest(RequestExtractEvidenceUSIType doRequest, CanonicalEvidenceType canonicalEvidence, DomesticsEvidencesType domesticEvidences, ErrorListType errorListType) {
+        RequestTransferEvidenceUSIDTType req = new RequestTransferEvidenceUSIDTType();
+        req.setRequestId(doRequest.getRequestId());
+        req.setSpecificationId(doRequest.getSpecificationId());
+        req.setTimeStamp(LocalDateTime.now());
+        req.setProcedureId(doRequest.getProcedureId());
+        req.setDataEvaluator(doRequest.getDataEvaluator());
+        req.setDataOwner(doRequest.getDataOwner());
+        req.setDataRequestSubject(doRequest.getDataRequestSubject());
+        req.setCanonicalEvidence(canonicalEvidence);
+        req.setDomesticEvidenceList(domesticEvidences);
+        req.setErrorList(errorListType);
+        return req;
+    }
+
+    public static RequestForwardEvidenceType buildDeUriRequest(RequestTransferEvidenceUSIDTType dtRequest) {
+        RequestForwardEvidenceType req = new RequestForwardEvidenceType();
+        req.setRequestId(dtRequest.getRequestId());
+        req.setTimeStamp(LocalDateTime.now());
+        req.setCanonicalEvidence(dtRequest.getCanonicalEvidence());
+        req.setDomesticEvidenceList(dtRequest.getDomesticEvidenceList());
+        req.setErrorList(dtRequest.getErrorList());
         return req;
     }
 
