@@ -10,7 +10,7 @@ pipeline {
             agent {
                 docker {
                     image 'maven:3-adoptopenjdk-11'
-                    args '-u 999:1000 -v $HOME/.m2:/var/maven/.m2  -e MAVEN_CONFIG=/var/maven/.m2 -e HOME='.' --network docker-ci_default'
+                    args '-u 999:1000 -v $HOME/.m2:/var/maven/.m2 -e MAVEN_CONFIG=/var/maven/.m2 -e HOME="." --network docker-ci_default'
                 }
             }
             steps {
