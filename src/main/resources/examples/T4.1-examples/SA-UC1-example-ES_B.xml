@@ -32,13 +32,13 @@
         </edci:name>
     </sa:placeOfIssue>
     <sa:holderOfAchievement id="urn:person:ef3b1a56-e668-4397-8dfd-c6a35f970c74">
-        <edci:nationalId spatialID="http://publications.europa.eu/resource/authority/country/ES">53377873W</edci:nationalId>
+        <edci:nationalId spatialID="http://publications.europa.eu/resource/authority/country/ES">53377873WB</edci:nationalId>
         <edci:givenNames>
-            <edci:text lang="en" content-type="text/plain">Francisco Jose</edci:text>
+            <edci:text lang="en" content-type="text/plain">Francisco Joseb</edci:text>
         </edci:givenNames>
         <edci:familyName>
-            <edci:text lang="en" content-type="text/plain">Arago Monzonis</edci:text>
+            <edci:text lang="en" content-type="text/plain">Arago Monzonisb</edci:text>
         </edci:familyName>
-        <edci:dateOfBirth>1984-07-24</edci:dateOfBirth>
+        <edci:dateOfBirth>1984-07-26</edci:dateOfBirth>
     </sa:holderOfAchievement>
 </sa:HigherEducationDiploma>

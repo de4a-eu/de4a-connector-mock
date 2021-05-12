@@ -33,5 +33,8 @@ public class DOConfig implements Serializable {
     @Getter
     @Value("${mock.do.preview.evidence.requestId.all.endpoint}")
     private String previewRequestIdsEndpoint;
+    @Getter
+    @Value("${mock.do.preview.bundle.path}")
+    private String bundlePath;
 
 }

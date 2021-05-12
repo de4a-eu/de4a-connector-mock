@@ -31,13 +31,13 @@
         </edci:name>
     </sa:placeOfIssue>
     <sa:holderOfAchievement id="http://tempuri.org">
-        <edci:nationalId spatialID="http://publications.europa.eu/resource/authority/country/SVN">123456</edci:nationalId>
+        <edci:nationalId spatialID="http://publications.europa.eu/resource/authority/country/SVN">123456D</edci:nationalId>
         <edci:givenNames>
-            <edci:text content-type="text/html" lang="sl">Marjeta</edci:text>
+            <edci:text content-type="text/html" lang="sl">Marjetad</edci:text>
         </edci:givenNames>
         <edci:familyName>
-            <edci:text content-type="text/html" lang="sl">Maček</edci:text>
+            <edci:text content-type="text/html" lang="sl">Mačekd</edci:text>
         </edci:familyName>
-        <edci:dateOfBirth>1999-09-16</edci:dateOfBirth>
+        <edci:dateOfBirth>1999-09-20</edci:dateOfBirth>
     </sa:holderOfAchievement>
 </sa:HigherEducationDiploma>

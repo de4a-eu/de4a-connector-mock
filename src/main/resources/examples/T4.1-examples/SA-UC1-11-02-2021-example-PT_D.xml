@@ -13,32 +13,31 @@
         xmlns:udt="urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="urn:eu-de4a:xsd:CanonicalEvidenceType::HigherEducationEvidence:v1.0 SA-UC1-20-04-2021.xsd">
-    <edci:identifier spatialID="ES">0124738434</edci:identifier>
     <edci:title>
-        <edci:text lang="en" content-type="text/plain">Diploma on Computer Engineering</edci:text>
+        <edci:text content-type="text/html" lang="en">MSc Program in Computer Science and Engineering</edci:text>
     </edci:title>
-    <sa:degree lang="en" content-type="text/plain">Master on Computer Science Engineering</sa:degree>
-    <sa:country>http://publications.europa.eu/resource/authority/country/ESP</sa:country>
-    <sa:institutionName lang="en" content-type="text/plain">Jaume I University</sa:institutionName>
-    <sa:studyProgramme lang="en" content-type="text/plain">Computer Science Engineering</sa:studyProgramme>
-    <sa:mainFieldOfStudy uri="http://data.europa.eu/snb/isced-f/0610"/>
+    <sa:degree content-type="text/html" lang="en">Master in Computer Science and Engineering</sa:degree>
+    <sa:country>http://publications.europa.eu/resource/authority/country/PRT</sa:country>
+    <sa:institutionName content-type="text/html" lang="pt">Instituto Superior Técnico</sa:institutionName>
+    <sa:studyProgramme content-type="text/html" lang="en">MSc Program in Computer Science and Engineering</sa:studyProgramme>
+    <sa:mainFieldOfStudy uri="http://data.europa.eu/snb/isced-f/061"/>
     <sa:modeOfStudy>http://data.europa.eu/europass/learningScheduleType/fullTime</sa:modeOfStudy>
-    <sa:durationOfEducation>P5Y</sa:durationOfEducation>
-    <sa:scope schemeID="http://data.europa.eu/europass/educationalCreditPointSystem/ects">300</sa:scope>
-    <sa:dateOfIssue>2008-07-22</sa:dateOfIssue>
+    <sa:durationOfEducation>P2Y</sa:durationOfEducation>
+    <sa:scope>120</sa:scope>
+    <sa:dateOfIssue>2021-01-31</sa:dateOfIssue>
     <sa:placeOfIssue>
         <edci:name>
-            <edci:text lang="en" content-type="text/plain">Castellon</edci:text>
+            <edci:text lang="pt" content-type="text/html">Lisboa - Portugal</edci:text>
         </edci:name>
     </sa:placeOfIssue>
-    <sa:holderOfAchievement id="urn:person:ef3b1a56-e668-4397-8dfd-c6a35f970c74">
-        <edci:nationalId spatialID="http://publications.europa.eu/resource/authority/country/ES">53377873W</edci:nationalId>
+    <sa:holderOfAchievement id="http://tempuri.org">
+        <edci:nationalId spatialID="http://publications.europa.eu/resource/authority/country/PRT">123456789D</edci:nationalId>
         <edci:givenNames>
-            <edci:text lang="en" content-type="text/plain">Francisco Jose</edci:text>
+            <edci:text content-type="text/html" lang="pt">Aliced</edci:text>
         </edci:givenNames>
         <edci:familyName>
-            <edci:text lang="en" content-type="text/plain">Arago Monzonis</edci:text>
+            <edci:text content-type="text/html" lang="pt">Alvesd</edci:text>
         </edci:familyName>
-        <edci:dateOfBirth>1984-07-24</edci:dateOfBirth>
+        <edci:dateOfBirth>1997-01-05</edci:dateOfBirth>
     </sa:holderOfAchievement>
 </sa:HigherEducationDiploma>
