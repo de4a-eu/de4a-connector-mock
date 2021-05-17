@@ -1,5 +1,7 @@
 **Change-log**
 
+- 2021-05-17
+  - Updated CanonicalEvidences to the latest version of the test dataset v4.2.
 - 2021-05-11
   - Updated the DO preview mock to support handle preview when not given requestId, and use return url from request object.
 - 2021-05-06
