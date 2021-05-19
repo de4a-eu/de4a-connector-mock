@@ -61,7 +61,7 @@ const App = () => {
             let urlString = backUrl
             if (urlString === "") {
                 if (backUrlParam && backUrlParam !== "") {
-                    urlString = new URL(backUrl)
+                    urlString = backUrlParam
                 } else {
                     console.error("no back url provided")
                     setEvidenceStatus(EvidenceStatus.Error)
@@ -72,6 +72,7 @@ const App = () => {
             window.location.replace(url.toString());
         })
         .catch(error => {
+            console.error("error: ", error)
             setEvidenceStatus(EvidenceStatus.Error)
         })
 
