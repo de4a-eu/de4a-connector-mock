@@ -26,6 +26,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry
                 .addEndpoint(String.format("%s%s", doConfig.getPreviewBaseEndpoint(), doConfig.getWebsocketSocketEndpoint()))
                 .withSockJS()
-                .setClientLibraryUrl("https://cdn.jsdelivr.net/sockjs/1.5.1/sockjs.min.js");
+                .setClientLibraryUrl("https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js");
     }
 }
