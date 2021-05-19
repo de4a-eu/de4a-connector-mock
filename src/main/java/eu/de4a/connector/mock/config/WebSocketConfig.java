@@ -23,6 +23,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint(String.format("%s%s", doConfig.getPreviewBaseEndpoint(), doConfig.getWebsocketSocketEndpoint())).withSockJS();
+        registry
+                .addEndpoint(String.format("%s%s", doConfig.getPreviewBaseEndpoint(), doConfig.getWebsocketSocketEndpoint()))
+                .withSockJS()
+                .setClientLibraryUrl("https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js");
     }
 }
