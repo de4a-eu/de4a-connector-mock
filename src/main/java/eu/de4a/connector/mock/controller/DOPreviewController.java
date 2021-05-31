@@ -62,6 +62,7 @@ public class DOPreviewController {
         return "doIndex";
     }
 
+    @CrossOrigin(originPatterns = "*")
     @ResponseStatus(HttpStatus.FOUND)
     @PostMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.endpoint.index}")
     public ModelAndView redirectPost(InputStream bodyStream) {
