@@ -23,6 +23,20 @@ public class Helper {
         return req;
     }
 
+    public static RequestExtractEvidenceUSIType buildDoUsiRequest(RequestTransferEvidenceUSIIMDRType drRequest) {
+        RequestExtractEvidenceUSIType req = new RequestExtractEvidenceUSIType();
+        req.setRequestId(drRequest.getRequestId());
+        req.setSpecificationId(drRequest.getSpecificationId());
+        req.setTimeStamp(LocalDateTime.now());
+        req.setProcedureId(drRequest.getProcedureId());
+        req.setDataEvaluator(drRequest.getDataEvaluator());
+        req.setDataOwner(drRequest.getDataOwner());
+        req.setDataRequestSubject(drRequest.getDataRequestSubject());
+        req.setRequestGrounds(drRequest.getRequestGrounds());
+        req.setCanonicalEvidenceTypeId(drRequest.getCanonicalEvidenceTypeId());
+        req.setAdditionalParameters(drRequest.getAdditionalParameters());
+        return req;
+    }
     public static RequestTransferEvidenceUSIDTType buildDtUsiRequest(RequestExtractEvidenceUSIType doRequest, CanonicalEvidenceType canonicalEvidence, DomesticsEvidencesType domesticEvidences, ErrorListType errorListType) {
         RequestTransferEvidenceUSIDTType req = new RequestTransferEvidenceUSIDTType();
         req.setRequestId(doRequest.getRequestId());
