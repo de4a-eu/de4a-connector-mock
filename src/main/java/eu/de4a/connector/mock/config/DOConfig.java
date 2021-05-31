@@ -25,6 +25,9 @@ public class DOConfig implements Serializable {
     @Value("${mock.do.preview.evidence.reject.endpoint}")
     private String previewEvidenceReject;
     @Getter
+    @Value("${mock.do.preview.evidence.error.endpoint}")
+    private String previewEvidenceError;
+    @Getter
     @Value("${mock.do.preview.dt.url}")
     private String previewDTUrl;
     @Getter

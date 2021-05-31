@@ -69,7 +69,9 @@ public class DOPreviewController {
         RequestUserRedirectionType redirection = marshaller.read(bodyStream);
         previewStorage.setRedirectUrl(redirection.getRequestId(), redirection.getRedirectURL());
         return new ModelAndView(
-                String.format("redirect:%s?requestId=%s",
+                String.format("redirect:%s%s%s?requestId=%s",
+                        baseUrl,
+                        doConfig.getPreviewBaseEndpoint(),
                         doConfig.getIndexEndpoint(),
                         redirection.getRequestId()));
     }
@@ -91,8 +93,8 @@ public class DOPreviewController {
                         dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(request));
     }
 
-    @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.accept.endpoint}")
-    public ResponseEntity<Object> acceptEvidence(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
+    @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.accept.endpoint}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> acceptEvidence(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
         RequestTransferEvidenceUSIDTType request;
         request = previewStorage.getRequest(requestId).get();
 
@@ -100,15 +102,12 @@ public class DOPreviewController {
         redirectionType.setRequestId(requestId);
         redirectionType.setEvidenceStatus(EvidenceStatusType.AGREE);
         String redirectUrl = previewStorage.getRedirectUrl(requestId);
+        CompletableFuture<String> locationUrl;
         if (redirectUrl.isEmpty()) {
-            ErrorListType errorListType = request.getErrorList();
-            if (errorListType == null) {
-                errorListType = new ErrorListType();
-                request.setErrorList(errorListType);
-            }
-            errorListType.addError(DE4AResponseDocumentHelper.createError(ErrorCodes.DE4A_ERROR.getCode(), "no redirect url recieved"));
+            log.error("no redirect url recieved");
+            locationUrl = CompletableFuture.completedFuture("");
         } else {
-            sendDeRedirect(redirectUrl, redirectionType, request, log::error );
+            locationUrl = sendDeRedirect(redirectUrl, redirectionType, log::error );
         }
         try {
             Boolean success = DOController.sendDTRequest(doConfig.getPreviewDTUrl(), request, log::error).get();
@@ -132,11 +131,11 @@ public class DOPreviewController {
         log.debug("sending websocket message {}: {}", endpoint, message);
         websocketMessaging.convertAndSend(endpoint, message);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(locationUrl.get());
     }
 
-    @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.reject.endpoint}")
-    public ResponseEntity<Object> rejectEvidence(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
+    @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.reject.endpoint}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> rejectEvidence(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
         RequestTransferEvidenceUSIDTType request;
         request = previewStorage.getRequest(requestId).get();
         request.setCanonicalEvidence(null);
@@ -149,15 +148,12 @@ public class DOPreviewController {
         redirectionType.setRequestId(requestId);
         redirectionType.setEvidenceStatus(EvidenceStatusType.DISAGREE);
         String redirectUrl = previewStorage.getRedirectUrl(requestId);
+        CompletableFuture<String> locationUrl;
         if (redirectUrl.isEmpty()) {
-            ErrorListType errorListType = request.getErrorList();
-            if (errorListType == null) {
-                errorListType = new ErrorListType();
-                request.setErrorList(errorListType);
-            }
-            errorListType.addError(DE4AResponseDocumentHelper.createError(ErrorCodes.DE4A_ERROR.getCode(), "no redirect url recieved"));
+            log.error("no redirect url recieved");
+            locationUrl = CompletableFuture.completedFuture("");
         } else {
-            sendDeRedirect(redirectUrl, redirectionType, request, log::error);
+            locationUrl = sendDeRedirect(redirectUrl, redirectionType, log::error);
         }
         try {
             Boolean success = DOController.sendDTRequest(doConfig.getPreviewDTUrl(), request, log::error).get();
@@ -181,7 +177,23 @@ public class DOPreviewController {
         log.debug("sending websocket message {}: {}", endpoint, message);
         websocketMessaging.convertAndSend(endpoint, message);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(locationUrl.get());
+    }
+
+    @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.error.endpoint}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> redirectError(@PathVariable String requestId) throws ExecutionException, InterruptedException {
+        ResponseUserRedirectionType redirectionType = new ResponseUserRedirectionType();
+        redirectionType.setRequestId(requestId);
+        redirectionType.setEvidenceStatus(EvidenceStatusType.ERROR);
+        String redirectUrl = previewStorage.getRedirectUrl(requestId);
+        CompletableFuture<String> locationUrl;
+        if (redirectUrl.isEmpty()) {
+            log.error("no redirect url recieved");
+            locationUrl = CompletableFuture.completedFuture("");
+        } else {
+            locationUrl = sendDeRedirect(redirectUrl, redirectionType, log::error);
+        }
+        return ResponseEntity.ok(locationUrl.get());
     }
 
     @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.requestId.all.endpoint}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -189,19 +201,9 @@ public class DOPreviewController {
         return ResponseEntity.ok(previewStorage.getAllRequestIds());
     }
 
-    @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.redirecturl.endpoint}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getRedirectUrl(@PathVariable String requestId) {
-        String redirectUrl = previewStorage.getRedirectUrl(requestId);
-        if (redirectUrl.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(redirectUrl);
-    }
-
-    public static CompletableFuture<Boolean> sendDeRedirect(
+    public static CompletableFuture<String> sendDeRedirect(
             String recipient,
             ResponseUserRedirectionType request,
-            RequestTransferEvidenceUSIDTType dtRequest,
             Consumer<String> onFailure) {
         HttpResponse deResp;
         try {
@@ -210,32 +212,17 @@ public class DOPreviewController {
                             .getAsInputStream(request), ContentType.APPLICATION_XML)
                     .execute().returnResponse();
         } catch (IOException ex) {
-            onFailure.accept(String.format("Failed to send pre-redirect post to dt: %s", ex.getMessage()));
-            ErrorListType errorListType =  dtRequest.getErrorList();
-            if (errorListType == null) {
-                errorListType = new ErrorListType();
-                dtRequest.setErrorList(errorListType);
-            }
-            errorListType.addError(DE4AResponseDocumentHelper.createError(ErrorCodes.DE4A_ERROR.getCode(), "Failed to send pre-redirect post to dt"));
-            return CompletableFuture.completedFuture(false);
+            onFailure.accept(String.format("Failed to send redirect post to de: %s", ex.getMessage()));
+            return CompletableFuture.completedFuture("");
         }
-        if (deResp.getStatusLine().getStatusCode() < 200 || deResp.getStatusLine().getStatusCode() >= 300) {
-            String errorString = String.format("Request sent to dt got status code %s, request %s body: %s", deResp.getStatusLine().getStatusCode(),
-                    recipient,
-                    DE4AMarshaller
-                            .deUsiRedirectResponseMarshaller()
-                            .getAsString(request) );
+        if (deResp.getStatusLine().getStatusCode() != 302) {
+            String errorString = String.format("Request sent to dt got status code %s, unable to redirect to de", deResp.getStatusLine().getStatusCode());
             onFailure.accept(errorString);
-            ErrorListType errorListType =  dtRequest.getErrorList();
-            if (errorListType == null) {
-                errorListType = new ErrorListType();
-                dtRequest.setErrorList(errorListType);
-            }
-            errorListType.addError(DE4AResponseDocumentHelper.createError(ErrorCodes.DE4A_ERROR.getCode(), errorString));
-            return CompletableFuture.completedFuture(false);
+            return CompletableFuture.completedFuture("");
         }
-        log.debug("Successfully sent de redirect post for request with id: {}", request.getRequestId());
+        String url = deResp.getFirstHeader("Location").toString();
+        log.debug("Successfully sent de redirect post for request with id: {}, got redirect location: {}", request.getRequestId(), url);
 
-        return CompletableFuture.completedFuture(true);
+        return CompletableFuture.completedFuture(url);
     }
 }
