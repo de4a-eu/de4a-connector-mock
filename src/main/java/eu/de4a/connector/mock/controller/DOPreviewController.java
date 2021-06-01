@@ -227,7 +227,7 @@ public class DOPreviewController {
             onFailure.accept(errorString);
             return CompletableFuture.completedFuture("");
         }
-        String url = deResp.getFirstHeader("Location").toString();
+        String url = deResp.getFirstHeader("Location").getValue();
         log.debug("Successfully sent de redirect post for request with id: {}, got redirect location: {}", request.getRequestId(), url);
 
         return CompletableFuture.completedFuture(url);
