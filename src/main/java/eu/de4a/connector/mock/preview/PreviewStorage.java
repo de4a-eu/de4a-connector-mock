@@ -12,6 +12,7 @@ import java.time.Instant;
 import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -23,39 +24,39 @@ public class PreviewStorage {
 
     // For concurrency handling, I'm assuming the requestId is unique. Since the data is not changed it can be considered
     // immutable no further assumptions are needed.
-    private ConcurrentHashMap<String, Pair<Object, RequestTransferEvidenceUSIDTType>> requestToPreview;
+    private ConcurrentHashMap<String, Preview<RequestTransferEvidenceUSIDTType>> requestToPreview;
     private TaskScheduler taskScheduler;
 
     public PreviewStorage(TaskScheduler taskScheduler) {
         this.taskScheduler = taskScheduler;
         this.requestToPreview = new ConcurrentHashMap<>();
-        this.taskScheduler.scheduleWithFixedDelay(() -> this.pruneOld(Duration.ofHours(1)), Duration.ofMinutes(1));
+        this.taskScheduler.scheduleWithFixedDelay(() -> this.pruneOld(Duration.ofMinutes(35)), Duration.ofSeconds(20));
     }
 
-    private Pair<Object, RequestTransferEvidenceUSIDTType> getRequestLockPair(String requestId) {
+    private Preview<RequestTransferEvidenceUSIDTType> getRequestLockPair(String requestId) {
         if (!requestToPreview.containsKey(requestId)) {
-            requestToPreview.put(requestId, new Pair<>(new Object(), null));
+            requestToPreview.put(requestId, new Preview<>(null, ""));
         }
         return requestToPreview.get(requestId);
     }
 
     public void addRequestToPreview(RequestTransferEvidenceUSIDTType request) {
-        Pair<Object, RequestTransferEvidenceUSIDTType> pair = getRequestLockPair(request.getRequestId());
-        synchronized (pair.lock) {
-            pair.object = request;
-            pair.lock.notifyAll();
+        Preview<RequestTransferEvidenceUSIDTType> preview = getRequestLockPair(request.getRequestId());
+        synchronized (preview.lock) {
+            preview.object = request;
+            preview.lock.notifyAll();
         }
     }
 
     public CompletableFuture<RequestTransferEvidenceUSIDTType> getRequest(String requestId) throws InterruptedException {
-        Pair<Object, RequestTransferEvidenceUSIDTType> pair =  getRequestLockPair(requestId);
+        Preview<RequestTransferEvidenceUSIDTType> preview =  getRequestLockPair(requestId);
         while (requestToPreview.containsKey(requestId)) {
-            synchronized (pair.lock) {
-                if (pair.object != null) {
-                    return CompletableFuture.completedFuture(pair.object);
+            synchronized (preview.lock) {
+                if (preview.object != null) {
+                    return CompletableFuture.completedFuture(preview.object);
                 }
                 log.debug("wait");
-                pair.lock.wait();
+                preview.lock.wait();
             }
         }
         return CompletableFuture.failedFuture(new IOException("Preview pruned, too old"));
@@ -66,6 +67,19 @@ public class PreviewStorage {
                 .filter(entry -> entry.getValue().object != null)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
+    }
+
+    public void setRedirectUrl(String requestId, String redirectionUrl) {
+        Preview<RequestTransferEvidenceUSIDTType> preview = getRequestLockPair(requestId);
+        preview.redirectionUrl = redirectionUrl;
+    }
+
+    public String getRedirectUrl(String requestId) {
+        var preview = requestToPreview.get(requestId);
+        if (preview == null) {
+            return "";
+        }
+        return preview.redirectionUrl;
     }
 
     public void pruneOld(TemporalAmount oldThreshold) {
@@ -81,15 +95,17 @@ public class PreviewStorage {
         requestToPreview.remove(requestId);
     }
 
-    private static class Pair<Lock, Object> {
-        private final Lock lock;
-        private Object object;
+    private static class Preview<T> {
+        private final Object lock;
+        private T object;
+        private String redirectionUrl;
         private Instant timeStamp;
 
-        private Pair(Lock lock, Object object) {
-            this.lock = lock;
+        private Preview(T object, String redirectionUrl) {
+            this.lock = new Object();
             this.object = object;
             this.timeStamp = Instant.now();
+            this.redirectionUrl = redirectionUrl;
         }
     }
 }

@@ -21,6 +21,7 @@ translate.whenUndefined = (key, locale) => {
 const EvidenceStatus = {
     Accepted: 'Accepted',
     Rejected: 'Rejected',
+    Processing: 'Processing',
     Unanswered: 'Unanswered',
     FetchingEvidence: 'FetchingEvidence',
     NoSuchEvidence: 'NoSuchEvidence',
@@ -44,7 +45,6 @@ const App = () => {
     const [evidenceStatus, setEvidenceStatus] = useState(EvidenceStatus.FetchingEvidence)
     const [evidencesList, setEvidencesList] = useState([])
     const [requestId, setRequestId] = useState("")
-    const [backUrl, setBackUrl] = useState("")
 
     const evidencesListRef = useRef(evidencesList)
     const setEvidencesListRef = useRef(setEvidencesList)
@@ -55,38 +55,86 @@ const App = () => {
     const backUrlParam = urlParams.get('backUrl')
     const pathName = useLocation().pathname
 
-    const acceptEvidence = () => axios.get(format(window.DO_CONST['previewAcceptEndpoint'], {requestId: requestId}))
-        .then(response => {
-            setEvidenceStatus(EvidenceStatus.Accepted)
-            let urlString = backUrl
-            if (urlString === "") {
-                if (backUrlParam && backUrlParam !== "") {
-                    urlString = backUrlParam
-                } else {
+    const timeoutRedirect = (timeout, redirectUrl) => {
+        setTimeout(() => {
+            setEvidenceStatus(EvidenceStatus.Error)
+            errorEvidence()
+        }, timeout)
+    }
+
+    const errorEvidence = () => {
+        axios.get(format(window.DO_CONST['previewErrorEndpoint'], {requestId: requestId}))
+            .then(response => {
+                setEvidenceStatus(EvidenceStatus.Error)
+                let locationUrl = response.data
+                if (locationUrl === "" && !backUrlParam || backUrlParam === "") {
                     console.error("no back url provided")
                     setEvidenceStatus(EvidenceStatus.Error)
+                    return
                 }
-            }
-            let url = new URL(urlString)
-            url.searchParams.append('accept', 'true')
-            window.location.replace(url.toString());
-        })
-        .catch(error => {
-            console.error("error: ", error)
-            setEvidenceStatus(EvidenceStatus.Error)
-        })
+                if (locationUrl !== "") {
+                    window.location.replace(locationUrl);
+                } else {
+                    let url = new URL(backUrlParam)
+                    url.searchParams.append('accept', 'true')
+                    window.location.replace(url.toString());
+                }
+            })
+            .catch(error => {
+                console.error("error: ", error)
+                setEvidenceStatus(EvidenceStatus.Error)
+            })
+    }
 
-    const rejectEvidence = () => axios.get(format(window.DO_CONST['previewRejectEndpoint'], {requestId: requestId}))
-        .then(response => {
-            setEvidenceStatus(EvidenceStatus.Rejected)
-            const url = new URL(backUrl)
-            url.searchParams.append('accept', 'false')
-            window.location.replace(url.toString());
-        })
-        .catch(error => {
-            setEvidenceStatus(EvidenceStatus.Error)
-            console.log(error)
-        })
+    const acceptEvidence = () => {
+        setEvidenceStatus(EvidenceStatus.Processing)
+        axios.get(format(window.DO_CONST['previewAcceptEndpoint'], {requestId: requestId}))
+            .then(response => {
+                let locationUrl = response.data
+                setEvidenceStatus(EvidenceStatus.Accepted)
+                if (locationUrl === "" && !backUrlParam || backUrlParam === "") {
+                    console.error("no back url provided")
+                    setEvidenceStatus(EvidenceStatus.Error)
+                    return
+                }
+                if (locationUrl !== "") {
+                    window.location.replace(locationUrl);
+                } else {
+                    let url = new URL(backUrlParam)
+                    url.searchParams.append('accept', 'true')
+                    window.location.replace(url.toString());
+                }
+            })
+            .catch(error => {
+                console.error("error: ", error)
+                setEvidenceStatus(EvidenceStatus.Error)
+            })
+    }
+
+    const rejectEvidence = () => {
+        setEvidenceStatus(EvidenceStatus.Processing)
+        axios.get(format(window.DO_CONST['previewRejectEndpoint'], {requestId: requestId}))
+            .then(response => {
+                let locationUrl = response.data
+                setEvidenceStatus(EvidenceStatus.Rejected)
+                if (locationUrl === "" && !backUrlParam || backUrlParam === "") {
+                    console.error("no back url provided")
+                    setEvidenceStatus(EvidenceStatus.Error)
+                    return
+                }
+                if (locationUrl !== "") {
+                    window.location.replace(locationUrl);
+                } else {
+                    const url = new URL(backUrlParam)
+                    url.searchParams.append('accept', 'false')
+                    window.location.replace(url.toString());
+                }
+            })
+            .catch(error => {
+                setEvidenceStatus(EvidenceStatus.Error)
+                console.log(error)
+            })
+    }
 
     const fetchEvidence = (requestId) => {
         if (requestId && requestId !== "") {
@@ -97,7 +145,6 @@ const App = () => {
                     setEvidence(response.data)
                     setRequestId(requestId)
                     setEvidenceStatus(EvidenceStatus.Unanswered)
-                    extractBackUrl(response.data)
                     console.log(response)
                 })
                 .catch(error => {
@@ -110,25 +157,8 @@ const App = () => {
         }
     }
 
-    const extractBackUrl = (evidence) => {
-        const parser = new DOMParser()
-        const xmlEvidence = parser.parseFromString( evidence, "application/xml")
-        const xmlNS = xmlEvidence.createNSResolver(xmlEvidence)
-
-        const dataEvaluatorNode = xmlEvidence.evaluate(
-            "//*[local-name() = 'DataEvaluator']",
-            xmlEvidence,
-            xmlNS,
-            XPathResult.ANY_UNORDERED_NODE_TYPE,
-            null).singleNodeValue
-
-        if (dataEvaluatorNode.lastChild.localName === "RedirectURL") {
-            setBackUrl(dataEvaluatorNode.lastChild.innerHTML)
-        }
-    }
-
     const fetchPreviewEvidences = () =>
-        axios.get(window.DO_CONST['previewPreviewIdsEndpoint'])
+        axios.get(window.DO_CONST['previewIdsEndpoint'])
             .then(response => {
                 setEvidencesList(response.data)
             })
@@ -213,9 +243,18 @@ const App = () => {
                 return <p>Evidence accepted</p>
             case EvidenceStatus.Rejected:
                 return <p>Evidence rejected</p>
+            case EvidenceStatus.Processing:
+                return <Row>
+                    <Col>
+                        <ClipLoader/>
+                    </Col>
+                    <Col>
+                        <p>Processing answer</p>
+                    </Col>
+                </Row>
             case EvidenceStatus.Error:
             default:
-                return <p>Error occured</p>
+                return <p>Error occurred</p>
         }
     }
 

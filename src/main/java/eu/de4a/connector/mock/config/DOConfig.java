@@ -13,6 +13,9 @@ public class DOConfig implements Serializable {
     @Value("${mock.do.preview.endpoint.base}")
     private String previewBaseEndpoint;
     @Getter
+    @Value("${mock.do.preview.endpoint.index}")
+    private String indexEndpoint;
+    @Getter
     @Value("${mock.do.preview.evidence.get.endpoint}")
     private String previewEvidenceRequest;
     @Getter
@@ -21,6 +24,9 @@ public class DOConfig implements Serializable {
     @Getter
     @Value("${mock.do.preview.evidence.reject.endpoint}")
     private String previewEvidenceReject;
+    @Getter
+    @Value("${mock.do.preview.evidence.error.endpoint}")
+    private String previewEvidenceError;
     @Getter
     @Value("${mock.do.preview.dt.url}")
     private String previewDTUrl;
@@ -33,6 +39,9 @@ public class DOConfig implements Serializable {
     @Getter
     @Value("${mock.do.preview.evidence.requestId.all.endpoint}")
     private String previewRequestIdsEndpoint;
+    @Getter
+    @Value("${mock.do.preview.evidence.redirecturl.endpoint}")
+    private String previewRedirectUrlEndpoint;
     @Getter
     @Value("${mock.do.preview.bundle.path}")
     private String bundlePath;
