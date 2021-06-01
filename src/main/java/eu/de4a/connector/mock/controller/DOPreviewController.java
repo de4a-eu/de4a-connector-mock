@@ -63,7 +63,7 @@ public class DOPreviewController {
     }
 
     @CrossOrigin(originPatterns = "*")
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.SEE_OTHER)
     @PostMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.endpoint.index}")
     public ModelAndView redirectPost(InputStream bodyStream) {
         DE4AMarshaller<RequestUserRedirectionType> marshaller = DE4AMarshaller.deUsiRedirectRequestMarshaller();
@@ -108,6 +108,7 @@ public class DOPreviewController {
             log.error("no redirect url recieved");
             locationUrl = CompletableFuture.completedFuture("");
         } else {
+            log.debug("send de post");
             locationUrl = sendDeRedirect(redirectUrl, redirectionType, log::error );
         }
         try {
@@ -216,8 +217,8 @@ public class DOPreviewController {
             onFailure.accept(String.format("Failed to send redirect post to de: %s", ex.getMessage()));
             return CompletableFuture.completedFuture("");
         }
-        if (deResp.getStatusLine().getStatusCode() != 302) {
-            String errorString = String.format("Request sent to dt got status code %s, unable to redirect to de", deResp.getStatusLine().getStatusCode());
+        if (deResp.getStatusLine().getStatusCode() > 300 && deResp.getStatusLine().getStatusCode() <= 303 || deResp.getStatusLine().getStatusCode() == 307) {
+            String errorString = String.format("Request sent to de got status code %s, unable to redirect to de", deResp.getStatusLine().getStatusCode());
             onFailure.accept(errorString);
             return CompletableFuture.completedFuture("");
         }
