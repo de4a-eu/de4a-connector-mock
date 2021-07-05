@@ -208,6 +208,7 @@ public class DOPreviewController {
             ResponseUserRedirectionType request,
             Consumer<String> onFailure) {
         HttpResponse deResp;
+        log.debug("Prepare to send redirect post request %s to de at: %s", request.getRequestId(), recipient);
         try {
             deResp = Request.Post(recipient)
                     .bodyStream(DE4AMarshaller.deUsiRedirectResponseMarshaller()
