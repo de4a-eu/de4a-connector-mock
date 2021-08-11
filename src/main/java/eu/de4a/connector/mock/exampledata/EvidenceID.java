@@ -5,6 +5,9 @@ import lombok.Getter;
 import java.util.Arrays;
 
 public enum EvidenceID {
+    MARRIAGE_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::MarriageEvidence"),
+    BIRTH_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::BirthEvidence"),
+    DOMICILE_REGISTRATION_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::DomicileRegistrationEvidence"),
     COMPANY_REGISTRATION("urn:de4a-eu:CanonicalEvidenceType::CompanyRegistration"),
     HIGHER_EDUCATION_DIPLOMA("urn:de4a-eu:CanonicalEvidenceType::HigherEducationDiploma");
 
