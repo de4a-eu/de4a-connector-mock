@@ -5,6 +5,7 @@ import eu.de4a.iem.xml.de4a.t41.v2021_04_13.DE4AT41Marshaller;
 import eu.de4a.iem.xml.de4a.t42.v0_6.DE4AT42Marshaller;
 import eu.de4a.iem.xml.de4a.t43.v1_6b.DE4AT43Marshaller;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -17,6 +18,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 @Slf4j
+@ToString
 public enum CanonicalEvidenceExamples {
 
     T43_M_PT("12345678", new ClassPathResource("examples/T4.3-examples/MA-example-Marriage-PT.xml"), DataOwner.AMA_PT, EvidenceID.MARRIAGE_EVIDENCE, DE4AT43Marshaller.marriageEvidence(), USIAutoResponse.OFF),
@@ -24,7 +26,7 @@ public enum CanonicalEvidenceExamples {
     T43_M_PT_B("12345678B", new ClassPathResource("examples/T4.3-examples/MA-example-Marriage-PT-B.xml"), DataOwner.AMA_PT, EvidenceID.MARRIAGE_EVIDENCE, DE4AT43Marshaller.marriageEvidence(), USIAutoResponse.DELAY_5_SEC),
     T43_M_PT_C("12345678C", new ClassPathResource("examples/T4.3-examples/MA-example-Marriage-PT-C.xml"), DataOwner.AMA_PT, EvidenceID.MARRIAGE_EVIDENCE, DE4AT43Marshaller.marriageEvidence(), USIAutoResponse.DELAY_40_SEC),
     T43_M_PT_D("12345678D", new ClassPathResource("examples/T4.3-examples/MA-example-Marriage-PT-D.xml"), DataOwner.AMA_PT, EvidenceID.MARRIAGE_EVIDENCE, DE4AT43Marshaller.marriageEvidence(), USIAutoResponse.DELAY_240_SEC),
-    T43_DR_PT("12345678A", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-PT.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.OFF),
+    T43_DR_PT("12345678", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-PT.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.OFF),
     T43_DR_PT_A("12345678A", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-PT-A.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.IMMEDIATE),
     T43_DR_PT_B("12345678B", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-PT-B.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.DELAY_5_SEC),
     T43_DR_PT_C("12345678C", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-PT-C.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.DELAY_40_SEC),
@@ -78,9 +80,11 @@ public enum CanonicalEvidenceExamples {
     @Getter
     final private EvidenceID evidenceID;
     @Getter
+    @ToString.Exclude
     final private GenericJAXBMarshaller marshaller;
     @Getter
     final private USIAutoResponse usiAutoResponse;
+    @ToString.Exclude
     private Element documentElement;
     private final Pattern eIDASIdentifierPattern;
 

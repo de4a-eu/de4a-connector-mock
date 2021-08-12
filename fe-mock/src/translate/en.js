@@ -61,8 +61,19 @@ const trans_en = {
         "DomicileRegistrationEvidence": "Domicile registration evidence",
         "CertifiesDomicile": "Certifies domicile",
         "Inhabitant": "Inhabitant",
-        "Domicile": "Domicile"
-
+        "Domicile": "Domicile",
+        "IdentifierType": "Identifier type",
+        "IssuingAuthorityID": "Issuing authority ID",
+        "Citizenship": "Citizenship",
+        "Name": "Name",
+        "Parent": "Parent",
+        "BirthEvidence": "Birth evidence",
+        "FamilyNameAfterMarriage": "Family name after marriage",
+        "FamilyNameBeforeMarriage": "Family name before marriage",
+        "MaritalStatusBeforeMarriage": "Marital status before marriage",
+        "CertifiesEndOfMarriage": "Certifies end of marriage",
+        "DateOfEndOfMarriage": "Date of end of marriage",
+        "Cause": "Cause"
     },
     "acceptButton": "Accept data",
     "rejectButton": "Reject data",
