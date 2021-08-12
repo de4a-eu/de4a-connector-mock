@@ -19,6 +19,21 @@ import java.util.stream.Stream;
 @Slf4j
 public enum CanonicalEvidenceExamples {
 
+    T43_M_PT("12345678", new ClassPathResource("examples/T4.3-examples/MA-example-Marriage-PT.xml"), DataOwner.AMA_PT, EvidenceID.MARRIAGE_EVIDENCE, DE4AT43Marshaller.marriageEvidence(), USIAutoResponse.OFF),
+    T43_M_PT_A("12345678A", new ClassPathResource("examples/T4.3-examples/MA-example-Marriage-PT-A.xml"), DataOwner.AMA_PT, EvidenceID.MARRIAGE_EVIDENCE, DE4AT43Marshaller.marriageEvidence(), USIAutoResponse.IMMEDIATE),
+    T43_M_PT_B("12345678B", new ClassPathResource("examples/T4.3-examples/MA-example-Marriage-PT-B.xml"), DataOwner.AMA_PT, EvidenceID.MARRIAGE_EVIDENCE, DE4AT43Marshaller.marriageEvidence(), USIAutoResponse.DELAY_5_SEC),
+    T43_M_PT_C("12345678C", new ClassPathResource("examples/T4.3-examples/MA-example-Marriage-PT-C.xml"), DataOwner.AMA_PT, EvidenceID.MARRIAGE_EVIDENCE, DE4AT43Marshaller.marriageEvidence(), USIAutoResponse.DELAY_40_SEC),
+    T43_M_PT_D("12345678D", new ClassPathResource("examples/T4.3-examples/MA-example-Marriage-PT-D.xml"), DataOwner.AMA_PT, EvidenceID.MARRIAGE_EVIDENCE, DE4AT43Marshaller.marriageEvidence(), USIAutoResponse.DELAY_240_SEC),
+    T43_DR_PT("12345678A", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-PT.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.OFF),
+    T43_DR_PT_A("12345678A", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-PT-A.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.IMMEDIATE),
+    T43_DR_PT_B("12345678B", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-PT-B.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.DELAY_5_SEC),
+    T43_DR_PT_C("12345678C", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-PT-C.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.DELAY_40_SEC),
+    T43_DR_PT_D("12345678D", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-PT-D.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.DELAY_240_SEC),
+    T43_B_PT("12345678", new ClassPathResource("examples/T4.3-examples/MA-example-Birth-PT.xml"), DataOwner.AMA_PT, EvidenceID.BIRTH_EVIDENCE, DE4AT43Marshaller.birthEvidence(), USIAutoResponse.OFF),
+    T43_B_PT_A("12345678A", new ClassPathResource("examples/T4.3-examples/MA-example-Birth-PT-A.xml"), DataOwner.AMA_PT, EvidenceID.BIRTH_EVIDENCE, DE4AT43Marshaller.birthEvidence(), USIAutoResponse.IMMEDIATE),
+    T43_B_PT_B("12345678B", new ClassPathResource("examples/T4.3-examples/MA-example-Birth-PT-B.xml"), DataOwner.AMA_PT, EvidenceID.BIRTH_EVIDENCE, DE4AT43Marshaller.birthEvidence(), USIAutoResponse.DELAY_5_SEC),
+    T43_B_PT_C("12345678C", new ClassPathResource("examples/T4.3-examples/MA-example-Birth-PT-C.xml"), DataOwner.AMA_PT, EvidenceID.BIRTH_EVIDENCE, DE4AT43Marshaller.birthEvidence(), USIAutoResponse.DELAY_40_SEC),
+    T43_B_PT_D("12345678D", new ClassPathResource("examples/T4.3-examples/MA-example-Birth-PT-D.xml"), DataOwner.AMA_PT, EvidenceID.BIRTH_EVIDENCE, DE4AT43Marshaller.birthEvidence(), USIAutoResponse.DELAY_240_SEC),
     T43_DR_ES("99999142H", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-ES.xml"), DataOwner.SGAD_ES, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.OFF),
     T43_DR_ES_A("99999142HA", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-ES-A.xml"), DataOwner.SGAD_ES, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.IMMEDIATE),
     T43_DR_ES_B("99999142HB", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-ES-B.xml"), DataOwner.SGAD_ES, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.DELAY_5_SEC),

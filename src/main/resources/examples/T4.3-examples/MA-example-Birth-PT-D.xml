@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<n3:BirthEvidence
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:person="http://www.w3.org/ns/corevocabulary/person"
+        xmlns:n1="http://www.altova.com/samplexml/other-namespace"
+        xmlns:cvb="http://www.w3.org/ns/corevocabulary/BasicComponents"
+        xmlns:cva="http://www.w3.org/ns/corevocabulary/AggregateComponents"
+        xmlns:n3="urn:eu-de4a:xsd:CanonicalEvidenceType::BirthEvidence:v1.6"
+        xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+        xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2"
+        xsi:schemaLocation="urn:eu-de4a:xsd:CanonicalEvidenceType::BirthEvidence:v1.6  birthEvidence-1.6.xsd">
+    <n3:Identifier>
+        <cvb:Identifier>PT-AMA-BIR-0098700111</cvb:Identifier>
+        <cvb:IdentifierType>BirthEvidenceId</cvb:IdentifierType>
+        <cbc:IssueDate>2021-09-19</cbc:IssueDate>
+        <cvb:IssuingAuthority>AMA - Administrative Modernization Agency, IP</cvb:IssuingAuthority>
+        <cvb:IssuingAuthorityID>PT-AMA-000123</cvb:IssuingAuthorityID>
+    </n3:Identifier>
+    <n3:IssueDate>2021-09-19</n3:IssueDate>
+    <n3:IssuingAuthority>
+        <n3:Identifier>
+            <cvb:Identifier>PT-IRN-002222333</cvb:Identifier>
+            <cvb:IdentifierType>IssuingAuthorityId</cvb:IdentifierType>
+            <cbc:IssueDate>1999-09-19</cbc:IssueDate>
+            <cvb:IssuingAuthority>IRN - Instituto dos Registos e do Notariado</cvb:IssuingAuthority>
+            <cvb:IssuingAuthorityID>PT-IRN-012333</cvb:IssuingAuthorityID>
+        </n3:Identifier>
+        <n3:PrefLabel>IRN - Instituto dos Registos e do Notariado</n3:PrefLabel>
+    </n3:IssuingAuthority>
+    <n3:IssuingPlace>
+        <cvb:PoBox></cvb:PoBox>
+        <cvb:LocatorDesignator></cvb:LocatorDesignator>
+        <cvb:LocatorName>Hgo Urgência Obstetrícia E Ginecologia</cvb:LocatorName>
+        <cvb:Thoroughfare>Av. Torrado da Silva</cvb:Thoroughfare>
+        <cvb:PostName>Almada</cvb:PostName>
+        <cvb:PostCode>2805-267</cvb:PostCode>
+        <n3:AddressArea>Almada</n3:AddressArea>
+        <n3:AdminUnitL2>Almada</n3:AdminUnitL2>
+        <n3:AdminUnitL1>PT</n3:AdminUnitL1>
+    </n3:IssuingPlace>
+    <n3:CertifiesBirth>
+        <n3:Child>
+            <n3:PersonName>
+                <n3:FamilyName>Karakolisd Karakolisd</n3:FamilyName>
+                <n3:GivenName>Panagiótisd Manouíld</n3:GivenName>
+            </n3:PersonName>
+            <n3:Identifier>
+                <cvb:Identifier>PT/PT/12345678D</cvb:Identifier>
+                <cvb:IdentifierType>eIDAS eID</cvb:IdentifierType>
+                <cbc:IssueDate>2020-08-13</cbc:IssueDate>
+                <cvb:IssuingAuthority>AMA - Administrative Modernization Agency, IP</cvb:IssuingAuthority>
+                <cvb:IssuingAuthorityID>PT-AMA-000123</cvb:IssuingAuthorityID>
+            </n3:Identifier>
+            <n3:Citizenship>
+                <cbc:Name>Greek</cbc:Name>
+                <n3:Identifier>GR</n3:Identifier>
+            </n3:Citizenship>
+            <n3:Citizenship>
+                <cbc:Name>Portuguese</cbc:Name>
+                <n3:Identifier>PT</n3:Identifier>
+            </n3:Citizenship>
+            <n3:DateOfBirth>
+                <n3:Year>2010</n3:Year>
+                <n3:Month>--12</n3:Month>
+                <n3:Day>---21</n3:Day>
+            </n3:DateOfBirth>
+            <n3:Gender>male</n3:Gender>
+            <n3:PlaceOfBirth>
+                <cvb:PoBox></cvb:PoBox>
+                <cvb:LocatorDesignator></cvb:LocatorDesignator>
+                <cvb:LocatorName>Hgo Urgência Obstetrícia E Ginecologia</cvb:LocatorName>
+                <cvb:Thoroughfare>Av. Torrado da Silva</cvb:Thoroughfare>
+                <cvb:PostName>Almada</cvb:PostName>
+                <cvb:PostCode>2805-267</cvb:PostCode>
+                <n3:AddressArea>Almada</n3:AddressArea>
+                <n3:AdminUnitL2>Almada</n3:AdminUnitL2>
+                <n3:AdminUnitL1>PT</n3:AdminUnitL1>
+            </n3:PlaceOfBirth>
+        </n3:Child>
+        <n3:Parent>
+            <n3:PersonName>
+                <n3:FamilyName>Karakolis</n3:FamilyName>
+                <n3:GivenName>Stavros</n3:GivenName>
+            </n3:PersonName>
+            <n3:Identifier>
+                <cvb:Identifier>GR/GR/12345678</cvb:Identifier>
+                <cvb:IdentifierType>eIDAS eID</cvb:IdentifierType>
+                <cbc:IssueDate>1957-08-13</cbc:IssueDate>
+                <cvb:IssuingAuthority>Institute of Registry and Notary</cvb:IssuingAuthority>
+                <cvb:IssuingAuthorityID>GR-12345678</cvb:IssuingAuthorityID>
+            </n3:Identifier>
+            <n3:Citizenship>
+                <cbc:Name>Greek</cbc:Name>
+                <n3:Identifier>GR</n3:Identifier>
+            </n3:Citizenship>
+            <n3:DateOfBirth>
+                <n3:Year>1990</n3:Year>
+                <n3:Month>--12</n3:Month>
+                <n3:Day>---17</n3:Day>
+            </n3:DateOfBirth>
+            <n3:Gender>male</n3:Gender>
+            <n3:PlaceOfBirth>
+                <cvb:PoBox>1</cvb:PoBox>
+                <cvb:LocatorDesignator>1</cvb:LocatorDesignator>
+                <cvb:LocatorName>Nosokomeio Paidon I Agia Sofia</cvb:LocatorName>
+                <cvb:Thoroughfare>Thivon</cvb:Thoroughfare>
+                <cvb:PostName>Athina</cvb:PostName>
+                <cvb:PostCode>115 27</cvb:PostCode>
+                <n3:AddressArea>Athina</n3:AddressArea>
+                <n3:AdminUnitL2>Athina</n3:AdminUnitL2>
+                <n3:AdminUnitL1>GR</n3:AdminUnitL1>
+            </n3:PlaceOfBirth>
+        </n3:Parent>
+        <n3:Parent>
+            <n3:PersonName>
+                <n3:FamilyName>Lopes Sequeira</n3:FamilyName>
+                <n3:GivenName>Maria Carolina</n3:GivenName>
+            </n3:PersonName>
+            <n3:Identifier>
+                <cvb:Identifier>PT/PT/12345999</cvb:Identifier>
+                <cvb:IdentifierType>eIDAS eID</cvb:IdentifierType>
+                <cbc:IssueDate>1982-04-23</cbc:IssueDate>
+                <cvb:IssuingAuthority>AMA - Administrative Modernization Agency, IP</cvb:IssuingAuthority>
+                <cvb:IssuingAuthorityID>PT-AMA-000123</cvb:IssuingAuthorityID>
+            </n3:Identifier>
+            <n3:Citizenship>
+                <cbc:Name>Portuguese</cbc:Name>
+                <n3:Identifier>PT</n3:Identifier>
+            </n3:Citizenship>
+            <n3:DateOfBirth>
+                <n3:Year>1987</n3:Year>
+                <n3:Month>--03</n3:Month>
+                <n3:Day>---27</n3:Day>
+            </n3:DateOfBirth>
+            <n3:Gender>female</n3:Gender>
+            <n3:PlaceOfBirth>
+                <cvb:PoBox>5</cvb:PoBox>
+                <cvb:LocatorDesignator>5</cvb:LocatorDesignator>
+                <cvb:LocatorName>Centro Hospitalar de Entre Douro e Vouga</cvb:LocatorName>
+                <cvb:Thoroughfare>R. Dr. Cândido Pinho</cvb:Thoroughfare>
+                <cvb:PostName>Santa Maria da Feira</cvb:PostName>
+                <cvb:PostCode>4520-211</cvb:PostCode>
+                <n3:AddressArea>Santa Maria da Feira</n3:AddressArea>
+                <n3:AdminUnitL2>Santa Maria da Feira</n3:AdminUnitL2>
+                <n3:AdminUnitL1>PT</n3:AdminUnitL1>
+            </n3:PlaceOfBirth>
+        </n3:Parent>
+    </n3:CertifiesBirth>
+</n3:BirthEvidence>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<n3:DomicileRegistrationEvidence
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:person="http://www.w3.org/ns/corevocabulary/person"
+        xmlns:n1="http://www.altova.com/samplexml/other-namespace"
+        xmlns:cvb="http://www.w3.org/ns/corevocabulary/BasicComponents"
+        xmlns:cva="http://www.w3.org/ns/corevocabulary/AggregateComponents"
+        xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"
+        xmlns:n3="urn:eu-de4a:xsd:CanonicalEvidenceType::DomicileRegistrationEvidence:v1.6"
+        xmlns:ext="urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2"
+        xsi:schemaLocation="urn:eu-de4a:xsd:CanonicalEvidenceType::DomicileRegistrationEvidence:v1.6  domicileRegistrationEvidence-1.6.xsd">
+    <n3:Identifier>
+        <cvb:Identifier>PT-AMA-DOM-0098700123</cvb:Identifier>
+        <cvb:IdentifierType>DomicileRegistrationEvidenceId</cvb:IdentifierType>
+        <cbc:IssueDate>2020-01-01</cbc:IssueDate>
+        <cvb:IssuingAuthority>AMA - Administrative Modernization Agency, IP</cvb:IssuingAuthority>
+        <cvb:IssuingAuthorityID>PT-AMA-000123</cvb:IssuingAuthorityID>
+    </n3:Identifier>
+    <n3:IssueDate>2020-01-01</n3:IssueDate>
+    <n3:IssuingAuthority>
+        <n3:Identifier>
+            <cvb:Identifier>PT-IRN-00012333</cvb:Identifier>
+            <cvb:IdentifierType>IssuingAuthorityId</cvb:IdentifierType>
+            <cbc:IssueDate>1957-08-13</cbc:IssueDate>
+            <cvb:IssuingAuthority>IRN - Instituto dos Registos e do Notariado</cvb:IssuingAuthority>
+            <cvb:IssuingAuthorityID>PT-IRN-012333</cvb:IssuingAuthorityID>
+        </n3:Identifier>
+        <n3:PrefLabel>IRN - Instituto dos Registos e do Notariado</n3:PrefLabel>
+    </n3:IssuingAuthority>
+    <n3:IssuingPlace>
+        <cvb:PoBox>1.08.01, Edifício H</cvb:PoBox>
+        <cvb:LocatorDesignator>1.08.01, Edifício H</cvb:LocatorDesignator>
+        <cvb:LocatorName>Edifício H - Campus de Justiça</cvb:LocatorName>
+        <cvb:Thoroughfare>Avenida D. João II</cvb:Thoroughfare>
+        <cvb:PostName>Lisboa</cvb:PostName>
+        <cvb:PostCode>1990-097</cvb:PostCode>
+        <n3:AddressArea>Lisboa</n3:AddressArea>
+        <n3:AdminUnitL2>Lisboa</n3:AdminUnitL2>
+        <n3:AdminUnitL1>PT</n3:AdminUnitL1>
+    </n3:IssuingPlace>
+    <n3:CertifiesDomicile>
+        <n3:Inhabitant>
+            <n3:PersonName>
+                <n3:FamilyName>Karakolisc Karakolisc</n3:FamilyName>
+                <n3:GivenName>Panagiótisc</n3:GivenName>
+            </n3:PersonName>
+            <n3:Identifier>
+                <cvb:Identifier>PT/PT/12345678C</cvb:Identifier>
+                <cvb:IdentifierType>eIDAS eID</cvb:IdentifierType>
+                <cbc:IssueDate>2020-08-13</cbc:IssueDate>
+                <cvb:IssuingAuthority>AMA - Administrative Modernization Agency, IP</cvb:IssuingAuthority>
+                <cvb:IssuingAuthorityID>PT-AMA-000123</cvb:IssuingAuthorityID>
+            </n3:Identifier>
+            <n3:Identifier>
+                <cvb:Identifier>12345678</cvb:Identifier>
+                <cvb:IdentifierType>NIC</cvb:IdentifierType>
+                <cbc:IssueDate>2020-08-13</cbc:IssueDate>
+                <cvb:IssuingAuthority>IRN - Instituto dos Registos e do Notariado</cvb:IssuingAuthority>
+                <cvb:IssuingAuthorityID>PT-IRN-012333</cvb:IssuingAuthorityID>
+            </n3:Identifier>
+            <n3:Identifier>
+                <cvb:Identifier>PASS12345678</cvb:Identifier>
+                <cvb:IdentifierType>PAS</cvb:IdentifierType>
+                <cbc:IssueDate>2019-05-13</cbc:IssueDate>
+                <cvb:IssuingAuthority>IRN - Instituto dos Registos e do Notariado</cvb:IssuingAuthority>
+                <cvb:IssuingAuthorityID>PT-IRN-012333</cvb:IssuingAuthorityID>
+            </n3:Identifier>
+            <n3:Identifier>
+                <cvb:Identifier>CR12345678</cvb:Identifier>
+                <cvb:IdentifierType>CR</cvb:IdentifierType>
+                <cbc:IssueDate>2018-01-11</cbc:IssueDate>
+                <cvb:IssuingAuthority>SEF - Serviço de Estrangeiros e Fronteiras</cvb:IssuingAuthority>
+                <cvb:IssuingAuthorityID>PT-IRN-012333</cvb:IssuingAuthorityID>
+            </n3:Identifier>
+            <n3:DateOfBirth>
+                <n3:Year>1980</n3:Year>
+                <n3:Month>--12</n3:Month>
+                <n3:Day>---20</n3:Day>
+            </n3:DateOfBirth>
+            <n3:Gender>male</n3:Gender>
+            <n3:MaritalStatus>married person</n3:MaritalStatus>
+            <n3:PlaceOfBirth>
+                <cvb:PoBox>5</cvb:PoBox>
+                <cvb:LocatorDesignator>5</cvb:LocatorDesignator>
+                <cvb:LocatorName>Centro Hospitalar de Entre Douro e Vouga</cvb:LocatorName>
+                <cvb:Thoroughfare>R. Dr. Cândido Pinho</cvb:Thoroughfare>
+                <cvb:PostName>Santa Maria da Feira</cvb:PostName>
+                <cvb:PostCode>4520-211</cvb:PostCode>
+                <n3:AddressArea>Santa Maria da Feira</n3:AddressArea>
+                <n3:AdminUnitL2>Santa Maria da Feira</n3:AdminUnitL2>
+                <n3:AdminUnitL1>PT</n3:AdminUnitL1>
+            </n3:PlaceOfBirth>
+            <n3:Citizenship>
+                <cbc:Name>Greek</cbc:Name>
+                <n3:Identifier>GR</n3:Identifier>
+            </n3:Citizenship>
+            <n3:Citizenship>
+                <cbc:Name>Portuguese</cbc:Name>
+                <n3:Identifier>PT</n3:Identifier>
+            </n3:Citizenship>
+        </n3:Inhabitant>
+        <n3:Domicile>
+            <cvb:PoBox>22</cvb:PoBox>
+            <cvb:LocatorDesignator>22, 2º esq</cvb:LocatorDesignator>
+            <cvb:LocatorName>Edifício Pizza Hut</cvb:LocatorName>
+            <cvb:Thoroughfare>Rua de Galileu Saúde Correia</cvb:Thoroughfare>
+            <cvb:PostName>Almada</cvb:PostName>
+            <cvb:PostCode>2800-692</cvb:PostCode>
+            <n3:AddressArea>Almada</n3:AddressArea>
+            <n3:AdminUnitL2>Almada</n3:AdminUnitL2>
+            <n3:AdminUnitL1>PT</n3:AdminUnitL1>
+        </n3:Domicile>
+    </n3:CertifiesDomicile>
+</n3:DomicileRegistrationEvidence>

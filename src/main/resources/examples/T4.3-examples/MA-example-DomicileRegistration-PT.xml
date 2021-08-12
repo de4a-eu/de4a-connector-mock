@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <bi:DomicileRegistrationEvidence
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:cvb="http://www.w3.org/ns/corevocabulary/BasicComponents"
@@ -20,16 +19,16 @@
     <bi:CertifiesDomicile>
         <bi:Inhabitant>
             <bi:PersonName>
-                <bi:FamilyName>ApellidoPrimerob ApellidoSegundob</bi:FamilyName>
-                <bi:GivenName>Nombreb</bi:GivenName>
+                <bi:FamilyName>ApellidoPrimero ApellidoSegundo</bi:FamilyName>
+                <bi:GivenName>Nombre</bi:GivenName>
             </bi:PersonName>
             <bi:Identifier>
-                <cvb:Identifier>99999142HB</cvb:Identifier>
+                <cvb:Identifier>99999142H</cvb:Identifier>
             </bi:Identifier>
             <bi:DateOfBirth>
                 <bi:Year>2000</bi:Year>
                 <bi:Month>--01</bi:Month>
-                <bi:Day>---03</bi:Day>
+                <bi:Day>---01</bi:Day>
             </bi:DateOfBirth>
             <bi:Gender>UNKNOWN</bi:Gender>
         </bi:Inhabitant>
