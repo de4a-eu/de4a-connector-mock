@@ -4,13 +4,8 @@ const port = process.env.PORT || 3000;
 
 module.exports = {
     entry: "./src/index.js",
-    mode: 'development',
     output: {
         filename: '../../target/classes/static/built/bundle.js'
-    },
-    devtool: 'inline-source-map',
-    devServer: {
-        historyApiFallback: true,
     },
     module: {
         rules: [

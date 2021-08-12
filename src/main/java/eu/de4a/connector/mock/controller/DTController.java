@@ -44,11 +44,7 @@ public class DTController {
 
     @PostMapping("${mock.dt.endpoint.usi}")
     public ResponseEntity<String> dt1usiresp(InputStream body) throws MarshallException {
-        //todo: check dataowner and use CanonicalEvidenceType from Pilot enum.
-        var marshaller = DE4AMarshaller.dtUsiRequestMarshaller(
-                IDE4ACanonicalEvidenceType.multiple(
-                        EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V06,
-                        EDE4ACanonicalEvidenceType.T41_UC1_2021_04_13));
+        var marshaller = DE4AMarshaller.dtUsiRequestMarshaller(null);
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
@@ -66,18 +62,18 @@ public class DTController {
             if (dataOwner == null) {
                 log.error("no such data owner, how the hell did this happen?!");
             }
-            sendDERequest(forwardUSIUrl, deRequest, dataOwner, log::error);
+            sendDERequest(forwardUSIUrl, deRequest, log::error);
         }
 
         var res = DE4AResponseDocumentHelper.createResponseError(true);
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.dtUsiResponseMarshaller().getAsString(res));
     }
 
-    public static CompletableFuture<Boolean> sendDERequest(String recipient, RequestForwardEvidenceType request, DataOwner dataOwner, Consumer<String> onFailure) {
+    public static CompletableFuture<Boolean> sendDERequest(String recipient, RequestForwardEvidenceType request, Consumer<String> onFailure) {
         HttpResponse deResp;
         try {
             deResp = Request.Post(recipient)
-                    .bodyStream(DE4AMarshaller.deUsiRequestMarshaller(dataOwner.getPilot().getCanonicalEvidenceType())
+                    .bodyStream(DE4AMarshaller.deUsiRequestMarshaller(null)
                             .getAsInputStream(request), ContentType.APPLICATION_XML)
                     .execute().returnResponse();
         } catch (IOException ex) {
@@ -88,7 +84,7 @@ public class DTController {
             onFailure.accept(String.format("Request sent to de got status code %s, request %s body: %s", deResp.getStatusLine().getStatusCode(),
                     recipient,
                     DE4AMarshaller
-                            .deUsiRequestMarshaller(dataOwner.getPilot().getCanonicalEvidenceType())
+                            .deUsiRequestMarshaller(null)
                             .getAsString(request)));
             return CompletableFuture.completedFuture(false);
         }

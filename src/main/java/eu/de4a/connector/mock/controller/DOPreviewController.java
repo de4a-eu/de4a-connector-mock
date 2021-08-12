@@ -13,6 +13,7 @@ import eu.de4a.iem.jaxb.common.types.*;
 import eu.de4a.iem.xml.de4a.CDE4AJAXB;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
 import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
+import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
@@ -98,6 +99,7 @@ public class DOPreviewController {
     public ResponseEntity<String> acceptEvidence(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
         RequestTransferEvidenceUSIDTType request;
         request = previewStorage.getRequest(requestId).get();
+        IDE4ACanonicalEvidenceType canonicalEvidenceType = previewStorage.getCanonicalEvidenceType(requestId);
 
         ResponseUserRedirectionType redirectionType = new ResponseUserRedirectionType();
         redirectionType.setRequestId(requestId);
@@ -112,7 +114,7 @@ public class DOPreviewController {
             locationUrl = sendDeRedirect(redirectUrl, redirectionType, log::error );
         }
         try {
-            Boolean success = DOController.sendDTRequest(doConfig.getPreviewDTUrl(), request, log::error).get();
+            Boolean success = DOController.sendDTRequest(doConfig.getPreviewDTUrl(), request, canonicalEvidenceType, log::error).get();
             if (!success) {
                 return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
             }
@@ -158,7 +160,7 @@ public class DOPreviewController {
             locationUrl = sendDeRedirect(redirectUrl, redirectionType, log::error);
         }
         try {
-            Boolean success = DOController.sendDTRequest(doConfig.getPreviewDTUrl(), request, log::error).get();
+            Boolean success = DOController.sendDTRequest(doConfig.getPreviewDTUrl(), request, null, log::error).get();
             if (!success) {
                 return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
             }
@@ -208,6 +210,7 @@ public class DOPreviewController {
             ResponseUserRedirectionType request,
             Consumer<String> onFailure) {
         HttpResponse deResp;
+        log.debug("Prepare to send redirect post request %s to de at: %s", request.getRequestId(), recipient);
         try {
             deResp = Request.Post(recipient)
                     .bodyStream(DE4AMarshaller.deUsiRedirectResponseMarshaller()
@@ -227,7 +230,7 @@ public class DOPreviewController {
             onFailure.accept(errorString);
             return CompletableFuture.completedFuture("");
         }
-        String url = deResp.getFirstHeader("Location").toString();
+        String url = deResp.getFirstHeader("Location").getValue();
         log.debug("Successfully sent de redirect post for request with id: {}, got redirect location: {}", request.getRequestId(), url);
 
         return CompletableFuture.completedFuture(url);

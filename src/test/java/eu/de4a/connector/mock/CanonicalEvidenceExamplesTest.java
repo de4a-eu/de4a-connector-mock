@@ -16,6 +16,7 @@ public class CanonicalEvidenceExamplesTest {
 
     private static <T> void _testReadWrite (CanonicalEvidenceExamples example)
     {
+        log.info("testing canonical evidence example {}", example);
         try {
             File aFile = example.getResource().getFile();
             GenericJAXBMarshaller aMarshaller = example.getMarshaller();
@@ -27,7 +28,7 @@ public class CanonicalEvidenceExamplesTest {
             final byte[] aBytes = aMarshaller.getAsBytes(aRead);
             Assertions.assertNotNull(aBytes, "Failed to re-write " + aFile.getAbsolutePath());
 
-            if (true) {
+            if (false) {
                 aMarshaller.setFormattedOutput(true);
                 log.info(aMarshaller.getAsString(aRead));
             }

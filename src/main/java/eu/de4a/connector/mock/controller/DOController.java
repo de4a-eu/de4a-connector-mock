@@ -196,9 +196,9 @@ public class DOController {
         RequestTransferEvidenceUSIDTType dtRequest = Helper.buildDtUsiRequest(req, ce, null, null);
 
         if (canonicalEvidence.getUsiAutoResponse().useAutoResp()) {
-            taskScheduler.schedule(() -> sendDTRequest(doConfig.getPreviewDTUrl(), dtRequest, log::error), Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
+            taskScheduler.schedule(() -> sendDTRequest(doConfig.getPreviewDTUrl(), dtRequest, evidenceID.getCanonicalEvidenceType(), log::error), Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
         } else {
-            previewStorage.addRequestToPreview(dtRequest);
+            previewStorage.addRequestToPreview(dtRequest, evidenceID.getCanonicalEvidenceType());
             String message;
             try {
                 message = objectMapper.writeValueAsString(new PreviewMessage(PreviewMessage.Action.ADD, dtRequest.getRequestId()));
@@ -219,7 +219,7 @@ public class DOController {
 
 
 
-    public static CompletableFuture<Boolean> sendDTRequest(String recipient, RequestTransferEvidenceUSIDTType request, Consumer<String> onFailure) {
+    public static CompletableFuture<Boolean> sendDTRequest(String recipient, RequestTransferEvidenceUSIDTType request, IDE4ACanonicalEvidenceType canonicalEvidenceType, Consumer<String> onFailure) {
         DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
         HttpResponse dtResp;
         try {
@@ -235,7 +235,7 @@ public class DOController {
             onFailure.accept(String.format("Request sent to dt got status code %s, request %s body: %s", dtResp.getStatusLine().getStatusCode(),
                     recipient,
                     DE4AMarshaller
-                            .dtUsiRequestMarshaller(dataOwner.getPilot().getCanonicalEvidenceType())
+                            .dtUsiRequestMarshaller(canonicalEvidenceType)
                             .getAsString(request) ));
             return CompletableFuture.completedFuture(false);
         }
