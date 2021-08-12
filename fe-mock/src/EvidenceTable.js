@@ -72,6 +72,54 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
                 </Col>
             </Row>
         },
+        "IssuingPlace" : (node) => {
+            return <Row className='evidenceField'>
+                <Col>
+                    <p>{translate(`canonicalEvidenceFields.${node.localName}`)}</p>
+                </Col>
+                <Col>
+                    <p>{
+                        printAddress(mapChildrenToMap(Array.from(node.childNodes), addressMap))
+                    }</p>
+                </Col>
+            </Row>
+        },
+        "PlaceOfMarriage" : (node) => {
+            return <Row className='evidenceField'>
+                <Col>
+                    <p>{translate(`canonicalEvidenceFields.${node.localName}`)}</p>
+                </Col>
+                <Col>
+                    <p>{
+                        printAddress(mapChildrenToMap(Array.from(node.childNodes), addressMap))
+                    }</p>
+                </Col>
+            </Row>
+        },
+        "PlaceOfBirth" : (node) => {
+            return <Row className='evidenceField'>
+                <Col>
+                    <p>{translate(`canonicalEvidenceFields.${node.localName}`)}</p>
+                </Col>
+                <Col>
+                    <p>{
+                        printAddress(mapChildrenToMap(Array.from(node.childNodes), addressMap))
+                    }</p>
+                </Col>
+            </Row>
+        },
+        "Domicile" : (node) => {
+            return <Row className='evidenceField'>
+                <Col>
+                    <p>{translate(`canonicalEvidenceFields.${node.localName}`)}</p>
+                </Col>
+                <Col>
+                    <p>{
+                        printAddress(mapChildrenToMap(Array.from(node.childNodes), addressMap))
+                    }</p>
+                </Col>
+            </Row>
+        },
         "title" : (node) => {
             return handleTextChild(node)
         },
