@@ -17,7 +17,7 @@ public interface PilotInterface {
                 .map(PilotInterface::getDataRequestSubjectRestrictions)
                 .distinct()
                 .count() != 1) {
-            throw new ExampleException("multiple pilots must all have the same DataRequestSubjectRestrictions");
+            throw new ExampleDataException("multiple pilots must all have the same DataRequestSubjectRestrictions");
         }
         return new PilotInterface() {
 
