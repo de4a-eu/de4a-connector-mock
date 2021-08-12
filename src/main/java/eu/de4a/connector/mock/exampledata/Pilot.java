@@ -1,31 +1,33 @@
 package eu.de4a.connector.mock.exampledata;
 
 import eu.de4a.iem.jaxb.common.types.DataRequestSubjectCVType;
-import eu.de4a.iem.xml.de4a.EDE4ACanonicalEvidenceType;
 import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
 import lombok.Getter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Arrays;
 
 public enum Pilot implements PilotInterface {
-    T43(DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED, IDE4ACanonicalEvidenceType.multiple(
-                    EDE4ACanonicalEvidenceType.T43_BIRTH_EVIDENCE_V16B,
-                    EDE4ACanonicalEvidenceType.T43_DOMREG_EVIDENCE_V16B,
-                    EDE4ACanonicalEvidenceType.T43_MARRIAGE_EVIDENCE_V16B)),
-    T42(DataRequestSubjectRestrictions.LEGAL_ENTITY_REQUIRED, EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V06),
-    T41(DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED, EDE4ACanonicalEvidenceType.T41_UC1_2021_04_13);
+    T43(DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED,
+            EvidenceID.MARRIAGE_EVIDENCE, EvidenceID.BIRTH_EVIDENCE, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE),
+    T42(DataRequestSubjectRestrictions.LEGAL_ENTITY_REQUIRED, EvidenceID.COMPANY_REGISTRATION),
+    T41(DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED, EvidenceID.HIGHER_EDUCATION_DIPLOMA);
 
     @Getter
     private final DataRequestSubjectRestrictions dataRequestSubjectRestrictions;
-    @Getter
-    private final IDE4ACanonicalEvidenceType canonicalEvidenceType;
+    private final EvidenceID[] evidenceIDS;
 
     private Pilot(
             DataRequestSubjectRestrictions dataRequestSubjectRestrictions,
-            IDE4ACanonicalEvidenceType canonicalEvidenceType ) {
+            EvidenceID... evidenceIDS) {
         this.dataRequestSubjectRestrictions = dataRequestSubjectRestrictions;
-        this.canonicalEvidenceType = canonicalEvidenceType;
+        this.evidenceIDS = evidenceIDS;
+    }
+
+    public IDE4ACanonicalEvidenceType getCanonicalEvidenceType() {
+        return IDE4ACanonicalEvidenceType.multiple(
+                Arrays.stream(evidenceIDS)
+                        .map(EvidenceID::getCanonicalEvidenceType)
+                        .toArray(IDE4ACanonicalEvidenceType[]::new));
     }
 
     public boolean validDataRequestSubject(DataRequestSubjectCVType dataRequestSubjectCVType) {

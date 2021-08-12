@@ -1,6 +1,7 @@
 package eu.de4a.connector.mock.preview;
 
 import eu.de4a.iem.jaxb.common.types.RequestTransferEvidenceUSIDTType;
+import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.TaskScheduler;
@@ -35,15 +36,16 @@ public class PreviewStorage {
 
     private Preview<RequestTransferEvidenceUSIDTType> getRequestLockPair(String requestId) {
         if (!requestToPreview.containsKey(requestId)) {
-            requestToPreview.put(requestId, new Preview<>(null, ""));
+            requestToPreview.put(requestId, new Preview<>(null, "", null));
         }
         return requestToPreview.get(requestId);
     }
 
-    public void addRequestToPreview(RequestTransferEvidenceUSIDTType request) {
+    public void addRequestToPreview(RequestTransferEvidenceUSIDTType request, IDE4ACanonicalEvidenceType canonicalEvidenceType) {
         Preview<RequestTransferEvidenceUSIDTType> preview = getRequestLockPair(request.getRequestId());
         synchronized (preview.lock) {
             preview.object = request;
+            preview.canonicalEvidenceType = canonicalEvidenceType;
             preview.lock.notifyAll();
         }
     }
@@ -60,6 +62,11 @@ public class PreviewStorage {
             }
         }
         return CompletableFuture.failedFuture(new IOException("Preview pruned, too old"));
+    }
+
+    public IDE4ACanonicalEvidenceType getCanonicalEvidenceType(String requestId) {
+        Preview<RequestTransferEvidenceUSIDTType> preview = getRequestLockPair(requestId);
+        return preview.canonicalEvidenceType;
     }
 
     public List<String> getAllRequestIds() {
@@ -98,12 +105,14 @@ public class PreviewStorage {
     private static class Preview<T> {
         private final Object lock;
         private T object;
+        private IDE4ACanonicalEvidenceType canonicalEvidenceType;
         private String redirectionUrl;
         private Instant timeStamp;
 
-        private Preview(T object, String redirectionUrl) {
+        private Preview(T object, String redirectionUrl, IDE4ACanonicalEvidenceType canonicalEvidenceType) {
             this.lock = new Object();
             this.object = object;
+            this.canonicalEvidenceType = canonicalEvidenceType;
             this.timeStamp = Instant.now();
             this.redirectionUrl = redirectionUrl;
         }
