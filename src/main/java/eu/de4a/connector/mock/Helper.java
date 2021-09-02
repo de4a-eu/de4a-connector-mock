@@ -1,10 +1,17 @@
 package eu.de4a.connector.mock;
 
 import eu.de4a.iem.jaxb.common.types.*;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public class Helper {
 
@@ -68,4 +75,23 @@ public class Helper {
         return stringWriter.toString();
     }
 
+    public static CompletableFuture<Boolean> sendRequest(String recipient, InputStream bodyStream, Consumer<String> onFailure) {
+        HttpResponse dtResp;
+        try {
+            dtResp = Request.Post(recipient)
+                    .bodyStream(bodyStream, ContentType.APPLICATION_XML)
+                    .execute().returnResponse();
+        } catch (IOException ex) {
+            onFailure.accept(String.format("Failed to send request to dt: %s", ex.getMessage()));
+            return CompletableFuture.completedFuture(false);
+        }
+        if (dtResp.getStatusLine().getStatusCode() != 200) {
+            onFailure.accept(String.format("Request sent to dt (%s) got status code %s",
+                    recipient,
+                    dtResp.getStatusLine().getStatusCode()));
+            return CompletableFuture.completedFuture(false);
+        }
+
+        return CompletableFuture.completedFuture(true);
+    }
 }

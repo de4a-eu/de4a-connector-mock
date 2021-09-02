@@ -18,9 +18,8 @@ import eu.de4a.kafkaclient.DE4AKafkaClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -38,9 +37,12 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+
+import static eu.de4a.connector.mock.Helper.sendRequest;
 
 @RestController
 @Slf4j
@@ -58,6 +60,9 @@ public class DOController {
     private SimpMessagingTemplate websocketMessaging;
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Value("${mock.baseurl}")
+    String baseUrl;
 
     @PostMapping("${mock.do.endpoint.im}")
     public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) {
@@ -196,9 +201,14 @@ public class DOController {
         RequestTransferEvidenceUSIDTType dtRequest = Helper.buildDtUsiRequest(req, ce, null, null);
 
         if (canonicalEvidence.getUsiAutoResponse().useAutoResp()) {
-            taskScheduler.schedule(() -> sendDTRequest(doConfig.getPreviewDTUrl(), dtRequest, evidenceID.getCanonicalEvidenceType(), log::error), Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
+            taskScheduler.schedule(() ->
+                    sendRequest(
+                            doConfig.getPreviewDTUrl(),
+                            DE4AMarshaller.dtUsiRequestMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(dtRequest),
+                            log::error),
+                    Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
         } else {
-            previewStorage.addRequestToPreview(dtRequest, evidenceID.getCanonicalEvidenceType());
+            previewStorage.addRequestToPreview(dtRequest);
             String message;
             try {
                 message = objectMapper.writeValueAsString(new PreviewMessage(PreviewMessage.Action.ADD, dtRequest.getRequestId()));
@@ -209,39 +219,29 @@ public class DOController {
             String endpoint = String.format("%s%s", doConfig.getPreviewBaseEndpoint(), doConfig.getWebsocketMessagesEndpoint());
             log.debug("sending websocket message {}: {}", endpoint, message);
             websocketMessaging.convertAndSend(endpoint, message);
+
+            RedirectUserType redirectUserType = new RedirectUserType();
+            redirectUserType.setRequestId(req.getRequestId());
+            redirectUserType.setSpecificationId(req.getSpecificationId());
+            redirectUserType.setTimeStamp(LocalDateTime.now());
+            redirectUserType.setDataEvaluator(req.getDataEvaluator());
+            redirectUserType.setCanonicalEvidenceTypeId(req.getCanonicalEvidenceTypeId());
+            redirectUserType.setRedirectUrl(
+                    String.format("%s%s%s?requestId=%s",
+                        baseUrl,
+                        doConfig.getPreviewBaseEndpoint(),
+                        doConfig.getIndexEndpoint(),
+                        req.getRequestId()));
+            sendRequest(
+                    doConfig.getPreviewDTRedirectUrl(),
+                    DE4AMarshaller.deUsiRedirectUserMarshaller().getAsInputStream(redirectUserType),
+                    log::error);
         }
 
         DE4AKafkaClient.send(EErrorLevel.INFO, () ->
                 String.format("Receiving USI RequestExtractEvidence, requestId: %s", req.getRequestId()));
 
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
-    }
-
-
-
-    public static CompletableFuture<Boolean> sendDTRequest(String recipient, RequestTransferEvidenceUSIDTType request, IDE4ACanonicalEvidenceType canonicalEvidenceType, Consumer<String> onFailure) {
-        DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
-        HttpResponse dtResp;
-        try {
-            dtResp = Request.Post(recipient)
-                    .bodyStream(DE4AMarshaller.dtUsiRequestMarshaller(dataOwner.getPilot().getCanonicalEvidenceType())
-                            .getAsInputStream(request), ContentType.APPLICATION_XML)
-                    .execute().returnResponse();
-        } catch (IOException ex) {
-            onFailure.accept(String.format("Failed to send request to dt: %s", ex.getMessage()));
-            return CompletableFuture.completedFuture(false);
-        }
-        if (dtResp.getStatusLine().getStatusCode() != 200) {
-            onFailure.accept(String.format("Request sent to dt got status code %s, request %s body: %s", dtResp.getStatusLine().getStatusCode(),
-                    recipient,
-                    DE4AMarshaller
-                            .dtUsiRequestMarshaller(canonicalEvidenceType)
-                            .getAsString(request) ));
-            return CompletableFuture.completedFuture(false);
-        }
-        log.debug("Successfully sent dt request with id: {}", request.getRequestId());
-
-        return CompletableFuture.completedFuture(true);
     }
 
 

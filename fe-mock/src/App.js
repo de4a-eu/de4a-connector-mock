@@ -52,39 +52,8 @@ const App = () => {
     const search = useLocation().search
     const urlParams = new URLSearchParams(search)
     const requestIdParam = urlParams.get('requestId')
-    const backUrlParam = urlParams.get('backUrl')
     const pathName = useLocation().pathname
 
-    const timeoutRedirect = (timeout, redirectUrl) => {
-        setTimeout(() => {
-            setEvidenceStatus(EvidenceStatus.Error)
-            errorEvidence()
-        }, timeout)
-    }
-
-    const errorEvidence = () => {
-        axios.get(format(window.DO_CONST['previewErrorEndpoint'], {requestId: requestId}))
-            .then(response => {
-                setEvidenceStatus(EvidenceStatus.Error)
-                let locationUrl = response.data
-                if (locationUrl === "" && !backUrlParam || backUrlParam === "") {
-                    console.error("no back url provided")
-                    setEvidenceStatus(EvidenceStatus.Error)
-                    return
-                }
-                if (locationUrl !== "") {
-                    window.location.replace(locationUrl);
-                } else {
-                    let url = new URL(backUrlParam)
-                    url.searchParams.append('accept', 'true')
-                    window.location.replace(url.toString());
-                }
-            })
-            .catch(error => {
-                console.error("error: ", error)
-                setEvidenceStatus(EvidenceStatus.Error)
-            })
-    }
 
     const acceptEvidence = () => {
         setEvidenceStatus(EvidenceStatus.Processing)
@@ -92,18 +61,12 @@ const App = () => {
             .then(response => {
                 let locationUrl = response.data
                 setEvidenceStatus(EvidenceStatus.Accepted)
-                if (locationUrl === "" && !backUrlParam || backUrlParam === "") {
+                if (locationUrl === "") {
                     console.error("no back url provided")
                     setEvidenceStatus(EvidenceStatus.Error)
                     return
                 }
-                if (locationUrl !== "") {
-                    window.location.replace(locationUrl);
-                } else {
-                    let url = new URL(backUrlParam)
-                    url.searchParams.append('accept', 'true')
-                    window.location.replace(url.toString());
-                }
+                window.location.replace(locationUrl);
             })
             .catch(error => {
                 console.error("error: ", error)
@@ -117,18 +80,12 @@ const App = () => {
             .then(response => {
                 let locationUrl = response.data
                 setEvidenceStatus(EvidenceStatus.Rejected)
-                if (locationUrl === "" && !backUrlParam || backUrlParam === "") {
+                if (locationUrl === "" ) {
                     console.error("no back url provided")
                     setEvidenceStatus(EvidenceStatus.Error)
                     return
                 }
-                if (locationUrl !== "") {
-                    window.location.replace(locationUrl);
-                } else {
-                    const url = new URL(backUrlParam)
-                    url.searchParams.append('accept', 'false')
-                    window.location.replace(url.toString());
-                }
+                window.location.replace(locationUrl);
             })
             .catch(error => {
                 setEvidenceStatus(EvidenceStatus.Error)

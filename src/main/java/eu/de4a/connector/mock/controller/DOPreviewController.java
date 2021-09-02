@@ -2,41 +2,31 @@ package eu.de4a.connector.mock.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.helger.commons.collection.impl.CommonsArrayList;
-import com.helger.commons.collection.impl.ICommonsList;
-import com.helger.commons.io.resource.ClassPathResource;
 import eu.de4a.connector.mock.preview.PreviewMessage;
 import eu.de4a.connector.mock.config.DOConfig;
 import eu.de4a.connector.mock.exampledata.DataOwner;
 import eu.de4a.connector.mock.preview.PreviewStorage;
 import eu.de4a.iem.jaxb.common.types.*;
-import eu.de4a.iem.xml.de4a.CDE4AJAXB;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
 import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
 import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
+
+import static eu.de4a.connector.mock.Helper.sendRequest;
 
 @Slf4j
 @Controller
@@ -63,21 +53,6 @@ public class DOPreviewController {
         return "doIndex";
     }
 
-    @CrossOrigin(originPatterns = "*")
-    @ResponseStatus(HttpStatus.SEE_OTHER)
-    @PostMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.endpoint.index}", consumes = MediaType.APPLICATION_XML_VALUE)
-    public ModelAndView redirectPost(InputStream bodyStream) {
-        DE4AMarshaller<RequestUserRedirectionType> marshaller = DE4AMarshaller.deUsiRedirectRequestMarshaller();
-        RequestUserRedirectionType redirection = marshaller.read(bodyStream);
-        previewStorage.setRedirectUrl(redirection.getRequestId(), redirection.getRedirectURL());
-        return new ModelAndView(
-                String.format("redirect:%s%s%s?requestId=%s",
-                        baseUrl,
-                        doConfig.getPreviewBaseEndpoint(),
-                        doConfig.getIndexEndpoint(),
-                        redirection.getRequestId()));
-    }
-
     @ExceptionHandler({InterruptedException.class, ExecutionException.class, TimeoutException.class})
     public ResponseEntity<Object> timeoutRequest(Exception ex) {
         log.error("Request for evidence failed: {}", ex.getMessage());
@@ -99,22 +74,16 @@ public class DOPreviewController {
     public ResponseEntity<String> acceptEvidence(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
         RequestTransferEvidenceUSIDTType request;
         request = previewStorage.getRequest(requestId).get();
-        IDE4ACanonicalEvidenceType canonicalEvidenceType = previewStorage.getCanonicalEvidenceType(requestId);
 
-        ResponseUserRedirectionType redirectionType = new ResponseUserRedirectionType();
-        redirectionType.setRequestId(requestId);
-        redirectionType.setEvidenceStatus(EvidenceStatusType.AGREE);
-        String redirectUrl = previewStorage.getRedirectUrl(requestId);
-        CompletableFuture<String> locationUrl;
-        if (redirectUrl.isEmpty()) {
+        String redirectUrl = request.getDataEvaluator().getRedirectURL();
+        if (redirectUrl == null || redirectUrl.isEmpty()) {
             log.error("no redirect url recieved");
-            locationUrl = CompletableFuture.completedFuture("");
-        } else {
-            log.debug("send de post");
-            locationUrl = sendDeRedirect(redirectUrl, redirectionType, log::error );
         }
         try {
-            Boolean success = DOController.sendDTRequest(doConfig.getPreviewDTUrl(), request, canonicalEvidenceType, log::error).get();
+            Boolean success = sendRequest(
+                    doConfig.getPreviewDTUrl(),
+                    DE4AMarshaller.dtUsiRequestMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(request),
+                    log::error).get();
             if (!success) {
                 return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
             }
@@ -135,7 +104,7 @@ public class DOPreviewController {
         log.debug("sending websocket message {}: {}", endpoint, message);
         websocketMessaging.convertAndSend(endpoint, message);
 
-        return ResponseEntity.ok().body(locationUrl.get());
+        return ResponseEntity.ok().body(redirectUrl);
     }
 
     @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.reject.endpoint}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -148,19 +117,15 @@ public class DOPreviewController {
         el.addError(DE4AResponseDocumentHelper.createError(ErrorCodes.PREVIEW_REJECTED_ERROR.getCode(), "The user rejected the evidence"));
         request.setErrorList(el);
 
-        ResponseUserRedirectionType redirectionType = new ResponseUserRedirectionType();
-        redirectionType.setRequestId(requestId);
-        redirectionType.setEvidenceStatus(EvidenceStatusType.DISAGREE);
-        String redirectUrl = previewStorage.getRedirectUrl(requestId);
-        CompletableFuture<String> locationUrl;
-        if (redirectUrl.isEmpty()) {
+        String redirectUrl = request.getDataEvaluator().getRedirectURL();
+        if (redirectUrl == null || redirectUrl.isEmpty()) {
             log.error("no redirect url recieved");
-            locationUrl = CompletableFuture.completedFuture("");
-        } else {
-            locationUrl = sendDeRedirect(redirectUrl, redirectionType, log::error);
         }
         try {
-            Boolean success = DOController.sendDTRequest(doConfig.getPreviewDTUrl(), request, null, log::error).get();
+            Boolean success = sendRequest(
+                    doConfig.getPreviewDTUrl(),
+                    DE4AMarshaller.dtUsiRequestMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(request),
+                    log::error).get();
             if (!success) {
                 return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
             }
@@ -181,23 +146,7 @@ public class DOPreviewController {
         log.debug("sending websocket message {}: {}", endpoint, message);
         websocketMessaging.convertAndSend(endpoint, message);
 
-        return ResponseEntity.ok().body(locationUrl.get());
-    }
-
-    @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.error.endpoint}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> redirectError(@PathVariable String requestId) throws ExecutionException, InterruptedException {
-        ResponseUserRedirectionType redirectionType = new ResponseUserRedirectionType();
-        redirectionType.setRequestId(requestId);
-        redirectionType.setEvidenceStatus(EvidenceStatusType.ERROR);
-        String redirectUrl = previewStorage.getRedirectUrl(requestId);
-        CompletableFuture<String> locationUrl;
-        if (redirectUrl.isEmpty()) {
-            log.error("no redirect url recieved");
-            locationUrl = CompletableFuture.completedFuture("");
-        } else {
-            locationUrl = sendDeRedirect(redirectUrl, redirectionType, log::error);
-        }
-        return ResponseEntity.ok(locationUrl.get());
+        return ResponseEntity.ok().body(redirectUrl);
     }
 
     @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.requestId.all.endpoint}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -205,34 +154,4 @@ public class DOPreviewController {
         return ResponseEntity.ok(previewStorage.getAllRequestIds());
     }
 
-    public static CompletableFuture<String> sendDeRedirect(
-            String recipient,
-            ResponseUserRedirectionType request,
-            Consumer<String> onFailure) {
-        HttpResponse deResp;
-        log.debug("Prepare to send redirect post request %s to de at: %s", request.getRequestId(), recipient);
-        try {
-            deResp = Request.Post(recipient)
-                    .bodyStream(DE4AMarshaller.deUsiRedirectResponseMarshaller()
-                            .getAsInputStream(request), ContentType.APPLICATION_XML)
-                    .execute().returnResponse();
-        } catch (IOException ex) {
-            onFailure.accept(String.format("Failed to send redirect post to de: %s", ex.getMessage()));
-            return CompletableFuture.completedFuture("");
-        }
-        if (
-                deResp.getStatusLine().getStatusCode() != 301 && //Moved Permanently
-                deResp.getStatusLine().getStatusCode() != 302 && //Found
-                deResp.getStatusLine().getStatusCode() != 303 && //See Other
-                deResp.getStatusLine().getStatusCode() != 307    //Temporary Redirect
-        ) {
-            String errorString = String.format("Request sent to de got status code %s, unable to redirect to de", deResp.getStatusLine().getStatusCode());
-            onFailure.accept(errorString);
-            return CompletableFuture.completedFuture("");
-        }
-        String url = deResp.getFirstHeader("Location").getValue();
-        log.debug("Successfully sent de redirect post for request with id: {}, got redirect location: {}", request.getRequestId(), url);
-
-        return CompletableFuture.completedFuture(url);
-    }
 }

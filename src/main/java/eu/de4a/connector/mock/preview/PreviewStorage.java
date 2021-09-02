@@ -13,7 +13,6 @@ import java.time.Instant;
 import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -41,11 +40,10 @@ public class PreviewStorage {
         return requestToPreview.get(requestId);
     }
 
-    public void addRequestToPreview(RequestTransferEvidenceUSIDTType request, IDE4ACanonicalEvidenceType canonicalEvidenceType) {
+    public void addRequestToPreview(RequestTransferEvidenceUSIDTType request) {
         Preview<RequestTransferEvidenceUSIDTType> preview = getRequestLockPair(request.getRequestId());
         synchronized (preview.lock) {
             preview.object = request;
-            preview.canonicalEvidenceType = canonicalEvidenceType;
             preview.lock.notifyAll();
         }
     }
@@ -64,29 +62,11 @@ public class PreviewStorage {
         return CompletableFuture.failedFuture(new IOException("Preview pruned, too old"));
     }
 
-    public IDE4ACanonicalEvidenceType getCanonicalEvidenceType(String requestId) {
-        Preview<RequestTransferEvidenceUSIDTType> preview = getRequestLockPair(requestId);
-        return preview.canonicalEvidenceType;
-    }
-
     public List<String> getAllRequestIds() {
         return requestToPreview.entrySet().stream()
                 .filter(entry -> entry.getValue().object != null)
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
-    }
-
-    public void setRedirectUrl(String requestId, String redirectionUrl) {
-        Preview<RequestTransferEvidenceUSIDTType> preview = getRequestLockPair(requestId);
-        preview.redirectionUrl = redirectionUrl;
-    }
-
-    public String getRedirectUrl(String requestId) {
-        var preview = requestToPreview.get(requestId);
-        if (preview == null) {
-            return "";
-        }
-        return preview.redirectionUrl;
     }
 
     public void pruneOld(TemporalAmount oldThreshold) {
@@ -105,16 +85,12 @@ public class PreviewStorage {
     private static class Preview<T> {
         private final Object lock;
         private T object;
-        private IDE4ACanonicalEvidenceType canonicalEvidenceType;
-        private String redirectionUrl;
         private Instant timeStamp;
 
         private Preview(T object, String redirectionUrl, IDE4ACanonicalEvidenceType canonicalEvidenceType) {
             this.lock = new Object();
             this.object = object;
-            this.canonicalEvidenceType = canonicalEvidenceType;
             this.timeStamp = Instant.now();
-            this.redirectionUrl = redirectionUrl;
         }
     }
 }
