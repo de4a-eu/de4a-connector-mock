@@ -69,10 +69,9 @@ public class DOController {
         var marshaller = DE4AMarshaller.doImRequestMarshaller();
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> MarshallErrorHandler.getInstance().postError(errorKey, ex));
-        RequestExtractEvidenceIMType req = marshaller.read(body);
+        RequestExtractEvidenceType req = marshaller.read(body);
         if (req == null) {
-            throw new MarshallException(errorKey);
-        }
+            throw new MarshallException(errorKey);       }
 
         DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Receiving RequestExtractEvidence, requestId: %s", req.getRequestId()));
 
@@ -139,7 +138,7 @@ public class DOController {
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
-        RequestExtractEvidenceUSIType req = marshaller.read(body);
+        RequestExtractEvidenceType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
