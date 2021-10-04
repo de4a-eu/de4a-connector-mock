@@ -1,10 +1,5 @@
 package eu.de4a.connector.mock;
 
-import eu.de4a.iem.jaxb.common.types.*;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.fluent.Request;
-import org.apache.http.entity.ContentType;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -13,38 +8,28 @@ import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.entity.ContentType;
+
+import eu.de4a.iem.jaxb.common.types.CanonicalEvidenceType;
+import eu.de4a.iem.jaxb.common.types.DomesticsEvidencesType;
+import eu.de4a.iem.jaxb.common.types.ErrorListType;
+import eu.de4a.iem.jaxb.common.types.RequestExtractEvidenceType;
+import eu.de4a.iem.jaxb.common.types.RequestForwardEvidenceType;
+import eu.de4a.iem.jaxb.common.types.RequestTransferEvidenceUSIDTType;
+
 public class Helper {
 
-    public static RequestExtractEvidenceIMType buildDoImRequest(RequestTransferEvidenceUSIIMDRType drRequest) {
-        RequestExtractEvidenceIMType req = new RequestExtractEvidenceIMType();
-        req.setRequestId(drRequest.getRequestId());
-        req.setSpecificationId(drRequest.getSpecificationId());
-        req.setTimeStamp(LocalDateTime.now());
-        req.setProcedureId(drRequest.getProcedureId());
-        req.setDataEvaluator(drRequest.getDataEvaluator());
-        req.setDataOwner(drRequest.getDataOwner());
-        req.setDataRequestSubject(drRequest.getDataRequestSubject());
-        req.setRequestGrounds(drRequest.getRequestGrounds());
-        req.setCanonicalEvidenceTypeId(drRequest.getCanonicalEvidenceTypeId());
-        req.setAdditionalParameters(drRequest.getAdditionalParameters());
-        return req;
+    public static RequestExtractEvidenceType buildDoImRequest(RequestExtractEvidenceType drRequest) {
+        return drRequest.clone ();
     }
 
-    public static RequestExtractEvidenceUSIType buildDoUsiRequest(RequestTransferEvidenceUSIIMDRType drRequest) {
-        RequestExtractEvidenceUSIType req = new RequestExtractEvidenceUSIType();
-        req.setRequestId(drRequest.getRequestId());
-        req.setSpecificationId(drRequest.getSpecificationId());
-        req.setTimeStamp(LocalDateTime.now());
-        req.setProcedureId(drRequest.getProcedureId());
-        req.setDataEvaluator(drRequest.getDataEvaluator());
-        req.setDataOwner(drRequest.getDataOwner());
-        req.setDataRequestSubject(drRequest.getDataRequestSubject());
-        req.setRequestGrounds(drRequest.getRequestGrounds());
-        req.setCanonicalEvidenceTypeId(drRequest.getCanonicalEvidenceTypeId());
-        req.setAdditionalParameters(drRequest.getAdditionalParameters());
-        return req;
+    public static RequestExtractEvidenceType buildDoUsiRequest(RequestExtractEvidenceType drRequest) {
+        return drRequest.clone ();
     }
-    public static RequestTransferEvidenceUSIDTType buildDtUsiRequest(RequestExtractEvidenceUSIType doRequest, CanonicalEvidenceType canonicalEvidence, DomesticsEvidencesType domesticEvidences, ErrorListType errorListType) {
+    
+    public static RequestTransferEvidenceUSIDTType buildDtUsiRequest(RequestExtractEvidenceType doRequest, CanonicalEvidenceType canonicalEvidence, DomesticsEvidencesType domesticEvidences, ErrorListType errorListType) {
         RequestTransferEvidenceUSIDTType req = new RequestTransferEvidenceUSIDTType();
         req.setRequestId(doRequest.getRequestId());
         req.setSpecificationId(doRequest.getSpecificationId());

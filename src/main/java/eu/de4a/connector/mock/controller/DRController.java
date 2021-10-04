@@ -54,7 +54,7 @@ public class DRController {
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
-        RequestTransferEvidenceUSIIMDRType req = marshaller.read(body);
+        RequestExtractEvidenceType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
@@ -77,7 +77,7 @@ public class DRController {
 
         // if set to forward, sends a request to the do for getting the CanonicalEvidence
         if (forwardIM) {
-            RequestExtractEvidenceIMType doRequest = Helper.buildDoImRequest(req);
+            RequestExtractEvidenceType doRequest = Helper.buildDoImRequest(req);
             HttpResponse doResponse;
             String doRespBody;
             try {
@@ -196,7 +196,7 @@ public class DRController {
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
-        RequestTransferEvidenceUSIIMDRType req = marshaller.read(body);
+        RequestExtractEvidenceType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
@@ -218,7 +218,7 @@ public class DRController {
 
         DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Received RequestTransferEvidence, requestId: %s", req.getRequestId()));
 
-        RequestExtractEvidenceUSIType doRequest = Helper.buildDoUsiRequest(req);
+        RequestExtractEvidenceType doRequest = Helper.buildDoUsiRequest(req);
         HttpResponse doResponse;
         String doRespBody;
         try {
