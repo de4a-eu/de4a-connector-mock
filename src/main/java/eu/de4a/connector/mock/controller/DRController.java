@@ -65,7 +65,7 @@ public class DRController {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_NOT_FOUND.getCode(),
+                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
                             String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
                     )
             );
@@ -91,7 +91,7 @@ public class DRController {
                     String errorString = String.format("error sending request to do (at %s): %s \n%s", forwardIMUrl, doResponse.getStatusLine().toString(), doRespBody);
                     errorListType.addError(
                             DE4AResponseDocumentHelper.createError(
-                                    ErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
+                                    MockedErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
                             )
                     );
                     res.setErrorList(errorListType);
@@ -104,7 +104,7 @@ public class DRController {
                 String errorString = String.format("error sending request to do: %s \n%s", ex.getLocalizedMessage(), Helper.getStackTrace(ex));
                 errorListType.addError(
                         DE4AResponseDocumentHelper.createError(
-                                ErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
+                                MockedErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
                         )
                 );
                 res.setErrorList(errorListType);
@@ -129,7 +129,7 @@ public class DRController {
                 String errorString = String.format("could not unmarshall response from do%s", errorMessage);
                 errorListType.addError(
                         DE4AResponseDocumentHelper.createError(
-                                ErrorCodes.DE4A_ERROR.getCode(), errorString
+                                MockedErrorCodes.DE4A_ERROR.getCode(), errorString
                                         .substring(0, Math.min(4000, errorMessage.length()))
                         )
                 );
@@ -150,7 +150,7 @@ public class DRController {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_BAD_REQUEST.getCode(),
+                            MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
                             String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
                     )
             );
@@ -162,7 +162,7 @@ public class DRController {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_NOT_FOUND.getCode(),
+                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
                             String.format("no known evidence type id '%s'", req.getCanonicalEvidenceTypeId())
                     )
             );
@@ -175,7 +175,7 @@ public class DRController {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_NOT_FOUND.getCode(),
+                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
                             String.format("No evidence with eIDASIdentifier '%s' found for %s", eIDASIdentifier, dataOwner.toString())));
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
@@ -207,7 +207,7 @@ public class DRController {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_NOT_FOUND.getCode(),
+                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
                             String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
                     )
             );
@@ -232,7 +232,7 @@ public class DRController {
                 String errorString = String.format("error sending request to do (at %s): %s \n%s", forwardUsiUrl, doResponse.getStatusLine().toString(), doRespBody);
                 errorListType.addError(
                         DE4AResponseDocumentHelper.createError(
-                                ErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
+                                MockedErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
                         )
                 );
                 res = DE4AResponseDocumentHelper.createResponseError(false);
@@ -246,7 +246,7 @@ public class DRController {
             String errorString = String.format("error sending request to do: %s \n%s", ex.getLocalizedMessage(), Helper.getStackTrace(ex));
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
+                            MockedErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
                     )
             );
             res = DE4AResponseDocumentHelper.createResponseError(false);
@@ -272,7 +272,7 @@ public class DRController {
             String errorString = String.format("could not unmarshall response from do%s", errorMessage);
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_ERROR.getCode(), errorString
+                            MockedErrorCodes.DE4A_ERROR.getCode(), errorString
                                     .substring(0, Math.min(4000, errorMessage.length()))
                     )
             );

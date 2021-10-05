@@ -2,7 +2,7 @@ package eu.de4a.connector.mock.controller;
 
 import lombok.Getter;
 
-public enum ErrorCodes {
+public enum MockedErrorCodes {
     DE4A_NOT_FOUND("de4a-404"),
     DE4A_BAD_REQUEST("de4a-400"),
     DE4A_ERROR("de4a-500"),
@@ -11,7 +11,7 @@ public enum ErrorCodes {
 
     @Getter
     private String code;
-    ErrorCodes(String code) {
+    MockedErrorCodes(String code) {
         this.code = code;
     }
 }

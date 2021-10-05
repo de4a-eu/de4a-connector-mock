@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Element;
 
-import java.beans.SimpleBeanInfo;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -39,10 +38,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
-import static eu.de4a.connector.mock.Helper.sendRequest;
+import static eu.de4a.connector.mock.Helper.*;
 
 @RestController
 @Slf4j
@@ -81,8 +78,7 @@ public class DOController {
         if (dataOwner == null) {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
-                    DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_NOT_FOUND.getCode(),
+                    doGenericError(
                             String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
                     )
             );
@@ -91,9 +87,10 @@ public class DOController {
         }
         if (!dataOwner.getPilot().validDataRequestSubject(req.getDataRequestSubject())) {
             ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(doIdentityMatchingError());
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_BAD_REQUEST.getCode(),
+                            MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
                             String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
                     )
             );
@@ -104,8 +101,7 @@ public class DOController {
         if (evidenceID == null) {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
-                    DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_NOT_FOUND.getCode(),
+                    doGenericError(
                             String.format("no known evidence type id '%s'", req.getCanonicalEvidenceTypeId())
                     )
             );
@@ -116,9 +112,10 @@ public class DOController {
         Element canonicalEvidence = CanonicalEvidenceExamples.getDocumentElement(dataOwner, evidenceID, eIDASIdentifier);
         if (canonicalEvidence == null) {
             ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(doIdentityMatchingError());
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_NOT_FOUND.getCode(),
+                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
                             String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
@@ -149,8 +146,7 @@ public class DOController {
         if (dataOwner == null) {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
-                    DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_NOT_FOUND.getCode(),
+                    doGenericError(
                             String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
                     )
             );
@@ -160,9 +156,10 @@ public class DOController {
         }
         if (!dataOwner.getPilot().validDataRequestSubject(req.getDataRequestSubject())) {
             ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(doIdentityMatchingError());
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_BAD_REQUEST.getCode(),
+                            MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
                             String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
                     )
             );
@@ -174,8 +171,7 @@ public class DOController {
         if (evidenceID == null) {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
-                    DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_NOT_FOUND.getCode(),
+                    doGenericError(
                             String.format("no known evidence type id '%s'", req.getCanonicalEvidenceTypeId())
                     )
             );
@@ -187,9 +183,10 @@ public class DOController {
         CanonicalEvidenceExamples canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
         if (canonicalEvidence == null) {
             ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(doIdentityMatchingError());
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_NOT_FOUND.getCode(),
+                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
                             String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
             res.setErrorList(errorListType);
             res.setAck(AckType.KO);

@@ -26,6 +26,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import static eu.de4a.connector.mock.Helper.doRejectedPreview;
 import static eu.de4a.connector.mock.Helper.sendRequest;
 
 @Slf4j
@@ -114,7 +115,7 @@ public class DOPreviewController {
         request.setCanonicalEvidence(null);
         request.setDomesticEvidenceList(null);
         ErrorListType el = new ErrorListType();
-        el.addError(DE4AResponseDocumentHelper.createError(ErrorCodes.PREVIEW_REJECTED_ERROR.getCode(), "The user rejected the evidence"));
+        el.addError(doRejectedPreview());
         request.setErrorList(el);
 
         String redirectUrl = request.getDataEvaluator().getRedirectURL();
