@@ -8,18 +8,14 @@ import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import eu.de4a.iem.jaxb.common.types.*;
+import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 
-import eu.de4a.iem.jaxb.common.types.CanonicalEvidenceType;
-import eu.de4a.iem.jaxb.common.types.DomesticsEvidencesType;
-import eu.de4a.iem.jaxb.common.types.ErrorListType;
-import eu.de4a.iem.jaxb.common.types.RequestExtractEvidenceType;
-import eu.de4a.iem.jaxb.common.types.RequestForwardEvidenceType;
-import eu.de4a.iem.jaxb.common.types.RequestTransferEvidenceUSIDTType;
-
 public class Helper {
+    public static final int ERROR_TEXT_MAX_LENGTH = 4000;
 
     public static RequestExtractEvidenceType buildDoImRequest(RequestExtractEvidenceType drRequest) {
         return drRequest.clone ();
@@ -28,7 +24,7 @@ public class Helper {
     public static RequestExtractEvidenceType buildDoUsiRequest(RequestExtractEvidenceType drRequest) {
         return drRequest.clone ();
     }
-    
+
     public static RequestTransferEvidenceUSIDTType buildDtUsiRequest(RequestExtractEvidenceType doRequest, CanonicalEvidenceType canonicalEvidence, DomesticsEvidencesType domesticEvidences, ErrorListType errorListType) {
         RequestTransferEvidenceUSIDTType req = new RequestTransferEvidenceUSIDTType();
         req.setRequestId(doRequest.getRequestId());
@@ -79,4 +75,97 @@ public class Helper {
 
         return CompletableFuture.completedFuture(true);
     }
+
+    public static ErrorType doConnectionError(String service, String explanation) {
+        return DE4AResponseDocumentHelper.createError(
+                "10503",
+                String
+                        .format("Connection error with %s - %s", service, explanation)
+                        .substring(0, ERROR_TEXT_MAX_LENGTH)
+        );
+    }
+
+    public static ErrorType doServiceNotFound(String service) {
+        return DE4AResponseDocumentHelper.createError(
+                "10501",
+                String
+                        .format("Service requested %s not found", service)
+                        .substring(0, ERROR_TEXT_MAX_LENGTH)
+        );
+    }
+
+    public static ErrorType doAccessingData(String service, String explanation) {
+        return DE4AResponseDocumentHelper.createError(
+                "10506",
+                String
+                        .format("Connection error with %s - %s", service, explanation)
+                        .substring(0, ERROR_TEXT_MAX_LENGTH)
+        );
+    }
+
+    public static ErrorType doErrorOnResponse(String service, String explanation) {
+        return DE4AResponseDocumentHelper.createError(
+                "10504",
+                String
+                        .format("Error on response from %s - %s", service, explanation)
+                        .substring(0, ERROR_TEXT_MAX_LENGTH)
+        );
+    }
+
+    public static ErrorType doGenericError(String explanation) {
+        return DE4AResponseDocumentHelper.createError(
+                "10507",
+                explanation.substring(0, ERROR_TEXT_MAX_LENGTH)
+        );
+    }
+
+    public static ErrorType doErrorExtractingEvidence() {
+        return DE4AResponseDocumentHelper.createError(
+                "40510",
+                "Error extracting evidence"
+        );
+    }
+
+    public static ErrorType doEvidenceNotAvailable() {
+        return DE4AResponseDocumentHelper.createError(
+                "40515",
+                "Evidence not available yet (delayed)"
+        );
+    }
+
+    public static ErrorType doIdentityMatchingError() {
+        return DE4AResponseDocumentHelper.createError(
+                "40511",
+                "Error in identity matching"
+        );
+    }
+
+    public static ErrorType doUnsuccessfulPreview() {
+        return DE4AResponseDocumentHelper.createError(
+                "40512",
+                "Unsuccessful completion of preview"
+        );
+    }
+
+    public static ErrorType doFailedReestablishUser() {
+        return DE4AResponseDocumentHelper.createError(
+                "40514",
+                "Failed to re-establish user identity"
+        );
+    }
+
+    public static ErrorType doRejectedPreview() {
+        return DE4AResponseDocumentHelper.createError(
+                "40513",
+                "Preview rejected by user"
+        );
+    }
+
+    public static ErrorType doEvidenceError() {
+        return DE4AResponseDocumentHelper.createError(
+                "40516",
+                "evidence"
+        );
+    }
+
 }
