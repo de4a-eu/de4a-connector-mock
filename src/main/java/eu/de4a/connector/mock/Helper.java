@@ -8,16 +8,11 @@ import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import eu.de4a.iem.jaxb.common.types.*;
+import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
-
-import eu.de4a.iem.jaxb.common.types.CanonicalEvidenceType;
-import eu.de4a.iem.jaxb.common.types.DomesticsEvidencesType;
-import eu.de4a.iem.jaxb.common.types.ErrorListType;
-import eu.de4a.iem.jaxb.common.types.RequestExtractEvidenceType;
-import eu.de4a.iem.jaxb.common.types.RequestForwardEvidenceType;
-import eu.de4a.iem.jaxb.common.types.RequestTransferEvidenceUSIDTType;
 
 public class Helper {
     public static final int ERROR_TEXT_MAX_LENGTH = 4000;
