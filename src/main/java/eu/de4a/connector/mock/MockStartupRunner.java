@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import com.helger.httpclient.HttpClientSettings;	
 
 @Component
 public class MockStartupRunner implements ApplicationRunner {
@@ -24,6 +25,10 @@ public class MockStartupRunner implements ApplicationRunner {
         DE4AKafkaSettings.setKafkaEnabled(kafka_enabled);
         DE4AKafkaSettings.setLoggingEnabled(kafka_enabled);
         DE4AKafkaSettings.setKafkaTopic(kafka_topic);
-	DE4AKafkaSettings.setKafkaHttp(kafka_http);	
+	DE4AKafkaSettings.setKafkaHttp(kafka_http);
+	if(kafka_http){
+	    // TODO Maybe add some relevant settings but leaving this out for now. Proxy settings would be releveant for instance...
+	    DE4AKafkaSettings.setHttpClientSetting(new HttpClientSettings());
+	}
     }
 }
