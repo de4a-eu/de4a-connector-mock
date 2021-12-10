@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bi:BirthEvidence
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:cvb="http://www.w3.org/ns/corevocabulary/BasicComponents"
+        xmlns="http://www.de4a.eu/2020/data/transferor/pattern/usi"
+        xmlns:bi="urn:eu-de4a:xsd:CanonicalEvidenceType::BirthEvidence:v1.6"
+        xsi:schemaLocation="urn:eu-de4a:xsd:CanonicalEvidenceType::BirthEvidence:v1.6  birthEvidence-1.6.xsd">
+    <bi:IssueDate>1978-12-26</bi:IssueDate>
+    <bi:IssuingAuthority>
+        <bi:PrefLabel>Registro Civil Central. Ministerio de Justicia</bi:PrefLabel>
+    </bi:IssuingAuthority>
+    <bi:IssuingPlace>
+        <bi:AdminUnitL2>Barcelona</bi:AdminUnitL2>
+        <bi:AdminUnitL1>ES</bi:AdminUnitL1>
+    </bi:IssuingPlace>
+    <bi:CertifiesBirth>
+        <bi:Child>
+            <bi:PersonName>
+                <bi:FamilyName>ApellidoPrimerob ApellidoSegundob</bi:FamilyName>
+                <bi:GivenName>Nombreb</bi:GivenName>
+            </bi:PersonName>
+            <bi:Identifier>
+                <cvb:Identifier>99999142HB</cvb:Identifier>
+            </bi:Identifier>
+            <bi:DateOfBirth>
+                <bi:Year>2000</bi:Year>
+                <bi:Month>--01</bi:Month>
+                <bi:Day>---03</bi:Day>
+            </bi:DateOfBirth>
+            <bi:Gender>FEMALE</bi:Gender>
+            <bi:PlaceOfBirth>
+                <bi:AdminUnitL2>Barcelona</bi:AdminUnitL2>
+                <bi:AdminUnitL1>ES</bi:AdminUnitL1>
+            </bi:PlaceOfBirth>
+        </bi:Child>
+    </bi:CertifiesBirth>
+</bi:BirthEvidence>

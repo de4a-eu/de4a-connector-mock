@@ -42,4 +42,32 @@ curl --request POST \
 
 The mock is configured in the [application.properties](src/main/resources/application.properties) file.
 
+Note that the following settings should be changed from their default values:
+
+- `spring.profiles.active=do, de, dt, dr`
+  
+  where you set what mocked interfaces to set up.
+- `mock.kafka.topic=de4a-mock`
+
+    where you set the topic for the package tracker messages.
+- DO specific
+    - `mock.allowedOriginList=https://de4a-dev-mock.egovlab.eu`
+      
+        where you set the allowed origins, needed for CORS
+    - `mock.baseurl=https://de4a-dev-mock.egovlab.eu` 
+      
+        needed to construct the redirect url.
+- DR specific
+    - `mock.dr.forward.do.im=https://de4a-dev-mock.egovlab.eu/requestExtractEvidenceIM`
+      
+      `mock.dr.forward.do.usi=https://de4a-dev-mock.egovlab.eu/do1/usi/extractevidence`
+      
+      where the mocked dr should forward to
+    
+- DT specific
+    - `mock.dt.forward.de.usi=https://de4a-dev-mock.egovlab.eu/api/response`
+      
+      where the mocked dt should forward to
+    
+
  [Change-log](CHANGELOG.md)   

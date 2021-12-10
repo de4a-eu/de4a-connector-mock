@@ -5,18 +5,19 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.5</version>
+        <version>2.5.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>de4a-connector-mock</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
     <packaging>${packaging.type}</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <commons-io.version>2.11.0</commons-io.version>
     </properties>
 
     <profiles>
@@ -42,7 +43,7 @@
             <dependency>
                 <groupId>eu.de4a</groupId>
                 <artifactId>de4a-commons-parent-pom</artifactId>
-                <version>0.1.2</version>
+                <version>0.2.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -59,8 +60,24 @@
             <artifactId>de4a-kafka-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-messaging</artifactId>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -77,11 +94,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.8.0</version>
-        </dependency>
-        <dependency>
-          <groupId>com.sun.xml.bind</groupId>
-          <artifactId>jaxb-impl</artifactId>
+            <version>${commons-io.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -91,14 +104,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <!-- Spring boot 2.4.4 uses jackson 2.11.4 while kafka client uses 2.12.2, this leads to issues -->
-        <!-- todo: check this again whenever spring updates -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.11.4</version><!--$NO-MVN-MAN-VER$-->
         </dependency>
     </dependencies>
 
@@ -114,6 +119,55 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.11.3</version>
+                <executions>
+                    <execution>
+                        <!-- optional: you don't really need execution ids, but it looks nice in your build log. -->
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <!-- optional: default phase is "generate-resources" -->
+                        <phase>generate-resources</phase>
+                    </execution>
+                   <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+
+                        <!-- optional: default phase is "generate-resources" -->
+                        <phase>generate-resources</phase>
+
+                        <configuration>
+                            <!-- optional: The default argument is actually
+                            "install", so unless you need to run some other npm command,
+                            you can remove this whole <configuration> section.
+                            -->
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm run webpack</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+
+                        <phase>generate-resources</phase>
+
+                        <configuration>
+                            <arguments>run webpack</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <nodeVersion>v15.14.0</nodeVersion>
+                    <workingDirectory>fe-mock</workingDirectory>
+                </configuration>
             </plugin>
         </plugins>
     </build>

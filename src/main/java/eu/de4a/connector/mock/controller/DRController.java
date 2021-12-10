@@ -5,10 +5,7 @@ import eu.de4a.connector.mock.Helper;
 import eu.de4a.connector.mock.exampledata.CanonicalEvidenceExamples;
 import eu.de4a.connector.mock.exampledata.DataOwner;
 import eu.de4a.connector.mock.exampledata.EvidenceID;
-import eu.de4a.iem.jaxb.common.types.CanonicalEvidenceType;
-import eu.de4a.iem.jaxb.common.types.ErrorListType;
-import eu.de4a.iem.jaxb.common.types.RequestExtractEvidenceIMType;
-import eu.de4a.iem.jaxb.common.types.RequestTransferEvidenceUSIIMDRType;
+import eu.de4a.iem.jaxb.common.types.*;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
 import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
 import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
@@ -47,6 +44,8 @@ public class DRController {
     private boolean forwardIM;
     @Value("${mock.dr.forward.do.im:set-some-url}")
     private String forwardIMUrl;
+    @Value("${mock.dr.forward.do.usi:set-some-url}")
+    private String forwardUsiUrl;
 
     @PostMapping("${mock.dr.endpoint.im}")
     public ResponseEntity<String> dr1imresp(InputStream body) throws MarshallException {
@@ -55,7 +54,7 @@ public class DRController {
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
-        RequestTransferEvidenceUSIIMDRType req = marshaller.read(body);
+        RequestExtractEvidenceType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
@@ -66,7 +65,7 @@ public class DRController {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_NOT_FOUND.getCode(),
+                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
                             String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
                     )
             );
@@ -78,7 +77,7 @@ public class DRController {
 
         // if set to forward, sends a request to the do for getting the CanonicalEvidence
         if (forwardIM) {
-            RequestExtractEvidenceIMType doRequest = Helper.buildDoImRequest(req);
+            RequestExtractEvidenceType doRequest = Helper.buildDoImRequest(req);
             HttpResponse doResponse;
             String doRespBody;
             try {
@@ -89,11 +88,10 @@ public class DRController {
                 doRespBody = IOUtils.toString(doResponse.getEntity().getContent(), StandardCharsets.UTF_8);
                 if (doResponse.getStatusLine().getStatusCode() != 200) {
                     ErrorListType errorListType = new ErrorListType();
+                    String errorString = String.format("error sending request to do (at %s): %s \n%s", forwardIMUrl, doResponse.getStatusLine().toString(), doRespBody);
                     errorListType.addError(
                             DE4AResponseDocumentHelper.createError(
-                                    ErrorCodes.DE4A_ERROR.getCode(),
-                                    String.format("error sending request to do (at %s): %s \n%s", forwardIMUrl, doResponse.getStatusLine().toString(), doRespBody)
-                                            .substring(0,4000)
+                                    MockedErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
                             )
                     );
                     res.setErrorList(errorListType);
@@ -103,10 +101,10 @@ public class DRController {
             } catch (IOException ex) {
                 log.error("dr forward to do exception: {}", ex.getLocalizedMessage());
                 ErrorListType errorListType = new ErrorListType();
+                String errorString = String.format("error sending request to do: %s \n%s", ex.getLocalizedMessage(), Helper.getStackTrace(ex));
                 errorListType.addError(
                         DE4AResponseDocumentHelper.createError(
-                                ErrorCodes.DE4A_ERROR.getCode(),
-                                String.format("error sending request to do: %s \n%s", ex.getLocalizedMessage(), Helper.getStackTrace(ex)).substring(0,4000)
+                                MockedErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
                         )
                 );
                 res.setErrorList(errorListType);
@@ -128,11 +126,11 @@ public class DRController {
                     errorMessage = "";
                 }
                 ErrorListType errorListType = new ErrorListType();
+                String errorString = String.format("could not unmarshall response from do%s", errorMessage);
                 errorListType.addError(
                         DE4AResponseDocumentHelper.createError(
-                                ErrorCodes.DE4A_ERROR.getCode(),
-                                String.format("could not unmarshall response from do%s", errorMessage)
-                                        .substring(0,4000)
+                                MockedErrorCodes.DE4A_ERROR.getCode(), errorString
+                                        .substring(0, Math.min(4000, errorMessage.length()))
                         )
                 );
                 res.setErrorList(errorListType);
@@ -152,7 +150,7 @@ public class DRController {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_BAD_REQUEST.getCode(),
+                            MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
                             String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
                     )
             );
@@ -164,7 +162,7 @@ public class DRController {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_NOT_FOUND.getCode(),
+                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
                             String.format("no known evidence type id '%s'", req.getCanonicalEvidenceTypeId())
                     )
             );
@@ -177,7 +175,7 @@ public class DRController {
             ErrorListType errorListType = new ErrorListType();
             errorListType.addError(
                     DE4AResponseDocumentHelper.createError(
-                            ErrorCodes.DE4A_NOT_FOUND.getCode(),
+                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
                             String.format("No evidence with eIDASIdentifier '%s' found for %s", eIDASIdentifier, dataOwner.toString())));
             res.setErrorList(errorListType);
             return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
@@ -191,4 +189,103 @@ public class DRController {
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
     }
 
+    @PostMapping("${mock.dr.endpoint.usi}")
+    public ResponseEntity<String> dr1usi(InputStream body) throws MarshallException {
+        var marshaller = DE4AMarshaller.drUsiRequestMarshaller();
+        UUID errorKey = UUID.randomUUID();
+        marshaller.readExceptionCallbacks().set((ex) -> {
+            MarshallErrorHandler.getInstance().postError(errorKey, ex);
+        });
+        RequestExtractEvidenceType req = marshaller.read(body);
+        if (req == null) {
+            throw new MarshallException(errorKey);
+        }
+        ResponseErrorType res;
+        // The data owner is needed to identify what CanonicalEvidence Schema is used, both when the request is sent to the do and when the response is just mocked in the dr.
+        DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
+        if (dataOwner == null) {
+            ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(
+                    DE4AResponseDocumentHelper.createError(
+                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
+                            String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
+                    )
+            );
+            res = DE4AResponseDocumentHelper.createResponseError(false);
+            res.setErrorList(errorListType);
+            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drUsiResponseMarshaller().getAsString(res));
+        }
+
+        DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Received RequestTransferEvidence, requestId: %s", req.getRequestId()));
+
+        RequestExtractEvidenceType doRequest = Helper.buildDoUsiRequest(req);
+        HttpResponse doResponse;
+        String doRespBody;
+        try {
+            doResponse = Request.Post(forwardUsiUrl)
+                    .bodyStream(DE4AMarshaller.doUsiRequestMarshaller().getAsInputStream(doRequest), ContentType.APPLICATION_XML)
+                    .execute().returnResponse();
+
+            doRespBody = IOUtils.toString(doResponse.getEntity().getContent(), StandardCharsets.UTF_8);
+            if (doResponse.getStatusLine().getStatusCode() != 200) {
+                ErrorListType errorListType = new ErrorListType();
+                String errorString = String.format("error sending request to do (at %s): %s \n%s", forwardUsiUrl, doResponse.getStatusLine().toString(), doRespBody);
+                errorListType.addError(
+                        DE4AResponseDocumentHelper.createError(
+                                MockedErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
+                        )
+                );
+                res = DE4AResponseDocumentHelper.createResponseError(false);
+                res.setErrorList(errorListType);
+                return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drUsiResponseMarshaller().getAsString(res));
+            }
+
+        } catch (IOException ex) {
+            log.error("dr forward to do exception: {}", ex.getLocalizedMessage());
+            ErrorListType errorListType = new ErrorListType();
+            String errorString = String.format("error sending request to do: %s \n%s", ex.getLocalizedMessage(), Helper.getStackTrace(ex));
+            errorListType.addError(
+                    DE4AResponseDocumentHelper.createError(
+                            MockedErrorCodes.DE4A_ERROR.getCode(), errorString.substring(0, Math.min(4000, errorString.length()))
+                    )
+            );
+            res = DE4AResponseDocumentHelper.createResponseError(false);
+            res.setErrorList(errorListType);
+            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drUsiResponseMarshaller().getAsString(res));
+        }
+
+        var doMarshaller = DE4AMarshaller.doUsiResponseMarshaller();
+        UUID doErrorKey = UUID.randomUUID();
+        doMarshaller.readExceptionCallbacks().set((ex) -> {
+            MarshallErrorHandler.getInstance().postError(errorKey, ex);
+        });
+        var doUsiResp = doMarshaller.read(doRespBody);
+        if (doUsiResp == null) {
+            String errorMessage;
+            try {
+                JAXBException doExp = MarshallErrorHandler.getInstance().getError(doErrorKey).get(1000, TimeUnit.MILLISECONDS);
+                errorMessage = String.format(": %s\n%s", doExp.getLocalizedMessage(), Helper.getStackTrace(doExp));
+            } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+                errorMessage = "";
+            }
+            ErrorListType errorListType = new ErrorListType();
+            String errorString = String.format("could not unmarshall response from do%s", errorMessage);
+            errorListType.addError(
+                    DE4AResponseDocumentHelper.createError(
+                            MockedErrorCodes.DE4A_ERROR.getCode(), errorString
+                                    .substring(0, Math.min(4000, errorMessage.length()))
+                    )
+            );
+            res = DE4AResponseDocumentHelper.createResponseError(false);
+            res.setErrorList(errorListType);
+            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drUsiResponseMarshaller().getAsString(res));
+        }
+
+        res = DE4AResponseDocumentHelper.createResponseError(doUsiResp.getErrorList() == null);
+        res.setErrorList(doUsiResp.getErrorList());
+
+        DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Responding to RequestTransferEvidence, requestId: %s", req.getRequestId()));
+
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.drUsiResponseMarshaller().getAsString(res));
+    }
 }
