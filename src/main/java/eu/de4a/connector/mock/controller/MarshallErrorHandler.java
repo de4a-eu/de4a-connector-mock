@@ -26,7 +26,7 @@ public class MarshallErrorHandler {
         errorHashMap.put(key, ex);
     }
 
-    public CompletableFuture<JAXBException> getError(UUID key) {
+    public CompletableFuture<JAXBException> getError(UUID key) throws InterruptedException{
         //I will assume getError will not be called from multiple threads with the same key.
         //Therefore no locks are needed.
         while (true) {

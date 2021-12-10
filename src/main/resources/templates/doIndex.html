@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>DO</title>
+</head>
+<body>
+
+<div id="do-root"></div>
+
+<script th:inline="javascript">
+    window.DO_CONST = {
+        "previewEndpoint": [[${doConfig.previewEvidenceRequest}]],
+        "previewAcceptEndpoint": [[${doConfig.previewEvidenceAccept}]],
+        "previewRejectEndpoint": [[${doConfig.previewEvidenceReject}]],
+        "previewWebsocket": [[${doConfig.websocketSocketEndpoint}]],
+        "previewMessages": [[${doConfig.websocketMessagesEndpoint}]],
+        "previewIdsEndpoint": [[${doConfig.previewRequestIdsEndpoint}]],
+        "previewRedirectUrlEndpoint": [[${doConfig.previewRedirectUrlEndpoint}]],
+    }
+</script>
+<script src="/built/bundle.js" th:src="${doConfig.bundlePath}"></script>
+
+</body>
+</html>

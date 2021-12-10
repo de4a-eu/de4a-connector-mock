@@ -1,0 +1,44 @@
+<bi:DomicileRegistrationEvidence
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:cvb="http://www.w3.org/ns/corevocabulary/BasicComponents"
+        xmlns="http://www.de4a.eu/2020/data/transferor/pattern/usi"
+        xmlns:bi="urn:eu-de4a:xsd:CanonicalEvidenceType::DomicileRegistrationEvidence:v1.6"
+        xsi:schemaLocation="urn:eu-de4a:xsd:CanonicalEvidenceType::DomicileRegistrationEvidence:v1.6 domicileRegistrationEvidence-1.6.xsd">
+    <bi:IssueDate>2012-01-01</bi:IssueDate>
+    <bi:IssuingAuthority>
+        <bi:PrefLabel>Instituto Nacional de Estadistica</bi:PrefLabel>
+    </bi:IssuingAuthority>
+    <bi:IssuingPlace>
+        <cvb:LocatorDesignator>0074874</cvb:LocatorDesignator>
+        <cvb:Thoroughfare>ES</cvb:Thoroughfare>
+        <cvb:PostCode>52002</cvb:PostCode>
+        <bi:AddressArea>MELILLA</bi:AddressArea>
+        <bi:AdminUnitL2>MELILLA</bi:AdminUnitL2>
+        <bi:AdminUnitL1>ES</bi:AdminUnitL1>
+    </bi:IssuingPlace>
+    <bi:CertifiesDomicile>
+        <bi:Inhabitant>
+            <bi:PersonName>
+                <bi:FamilyName>ApellidoPrimero ApellidoSegundo</bi:FamilyName>
+                <bi:GivenName>Nombre</bi:GivenName>
+            </bi:PersonName>
+            <bi:Identifier>
+                <cvb:Identifier>99999142H</cvb:Identifier>
+            </bi:Identifier>
+            <bi:DateOfBirth>
+                <bi:Year>2000</bi:Year>
+                <bi:Month>--01</bi:Month>
+                <bi:Day>---01</bi:Day>
+            </bi:DateOfBirth>
+            <bi:Gender>UNKNOWN</bi:Gender>
+        </bi:Inhabitant>
+        <bi:Domicile>
+            <cvb:LocatorDesignator>CALLE DEMETRIO, B, floor: 2</cvb:LocatorDesignator>
+            <cvb:Thoroughfare>ES</cvb:Thoroughfare>
+            <cvb:PostName>MELILLA</cvb:PostName>
+            <cvb:PostCode>52002</cvb:PostCode>
+            <bi:AdminUnitL2>MELILLA</bi:AdminUnitL2>
+            <bi:AdminUnitL1>ES</bi:AdminUnitL1>
+        </bi:Domicile>
+    </bi:CertifiesDomicile>
+</bi:DomicileRegistrationEvidence>
