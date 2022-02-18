@@ -6,6 +6,7 @@ import eu.de4a.connector.mock.preview.PreviewMessage;
 import eu.de4a.connector.mock.config.DOConfig;
 import eu.de4a.connector.mock.exampledata.DataOwner;
 import eu.de4a.connector.mock.preview.PreviewStorage;
+import eu.de4a.connector.mock.preview.SubscriptionStorage;
 import eu.de4a.iem.jaxb.common.types.*;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
 import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
@@ -38,6 +39,9 @@ public class DOPreviewController {
     PreviewStorage previewStorage;
 
     @Autowired
+    SubscriptionStorage subscriptionStorage;
+    
+    @Autowired
     DOConfig doConfig;
     @Autowired
     ObjectMapper objectMapper;
@@ -50,6 +54,18 @@ public class DOPreviewController {
 
     @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.endpoint.index}")
     public String doIndex(Model model) {
+        model.addAttribute("doConfig", doConfig);
+        return "doIndex";
+    }
+    //mock.do.endpoint.subscription=/do1/subscription/eventSubscription
+    @GetMapping(value = "${mock.do.endpoint.subscription}")
+    public String doNotification(Model model) {
+        model.addAttribute("doConfig", doConfig);
+        return "doIndex";
+    }
+    
+    @GetMapping(value = "/notification")
+    public String doNotificationIndex(Model model) {
         model.addAttribute("doConfig", doConfig);
         return "doIndex";
     }

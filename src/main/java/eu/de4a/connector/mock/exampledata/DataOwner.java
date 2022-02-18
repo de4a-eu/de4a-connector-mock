@@ -15,7 +15,8 @@ public enum DataOwner {
     JSI_SI("iso6523-actorid-upis::9999:SI000000018", "(JSI) Institut Jozef Stefan", "SI", Pilot.T41),
     MIZS_SI("iso6523-actorid-upis::9999:SI000000016", "(MIZS) Ministrstvo za Izobrazevanje, Znanost in Sport", "SI", Pilot.T41),
     UJI_ES("iso6523-actorid-upis::9999:ESQ6250003H", "(UJI) Universitat Jaume I de Castellón", "ES", Pilot.T41),
-    SGAD_ES("iso6523-actorid-upis::9999:ESS2833002E", "(MPTFP-SGAD) Secretaría General de Administración Digital", "ES", PilotInterface.multiple(Pilot.T43, Pilot.T41));
+    
+    SGAD_ES("iso6523-actorid-upis::9999:ESS2833002E-it1", "(MPTFP-SGAD) Secretaría General de Administración Digital", "ES", PilotInterface.multiple(Pilot.T43, Pilot.T41));
 
     @Getter
     final private String urn;

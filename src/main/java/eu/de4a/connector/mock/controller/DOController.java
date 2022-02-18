@@ -10,6 +10,7 @@ import eu.de4a.connector.mock.exampledata.DataOwner;
 import eu.de4a.connector.mock.exampledata.EvidenceID;
 import eu.de4a.connector.mock.preview.PreviewMessage;
 import eu.de4a.connector.mock.preview.PreviewStorage;
+import eu.de4a.connector.mock.preview.SubscriptionStorage;
 import eu.de4a.iem.jaxb.common.types.*;
 import eu.de4a.iem.xml.de4a.DE4AMarshaller;
 import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
@@ -53,6 +54,8 @@ public class DOController {
     private TaskScheduler taskScheduler;
     @Autowired
     private PreviewStorage previewStorage;
+    @Autowired
+    private SubscriptionStorage subscriptionStorage;
     @Autowired
     private SimpMessagingTemplate websocketMessaging;
     @Autowired
@@ -240,6 +243,131 @@ public class DOController {
         return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
     }
 
+    @PostMapping("${mock.do.endpoint.subscription}")
+    public ResponseEntity<String> DO1SubscriptionRequestEventSubscription(InputStream body) throws MarshallException {
+        //TODO 
+    	//var marshaller = DE4AMarshaller.doSubscriptionRequestMarshaller();
+        var marshaller = DE4AMarshaller.doUsiRequestMarshaller();
+        UUID errorKey = UUID.randomUUID();
+        marshaller.readExceptionCallbacks().set((ex) -> {
+            MarshallErrorHandler.getInstance().postError(errorKey, ex);
+        });
+        // TODO
+        //RequestEventSubscriptionType req = marshaller.read(body);
+        RequestExtractEvidenceType req = marshaller.read(body);
+        if (req == null) {
+            throw new MarshallException(errorKey);
+        }
+
+        ResponseErrorType res = DE4AResponseDocumentHelper.createResponseError(true);
+        DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
+        if (dataOwner == null) {
+            ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(
+                    doGenericError(
+                            String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
+                    )
+            );
+            res.setErrorList(errorListType);
+            res.setAck(AckType.KO);
+            //TODO
+            //return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doSubscripitionResponseMarshaller().getAsString(res));
+            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+        }
+        if (!dataOwner.getPilot().validDataRequestSubject(req.getDataRequestSubject())) {
+            ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(doIdentityMatchingError());
+            errorListType.addError(
+                    DE4AResponseDocumentHelper.createError(
+                            MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
+                            String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
+                    )
+            );
+            res.setErrorList(errorListType);
+            res.setAck(AckType.KO);
+            //TODO
+            //return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doSubscripitionResponseMarshaller().getAsString(res));
+            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+        }
+        // TODO
+        // EventSubscription
+        EvidenceID evidenceID = EvidenceID.selectEvidenceId(req.getCanonicalEvidenceTypeId());
+        if (evidenceID == null) {
+            ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(
+                    doGenericError(
+                            String.format("no known evidence type id '%s'", req.getCanonicalEvidenceTypeId())
+                    )
+            );
+            res.setErrorList(errorListType);
+            res.setAck(AckType.KO);
+            //TODO
+            //return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doSubscripitionResponseMarshaller().getAsString(res));
+            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+        }
+        String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(req.getDataRequestSubject());
+        // TODO
+        // EventSubscription samples
+        CanonicalEvidenceExamples canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
+        if (canonicalEvidence == null) {
+            ErrorListType errorListType = new ErrorListType();
+            errorListType.addError(doIdentityMatchingError());
+            errorListType.addError(
+                    DE4AResponseDocumentHelper.createError(
+                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
+                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
+            res.setErrorList(errorListType);
+            res.setAck(AckType.KO);
+            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+        }
+        CanonicalEvidenceType ce = new CanonicalEvidenceType();
+        ce.setAny(canonicalEvidence.getDocumentElement());
+
+        RequestTransferEvidenceUSIDTType dtRequest = Helper.buildDtUsiRequest(req, ce, null, null);
+
+        if (canonicalEvidence.getUsiAutoResponse().useAutoResp()) {
+            taskScheduler.schedule(() ->
+                    sendRequest(
+                            doConfig.getPreviewDTUrl(),
+                            DE4AMarshaller.dtUsiRequestMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(dtRequest),
+                            log::error),
+                    Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
+        } else {
+        	subscriptionStorage.addRequestToPreview(dtRequest);
+            String message;
+            try {
+                message = objectMapper.writeValueAsString(new PreviewMessage(PreviewMessage.Action.ADD, dtRequest.getRequestId()));
+            } catch (JsonProcessingException ex) {
+                message = "{}";
+                log.error("json error");
+            }
+            String endpoint = String.format("%s%s", doConfig.getPreviewBaseEndpoint(), doConfig.getWebsocketMessagesEndpoint());
+            log.debug("sending websocket message {}: {}", endpoint, message);
+            websocketMessaging.convertAndSend(endpoint, message);
+
+            RedirectUserType redirectUserType = new RedirectUserType();
+            redirectUserType.setRequestId(req.getRequestId());
+            redirectUserType.setSpecificationId(req.getSpecificationId());
+            redirectUserType.setTimeStamp(LocalDateTime.now());
+            redirectUserType.setDataEvaluator(req.getDataEvaluator());
+            redirectUserType.setCanonicalEvidenceTypeId(req.getCanonicalEvidenceTypeId());
+            redirectUserType.setRedirectUrl(
+                    String.format("%s%s%s?requestId=%s",
+                        baseUrl,
+                        doConfig.getPreviewBaseEndpoint(),
+                        doConfig.getIndexEndpoint(),
+                        req.getRequestId()));
+            sendRequest(
+                    doConfig.getPreviewDTRedirectUrl(),
+                    DE4AMarshaller.deUsiRedirectUserMarshaller().getAsInputStream(redirectUserType),
+                    log::error);
+        }
+
+        DE4AKafkaClient.send(EErrorLevel.INFO, () ->
+                String.format("Receiving USI RequestExtractEvidence, requestId: %s", req.getRequestId()));
+
+        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+    }
 
     public static String responseBodyToString(HttpResponse response) {
         StringWriter stringWriter = new StringWriter();

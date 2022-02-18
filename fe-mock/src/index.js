@@ -1,15 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter} from "react-router-dom";
+import {BrowserRouter, Switch, Route} from "react-router-dom";
 import 'bootstrap'
 import './index.scss';
 import App from './App';
+import AppSubscription from './AppSubscription';
+import Notification from './Notification';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
       <BrowserRouter>
-          <App />
+        <Switch>
+            <Route path='/do1/preview/index'>
+                <App />
+            </Route>
+            <Route path='/do1/subscription/eventSubscription'>
+                <AppSubscription />
+            </Route>
+			<Route path='/notification'>
+                <Notification />
+            </Route>
+        </Switch>
       </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('do-root')

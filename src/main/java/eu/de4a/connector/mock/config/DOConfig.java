@@ -16,6 +16,9 @@ public class DOConfig implements Serializable {
     @Value("${mock.do.preview.endpoint.index}")
     private String indexEndpoint;
     @Getter
+    @Value("${mock.do.preview.endpoint.notification}")
+    private String notificationEndpoint;
+    @Getter
     @Value("${mock.do.preview.evidence.get.endpoint}")
     private String previewEvidenceRequest;
     @Getter

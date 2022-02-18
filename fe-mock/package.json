@@ -29,7 +29,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "webpack": "webpack --config webpack.prod.js",
-    "webpack-dev": "webpack --config webpack.dev.js"
+    "webpack-dev": "webpack serve --config webpack.dev.js"
   },
   "eslintConfig": {
     "extends": [
