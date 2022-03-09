@@ -1,6 +1,6 @@
 package eu.de4a.connector.mock.exampledata;
 
-import eu.de4a.iem.jaxb.common.types.AgentType;
+import eu.de4a.iem.core.jaxb.common.AgentType;
 import lombok.Getter;
 
 import java.util.Arrays;

@@ -1,7 +1,8 @@
 package eu.de4a.connector.mock.preview;
 
-import eu.de4a.iem.jaxb.common.types.RequestTransferEvidenceUSIDTType;
-import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
+//import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceUSIType;
+import eu.de4a.iem.core.jaxb.common.ResponseExtractMultiEvidenceType;
+import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.TaskScheduler;
@@ -24,7 +25,7 @@ public class PreviewStorage {
 
     // For concurrency handling, I'm assuming the requestId is unique. Since the data is not changed it can be considered
     // immutable no further assumptions are needed.
-    private ConcurrentHashMap<String, Preview<RequestTransferEvidenceUSIDTType>> requestToPreview;
+    private ConcurrentHashMap<String, Preview<ResponseExtractMultiEvidenceType>> requestToPreview;
     private TaskScheduler taskScheduler;
 
     public PreviewStorage(TaskScheduler taskScheduler) {
@@ -33,23 +34,23 @@ public class PreviewStorage {
         this.taskScheduler.scheduleWithFixedDelay(() -> this.pruneOld(Duration.ofMinutes(35)), Duration.ofSeconds(20));
     }
 
-    private Preview<RequestTransferEvidenceUSIDTType> getRequestLockPair(String requestId) {
+    private Preview<ResponseExtractMultiEvidenceType> getRequestLockPair(String requestId) {
         if (!requestToPreview.containsKey(requestId)) {
             requestToPreview.put(requestId, new Preview<>(null, "", null));
         }
         return requestToPreview.get(requestId);
     }
 
-    public void addRequestToPreview(RequestTransferEvidenceUSIDTType request) {
-        Preview<RequestTransferEvidenceUSIDTType> preview = getRequestLockPair(request.getRequestId());
+    public void addRequestToPreview(ResponseExtractMultiEvidenceType res) {
+        Preview<ResponseExtractMultiEvidenceType> preview = getRequestLockPair(res.getRequestId());
         synchronized (preview.lock) {
-            preview.object = request;
+            preview.object = res;
             preview.lock.notifyAll();
         }
     }
 
-    public CompletableFuture<RequestTransferEvidenceUSIDTType> getRequest(String requestId) throws InterruptedException {
-        Preview<RequestTransferEvidenceUSIDTType> preview =  getRequestLockPair(requestId);
+    public CompletableFuture<ResponseExtractMultiEvidenceType> getRequest(String requestId) throws InterruptedException {
+        Preview<ResponseExtractMultiEvidenceType> preview =  getRequestLockPair(requestId);
         while (requestToPreview.containsKey(requestId)) {
             synchronized (preview.lock) {
                 if (preview.object != null) {
@@ -84,10 +85,10 @@ public class PreviewStorage {
 
     private static class Preview<T> {
         private final Object lock;
-        private T object;
+        private ResponseExtractMultiEvidenceType object;
         private Instant timeStamp;
 
-        private Preview(T object, String redirectionUrl, IDE4ACanonicalEvidenceType canonicalEvidenceType) {
+        private Preview(ResponseExtractMultiEvidenceType object, String redirectionUrl, IDE4ACanonicalEvidenceType canonicalEvidenceType) {
             this.lock = new Object();
             this.object = object;
             this.timeStamp = Instant.now();

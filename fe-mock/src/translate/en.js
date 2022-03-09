@@ -63,7 +63,7 @@ const trans_en = {
         "Inhabitant": "Inhabitant",
         "Domicile": "Domicile",
         "IdentifierType": "Identifier type",
-        "IssuingAuthorityID": "Issuing authority ID",
+        "IssuingAuthorityID": "Issuing authority IfirstNameD",
         "Citizenship": "Citizenship",
         "Name": "Name",
         "Parent": "Parent",
@@ -73,13 +73,57 @@ const trans_en = {
         "MaritalStatusBeforeMarriage": "Marital status before marriage",
         "CertifiesEndOfMarriage": "Certifies end of marriage",
         "DateOfEndOfMarriage": "Date of end of marriage",
-        "Cause": "Cause"
+	    "Cause": "Cause",
+
+		"personIdentifier": "personIdentifier",
+		"gender": "gender",
+		"firstName": "firstName",
+		"currentAddress": "currentAddress",
+		"birthName": "birthName",
+		"vatRegistration": "vatRegistration",
+		"taxReference": "taxReference",
+		"sic": "sic",
+		"seed": "seed",
+		"lei": "lei",
+		"legalPersonIdentifier": "legalPersonIdentifier",
+		"legalName": "legalName",
+		"legalAddress": "legalAddress",
+		"eori": "eori",
+		"d201217EUIdentifier": "d201217EUIdentifier",
+		"canonicalEvidence": "canonicalEvidence",
+		"timeStamp": "timeStamp",
+		"requestId": "requestId",
+		"redirectURL": "redirectURL",
+		"agentUrn": "agentUrn",
+		"assuranceLevelValue": "assuranceLevelValue",
+		"assuranceLevelCodeListVerionID": "assuranceLevelCodeListVerionID",
+		"assuranceLevelCodeListID": "assuranceLevelCodeListID",
+		"assuranceLevelAgencyName": "assuranceLevelAgencyName",
+		"assuranceLevelAgencyID": "assuranceLevelAgencyID",
+		"value": "value",
+		"latinScript": "latinScript",
+		"languageLocaleID": "languageLocaleID",
+		"languageID": "languageID",
+	 
+		"ResponseEventSubscriptionItem" : "Subscription item",
+		"RequestItemId" : "Request item identifier",
+		"SubscriptionPeriod" : "Subscription period",
+		"StartDate" : "Start date",
+		"EndDate" : "End date"
+		
+
     },
     "acceptButton": "Accept data",
     "rejectButton": "Reject data",
     "legalText": "The DE4A project (https://www.de4a.eu/about-project) has been funded by the European Commission. This project pilots specific procedures of the Single Digital Gateway Regulation - Article 14 of the SDGR specifies the requirement for an explicit request.",
     "previewButton": "Preview",
-    "requestListTitle": "Select an evidence to preview"
+    "requestListTitle": "Select an evidence to preview",
+
+	"requestSubscriptionListTitle": "Select a subscription to preview",
+	"sendNotification": "Send notification",
+	"subscriptionExplanation" : "The following information has been retrieved from the subscription message received. Please review the provided information. By selecting [Send notification] a notification will be sent to the subscribed participant. \n\n  The information is formatted according to the European standards, therefore some information might look different from the country specific presentation. ",
+	
+	"continue": "Continue"
 }
 
 export default trans_en

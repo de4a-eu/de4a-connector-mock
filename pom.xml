@@ -43,7 +43,14 @@
             <dependency>
                 <groupId>eu.de4a</groupId>
                 <artifactId>de4a-commons-parent-pom</artifactId>
-                <version>0.2.1</version>
+                <version>0.2.1-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.de4a.ial</groupId>
+                <artifactId>ial-parent-pom</artifactId>
+                <version>0.1.0-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -51,13 +58,27 @@
     </dependencyManagement>
     
     <dependencies>
+    	<dependency>
+            <groupId>eu.de4a.ial</groupId>
+            <artifactId>ial-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>eu.de4a</groupId>
             <artifactId>de4a-iem</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.de4a</groupId>
+            <artifactId>de4a-core-schemas</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.de4a</groupId>
             <artifactId>de4a-kafka-client</artifactId>
+            <exclusions>
+            	<exclusion>
+            		<groupId>com.fasterxml.jackson.core</groupId>
+            		<artifactId>jackson-databind</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -77,9 +98,18 @@
                     <groupId>org.apache.logging.log4j</groupId>
                     <artifactId>log4j-api</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>com.fasterxml.jackson.core</groupId>
+                	<artifactId>jackson-databind</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.12.4</version>
+		</dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-to-slf4j</artifactId>

@@ -16,9 +16,6 @@ public class DOConfig implements Serializable {
     @Value("${mock.do.preview.endpoint.index}")
     private String indexEndpoint;
     @Getter
-    @Value("${mock.do.preview.endpoint.notification}")
-    private String notificationEndpoint;
-    @Getter
     @Value("${mock.do.preview.evidence.get.endpoint}")
     private String previewEvidenceRequest;
     @Getter
@@ -48,5 +45,30 @@ public class DOConfig implements Serializable {
     @Getter
     @Value("${mock.do.preview.bundle.path}")
     private String bundlePath;
+    @Getter
+    @Value("${mock.do.preview.endpoint.subscription.base}")
+    private String subscriptionBaseEndpoint;
+    @Getter
+    @Value("${mock.do.preview.endpoint.subscription.index}")
+    private String subscriptionEndpoint;
+    @Getter
+    @Value("${mock.do.preview.subscription.requestId.all.endpoint}")
+    private String previewSubscriptionRequestIdsEndpoint;
+    @Getter
+    @Value("${mock.do.preview.subscription.get.endpoint}")
+    private String previewSubscriptionRequest;
+    
+    @Getter
+    @Value("${mock.do.preview.endpoint.notification}")
+    private String notificationEndpoint;
+    
+    @Getter
+    @Value("${mock.do.create.notification}")
+    private String createNotif;
+    /*
+    @Getter
+    @Value("${mock.do.preview.endpoint.notification.summary}")
+    private String notificationSummary;
+    */
 
 }

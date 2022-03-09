@@ -6,10 +6,15 @@ import './index.scss';
 import App from './App';
 import AppSubscription from './AppSubscription';
 import Notification from './Notification';
+import NotifSummary from './NotifSummary';
+import NotifSent from './NotifSent';
 import reportWebVitals from './reportWebVitals';
+
+import ContextContainer from "./context/ContextContainer";
 
 ReactDOM.render(
   <React.StrictMode>
+	<ContextContainer>	
       <BrowserRouter>
         <Switch>
             <Route path='/do1/preview/index'>
@@ -21,8 +26,15 @@ ReactDOM.render(
 			<Route path='/notification'>
                 <Notification />
             </Route>
+			<Route path='/notifsummary'>
+                <NotifSummary />
+            </Route>
+			<Route path='/notifsent'>
+                <NotifSent />
+            </Route>
         </Switch>
       </BrowserRouter>
+	</ContextContainer>
   </React.StrictMode>,
   document.getElementById('do-root')
 );

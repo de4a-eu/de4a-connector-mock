@@ -1,22 +1,19 @@
 package eu.de4a.connector.mock.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.helger.commons.error.level.EErrorLevel;
-import eu.de4a.connector.mock.Helper;
-import eu.de4a.connector.mock.config.DOConfig;
-import eu.de4a.connector.mock.exampledata.CanonicalEvidenceExamples;
-import eu.de4a.connector.mock.exampledata.DataOwner;
-import eu.de4a.connector.mock.exampledata.EvidenceID;
-import eu.de4a.connector.mock.preview.PreviewMessage;
-import eu.de4a.connector.mock.preview.PreviewStorage;
-import eu.de4a.connector.mock.preview.SubscriptionStorage;
-import eu.de4a.iem.jaxb.common.types.*;
-import eu.de4a.iem.xml.de4a.DE4AMarshaller;
-import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
-import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
-import eu.de4a.kafkaclient.DE4AKafkaClient;
-import lombok.extern.slf4j.Slf4j;
+import static eu.de4a.connector.mock.Helper.doGenericError;
+import static eu.de4a.connector.mock.Helper.doIdentityMatchingError;
+import static eu.de4a.connector.mock.Helper.sendRequest;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +29,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.w3c.dom.Element;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.UUID;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.helger.commons.error.level.EErrorLevel;
 
-import static eu.de4a.connector.mock.Helper.*;
+import eu.de4a.connector.mock.Helper;
+import eu.de4a.connector.mock.config.DOConfig;
+import eu.de4a.connector.mock.exampledata.CanonicalEventSubscriptionExamples;
+import eu.de4a.connector.mock.exampledata.CanonicalEvidenceExamples;
+import eu.de4a.connector.mock.exampledata.DataOwner;
+import eu.de4a.connector.mock.exampledata.EvidenceID;
+import eu.de4a.connector.mock.exampledata.SubscriptionID;
+import eu.de4a.connector.mock.preview.PreviewMessage;
+import eu.de4a.connector.mock.preview.PreviewStorage;
+import eu.de4a.connector.mock.preview.SubscriptionStorage;
+import eu.de4a.iem.core.DE4ACoreMarshaller;
+import eu.de4a.iem.core.DE4AResponseDocumentHelper;
+import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
+import eu.de4a.iem.core.jaxb.common.CanonicalEvidenceType;
+import eu.de4a.iem.core.jaxb.common.ErrorType;
+import eu.de4a.iem.core.jaxb.common.EventSubscripRequestItemType;
+import eu.de4a.iem.core.jaxb.common.RedirectUserType;
+import eu.de4a.iem.core.jaxb.common.RequestEventSubscriptionType;
+import eu.de4a.iem.core.jaxb.common.RequestEvidenceItemType;
+import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceIMType;
+import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceUSIType;
+import eu.de4a.iem.core.jaxb.common.ResponseErrorType;
+import eu.de4a.iem.core.jaxb.common.ResponseEventSubscriptionItemType;
+import eu.de4a.iem.core.jaxb.common.ResponseEventSubscriptionType;
+import eu.de4a.iem.core.jaxb.common.ResponseExtractEvidenceItemType;
+import eu.de4a.iem.core.jaxb.common.ResponseExtractMultiEvidenceType;
+import eu.de4a.kafkaclient.DE4AKafkaClient;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
@@ -66,151 +86,234 @@ public class DOController {
 
     @PostMapping("${mock.do.endpoint.im}")
     public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) {
-        var marshaller = DE4AMarshaller.doImRequestMarshaller();
+    	CanonicalEvidenceExamples canonicalEvidence = null;
+        var marshaller = DE4ACoreMarshaller.doRequestExtractMultiEvidenceIMMarshaller();
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> MarshallErrorHandler.getInstance().postError(errorKey, ex));
-        RequestExtractEvidenceType req = marshaller.read(body);
+        
+        ResponseErrorType response = new ResponseErrorType();
+        RequestExtractMultiEvidenceIMType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);       }
 
         DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Receiving RequestExtractEvidence, requestId: %s", req.getRequestId()));
-
-        var res = DE4AResponseDocumentHelper.createResponseExtractEvidence(req);
+        
+        ResponseExtractMultiEvidenceType res = new ResponseExtractMultiEvidenceType();
+        ResponseExtractEvidenceItemType resElement = new ResponseExtractEvidenceItemType();
         DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
         if (dataOwner == null) {
-            ErrorListType errorListType = new ErrorListType();
-            errorListType.addError(
-                    doGenericError(
-                            String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
-                    )
-            );
-            res.setErrorList(errorListType);
-            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsString(res));
+            ErrorType errorType = new ErrorType();
+            errorType.setText(String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn()));
+            response.addError(errorType);
+            response.setAck(false);
+            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
         }
-        if (!dataOwner.getPilot().validDataRequestSubject(req.getDataRequestSubject())) {
-            ErrorListType errorListType = new ErrorListType();
-            errorListType.addError(doIdentityMatchingError());
-            errorListType.addError(
-                    DE4AResponseDocumentHelper.createError(
-                            MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
-                            String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
-                    )
-            );
-            res.setErrorList(errorListType);
-            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
+        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
+        	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
+        		response.addError(doIdentityMatchingError());
+                response.addError(
+                        DE4AResponseDocumentHelper.createError(
+                                MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
+                                String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
+                        )
+                );
+                response.setAck(false);
+                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+        	}
         }
-        EvidenceID evidenceID = EvidenceID.selectEvidenceId(req.getCanonicalEvidenceTypeId());
-        if (evidenceID == null) {
-            ErrorListType errorListType = new ErrorListType();
-            errorListType.addError(
-                    doGenericError(
-                            String.format("no known evidence type id '%s'", req.getCanonicalEvidenceTypeId())
-                    )
-            );
-            res.setErrorList(errorListType);
-            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
+        
+        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
+        	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
+        	if (evidenceID == null) {
+                response.addError(
+                        doGenericError(
+                                String.format("no known evidence type id '%s'", reqElement.getCanonicalEvidenceTypeId())
+                        )
+                );
+                response.setAck(false);
+                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+            }
         }
-        String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(req.getDataRequestSubject());
-        Element canonicalEvidence = CanonicalEvidenceExamples.getDocumentElement(dataOwner, evidenceID, eIDASIdentifier);
-        if (canonicalEvidence == null) {
-            ErrorListType errorListType = new ErrorListType();
-            errorListType.addError(doIdentityMatchingError());
-            errorListType.addError(
-                    DE4AResponseDocumentHelper.createError(
-                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
-                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
-            res.setErrorList(errorListType);
-            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
+        
+       
+        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
+        	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
+        	String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
+            canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
+            if (canonicalEvidence == null) {
+            	response.addError(doIdentityMatchingError());
+            	response.addError(
+                        DE4AResponseDocumentHelper.createError(
+                                MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
+                                String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
+            	response.setAck(false);
+            	return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+            }
         }
+        
+        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
+        	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
+	        String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
+	        canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
+	        if (canonicalEvidence == null) {
+	        	response.addError(doIdentityMatchingError());
+	        	response.addError(
+	                    DE4AResponseDocumentHelper.createError(
+	                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
+	                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
+	        	response.setAck(false);
+	        	return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+	        }
+        }
+        
+        res = Helper.buildResponseRequest(req);
+        
         CanonicalEvidenceType ce = new CanonicalEvidenceType();
         ce.setAny(canonicalEvidence);
-        res.setCanonicalEvidence(ce);
+        
+        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
+        	resElement.setDataRequestSubject(reqElement.getDataRequestSubject());
+        	resElement.setCanonicalEvidence(ce);
+        	resElement.setRequestItemId(reqElement.getRequestItemId());
+        	res.addResponseExtractEvidenceItem(resElement);
+        }
+        
+        //DE4ACoreMarshaller.dtResponseTransferEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsString(res);
+        /*resElement.setCanonicalEvidence(ce);
+        List<ResponseExtractEvidenceItemType> resList = new ArrayList<>();
+        resList.add(resElement);
+        res.setResponseExtractEvidenceItem(resList);
+        */
+        
+        //before ending store the evidence
+        if (canonicalEvidence.getUsiAutoResponse().useAutoResp()) {
+            taskScheduler.schedule(() ->
+                    sendRequest(
+                            doConfig.getPreviewDTUrl(),
+                            DE4ACoreMarshaller.drRequestTransferEvidenceIMMarshaller().getAsInputStream(req),
+                            log::error),
+                    Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
+        } else {
+        	previewStorage.addRequestToPreview(res);
+            String message;
+            try {
+                message = objectMapper.writeValueAsString(new PreviewMessage(PreviewMessage.Action.ADD, req.getRequestId()));
+            } catch (JsonProcessingException ex) {
+                message = "{}";
+                log.error("json error");
+            }
+            String endpoint = String.format("%s%s", doConfig.getPreviewBaseEndpoint(), doConfig.getWebsocketMessagesEndpoint());
+            log.debug("sending websocket message {}: {}", endpoint, message);
+            websocketMessaging.convertAndSend(endpoint, message);
 
+            
+        }
+        
         DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Responding to RequestExtractEvidence, requestId: %s", req.getRequestId()));
-
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doImResponseMarshaller(dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(res));
+        
+        response.setAck(true);
+        
+        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
     }
+    
 
     @PostMapping("${mock.do.endpoint.usi}")
     public ResponseEntity<String> DO1USIRequestExtractEvidence(InputStream body) throws MarshallException {
-        var marshaller = DE4AMarshaller.doUsiRequestMarshaller();
+        var marshaller = DE4ACoreMarshaller.doRequestExtractMultiEvidenceUSIMarshaller();
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
-        RequestExtractEvidenceType req = marshaller.read(body);
+        RequestExtractMultiEvidenceUSIType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
+        
+        ResponseErrorType response = new ResponseErrorType();
+        
 
-        ResponseErrorType res = DE4AResponseDocumentHelper.createResponseError(true);
+        ResponseExtractMultiEvidenceType res = new ResponseExtractMultiEvidenceType();
+        ResponseExtractEvidenceItemType resElement = new ResponseExtractEvidenceItemType();
         DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
         if (dataOwner == null) {
-            ErrorListType errorListType = new ErrorListType();
-            errorListType.addError(
+        	response.addError(
                     doGenericError(
                             String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
                     )
             );
-            res.setErrorList(errorListType);
-            res.setAck(AckType.KO);
-            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+        	response.setAck(false);
+            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
         }
-        if (!dataOwner.getPilot().validDataRequestSubject(req.getDataRequestSubject())) {
-            ErrorListType errorListType = new ErrorListType();
-            errorListType.addError(doIdentityMatchingError());
-            errorListType.addError(
-                    DE4AResponseDocumentHelper.createError(
-                            MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
-                            String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
-                    )
-            );
-            res.setErrorList(errorListType);
-            res.setAck(AckType.KO);
-            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceUSIItem()) {
+        	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
+        		response.addError(doIdentityMatchingError());
+        		response.addError(
+                        DE4AResponseDocumentHelper.createError(
+                                MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
+                                String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
+                        )
+                );
+        		response.setAck(false);
+                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+        	}
         }
-        EvidenceID evidenceID = EvidenceID.selectEvidenceId(req.getCanonicalEvidenceTypeId());
-        if (evidenceID == null) {
-            ErrorListType errorListType = new ErrorListType();
-            errorListType.addError(
-                    doGenericError(
-                            String.format("no known evidence type id '%s'", req.getCanonicalEvidenceTypeId())
-                    )
-            );
-            res.setErrorList(errorListType);
-            res.setAck(AckType.KO);
-            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+        
+        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceUSIItem()) {
+        	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
+            if (evidenceID == null) {
+            	response.addError(
+                        doGenericError(
+                                String.format("no known evidence type id '%s'", reqElement.getCanonicalEvidenceTypeId())
+                        )
+                );
+                response.setAck(false);
+                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+            }
         }
-        String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(req.getDataRequestSubject());
-        CanonicalEvidenceExamples canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
-        if (canonicalEvidence == null) {
-            ErrorListType errorListType = new ErrorListType();
-            errorListType.addError(doIdentityMatchingError());
-            errorListType.addError(
-                    DE4AResponseDocumentHelper.createError(
-                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
-                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
-            res.setErrorList(errorListType);
-            res.setAck(AckType.KO);
-            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+        
+        
+        CanonicalEvidenceExamples canonicalEvidence = null;
+        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceUSIItem()) {
+        	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
+        	String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
+	        
+	        canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
+	        if (canonicalEvidence == null) {
+	        	response.addError(doIdentityMatchingError());
+	        	response.addError(
+	                    DE4AResponseDocumentHelper.createError(
+	                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
+	                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
+	        	response.setAck(false);
+	            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+	        }
         }
+        
         CanonicalEvidenceType ce = new CanonicalEvidenceType();
         ce.setAny(canonicalEvidence.getDocumentElement());
-
-        RequestTransferEvidenceUSIDTType dtRequest = Helper.buildDtUsiRequest(req, ce, null, null);
-
+        
+        res = Helper.buildResponseRequest(req);
+        
+        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceUSIItem()) {
+        	resElement.setDataRequestSubject(reqElement.getDataRequestSubject());
+        	resElement.setCanonicalEvidence(ce);
+        	resElement.setRequestItemId(reqElement.getRequestItemId());
+        	res.addResponseExtractEvidenceItem(resElement);
+        }
+        
+        
         if (canonicalEvidence.getUsiAutoResponse().useAutoResp()) {
             taskScheduler.schedule(() ->
                     sendRequest(
                             doConfig.getPreviewDTUrl(),
-                            DE4AMarshaller.dtUsiRequestMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(dtRequest),
+                            DE4ACoreMarshaller.drRequestTransferEvidenceUSIMarshaller().getAsInputStream(req),
                             log::error),
                     Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
         } else {
-            previewStorage.addRequestToPreview(dtRequest);
+        	previewStorage.addRequestToPreview(res);
             String message;
             try {
-                message = objectMapper.writeValueAsString(new PreviewMessage(PreviewMessage.Action.ADD, dtRequest.getRequestId()));
+                message = objectMapper.writeValueAsString(new PreviewMessage(PreviewMessage.Action.ADD, req.getRequestId()));
             } catch (JsonProcessingException ex) {
                 message = "{}";
                 log.error("json error");
@@ -223,120 +326,112 @@ public class DOController {
             redirectUserType.setRequestId(req.getRequestId());
             redirectUserType.setSpecificationId(req.getSpecificationId());
             redirectUserType.setTimeStamp(LocalDateTime.now());
+            redirectUserType.setCanonicalEvidenceTypeId(endpoint);
             redirectUserType.setDataEvaluator(req.getDataEvaluator());
-            redirectUserType.setCanonicalEvidenceTypeId(req.getCanonicalEvidenceTypeId());
             redirectUserType.setRedirectUrl(
                     String.format("%s%s%s?requestId=%s",
                         baseUrl,
                         doConfig.getPreviewBaseEndpoint(),
                         doConfig.getIndexEndpoint(),
                         req.getRequestId()));
+           /*//works with a running & configured connector DT 
             sendRequest(
                     doConfig.getPreviewDTRedirectUrl(),
-                    DE4AMarshaller.deUsiRedirectUserMarshaller().getAsInputStream(redirectUserType),
+                    DE4ACoreMarshaller.dtUSIRedirectUserMarshaller().getAsInputStream(redirectUserType),
                     log::error);
+                    */
         }
 
         DE4AKafkaClient.send(EErrorLevel.INFO, () ->
                 String.format("Receiving USI RequestExtractEvidence, requestId: %s", req.getRequestId()));
 
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+        response.setAck(true);
+        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
     }
+    
 
     @PostMapping("${mock.do.endpoint.subscription}")
     public ResponseEntity<String> DO1SubscriptionRequestEventSubscription(InputStream body) throws MarshallException {
-        //TODO 
-    	//var marshaller = DE4AMarshaller.doSubscriptionRequestMarshaller();
-        var marshaller = DE4AMarshaller.doUsiRequestMarshaller();
+        var marshaller = DE4ACoreMarshaller.doRequestEventSubscriptionMarshaller();
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
-        // TODO
-        //RequestEventSubscriptionType req = marshaller.read(body);
-        RequestExtractEvidenceType req = marshaller.read(body);
+        RequestEventSubscriptionType req = marshaller.read(body);
         if (req == null) {
             throw new MarshallException(errorKey);
         }
 
-        ResponseErrorType res = DE4AResponseDocumentHelper.createResponseError(true);
+        ResponseEventSubscriptionType res = new ResponseEventSubscriptionType();
+        ResponseErrorType response = new ResponseErrorType();
+                
         DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
         if (dataOwner == null) {
-            ErrorListType errorListType = new ErrorListType();
-            errorListType.addError(
+        	response.addError(
                     doGenericError(
                             String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
                     )
             );
-            res.setErrorList(errorListType);
-            res.setAck(AckType.KO);
-            //TODO
-            //return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doSubscripitionResponseMarshaller().getAsString(res));
-            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+        	response.setAck(false);
+            ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
         }
-        if (!dataOwner.getPilot().validDataRequestSubject(req.getDataRequestSubject())) {
-            ErrorListType errorListType = new ErrorListType();
-            errorListType.addError(doIdentityMatchingError());
-            errorListType.addError(
-                    DE4AResponseDocumentHelper.createError(
-                            MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
-                            String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
-                    )
-            );
-            res.setErrorList(errorListType);
-            res.setAck(AckType.KO);
-            //TODO
-            //return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doSubscripitionResponseMarshaller().getAsString(res));
-            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+        for (EventSubscripRequestItemType reqElement : req.getEventSubscripRequestItem()) {
+        	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
+        		response.addError(doIdentityMatchingError());
+        		response.addError(
+	                    DE4AResponseDocumentHelper.createError(
+	                            MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
+	                            String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
+	                    )
+	            );
+        		response.setAck(false);
+                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+	        }
         }
-        // TODO
-        // EventSubscription
-        EvidenceID evidenceID = EvidenceID.selectEvidenceId(req.getCanonicalEvidenceTypeId());
-        if (evidenceID == null) {
-            ErrorListType errorListType = new ErrorListType();
-            errorListType.addError(
-                    doGenericError(
-                            String.format("no known evidence type id '%s'", req.getCanonicalEvidenceTypeId())
-                    )
-            );
-            res.setErrorList(errorListType);
-            res.setAck(AckType.KO);
-            //TODO
-            //return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doSubscripitionResponseMarshaller().getAsString(res));
-            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+        CanonicalEventSubscriptionExamples canonicalEventSubscription = null;
+        for (EventSubscripRequestItemType reqElement : req.getEventSubscripRequestItem()) {
+        	SubscriptionID subscriptionID = SubscriptionID.selectSubscriptionID(reqElement.getCanonicalEventCatalogUri());
+            if (subscriptionID == null) {
+            	response.addError(
+                        doGenericError(
+                                String.format("no known subscription type id '%s'", reqElement.getCanonicalEventCatalogUri())
+                        )
+                );
+            	response.setAck(false);
+                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+            }
+            
+            String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
+            
+            canonicalEventSubscription = CanonicalEventSubscriptionExamples.getCanonicalEventSubscription(dataOwner, subscriptionID, eIDASIdentifier);
+            if (canonicalEventSubscription == null) {
+                
+                response.addError(
+                        DE4AResponseDocumentHelper.createError(
+                                MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
+                                String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, subscriptionID.getId(), dataOwner.toString())));
+                response.setAck(false);
+                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+            }
         }
-        String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(req.getDataRequestSubject());
-        // TODO
-        // EventSubscription samples
-        CanonicalEvidenceExamples canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
-        if (canonicalEvidence == null) {
-            ErrorListType errorListType = new ErrorListType();
-            errorListType.addError(doIdentityMatchingError());
-            errorListType.addError(
-                    DE4AResponseDocumentHelper.createError(
-                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
-                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
-            res.setErrorList(errorListType);
-            res.setAck(AckType.KO);
-            return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
-        }
-        CanonicalEvidenceType ce = new CanonicalEvidenceType();
-        ce.setAny(canonicalEvidence.getDocumentElement());
-
-        RequestTransferEvidenceUSIDTType dtRequest = Helper.buildDtUsiRequest(req, ce, null, null);
-
-        if (canonicalEvidence.getUsiAutoResponse().useAutoResp()) {
+        
+        res = Helper.buildSubscriptionResponse(req);
+        List<ResponseEventSubscriptionItemType> resElementList = Helper.buildSubscriptionItem(req.getEventSubscripRequestItem());
+        res.setResponseEventSubscriptionItem(resElementList);
+        final ResponseEventSubscriptionType EventSubscription = res;
+        
+        if (canonicalEventSubscription.getUsiAutoResponse().useAutoResp()) {
             taskScheduler.schedule(() ->
                     sendRequest(
                             doConfig.getPreviewDTUrl(),
-                            DE4AMarshaller.dtUsiRequestMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(dtRequest),
+                            DE4ACoreMarshaller.dtResponseEventSubscriptionMarshaller().getAsInputStream(EventSubscription),
                             log::error),
-                    Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
+                    Instant.now().plusMillis(canonicalEventSubscription.getUsiAutoResponse().getWait()));
         } else {
-        	subscriptionStorage.addRequestToPreview(dtRequest);
+        	subscriptionStorage.addRequestToPreview(res);
             String message;
             try {
-                message = objectMapper.writeValueAsString(new PreviewMessage(PreviewMessage.Action.ADD, dtRequest.getRequestId()));
+                message = objectMapper.writeValueAsString(new PreviewMessage(PreviewMessage.Action.ADD, req.getRequestId()));
             } catch (JsonProcessingException ex) {
                 message = "{}";
                 log.error("json error");
@@ -345,28 +440,17 @@ public class DOController {
             log.debug("sending websocket message {}: {}", endpoint, message);
             websocketMessaging.convertAndSend(endpoint, message);
 
-            RedirectUserType redirectUserType = new RedirectUserType();
-            redirectUserType.setRequestId(req.getRequestId());
-            redirectUserType.setSpecificationId(req.getSpecificationId());
-            redirectUserType.setTimeStamp(LocalDateTime.now());
-            redirectUserType.setDataEvaluator(req.getDataEvaluator());
-            redirectUserType.setCanonicalEvidenceTypeId(req.getCanonicalEvidenceTypeId());
-            redirectUserType.setRedirectUrl(
-                    String.format("%s%s%s?requestId=%s",
-                        baseUrl,
-                        doConfig.getPreviewBaseEndpoint(),
-                        doConfig.getIndexEndpoint(),
-                        req.getRequestId()));
-            sendRequest(
-                    doConfig.getPreviewDTRedirectUrl(),
-                    DE4AMarshaller.deUsiRedirectUserMarshaller().getAsInputStream(redirectUserType),
-                    log::error);
         }
 
+        final ResponseEventSubscriptionType fResponse = res;
+        
         DE4AKafkaClient.send(EErrorLevel.INFO, () ->
-                String.format("Receiving USI RequestExtractEvidence, requestId: %s", req.getRequestId()));
+                String.format("Receiving USI ResponseEventSubscriptionType, requestId: %s", fResponse.getRequestId()));
 
-        return ResponseEntity.status(HttpStatus.OK).body(DE4AMarshaller.doUsiResponseMarshaller().getAsString(res));
+       
+        response.setAck(true);
+        
+        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
     }
 
     public static String responseBodyToString(HttpResponse response) {

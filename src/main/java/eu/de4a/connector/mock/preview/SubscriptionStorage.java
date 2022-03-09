@@ -1,12 +1,5 @@
 package eu.de4a.connector.mock.preview;
 
-import eu.de4a.iem.jaxb.common.types.RequestTransferEvidenceUSIDTType;
-import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -17,6 +10,14 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import org.springframework.context.annotation.Profile;
+import org.springframework.scheduling.TaskScheduler;
+import org.springframework.stereotype.Service;
+
+import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
+import eu.de4a.iem.core.jaxb.common.ResponseEventSubscriptionType;
+import lombok.extern.slf4j.Slf4j;
+
 @Service
 @Slf4j
 @Profile("do")
@@ -24,7 +25,7 @@ public class SubscriptionStorage {
 // TODO 
     // For concurrency handling, I'm assuming the requestId is unique. Since the data is not changed it can be considered
     // immutable no further assumptions are needed.
-    private ConcurrentHashMap<String, Preview<RequestTransferEvidenceUSIDTType>> subscriptionToPreview;
+    private ConcurrentHashMap<String, Preview<ResponseEventSubscriptionType>> subscriptionToPreview;
     private TaskScheduler taskScheduler;
 
     public SubscriptionStorage(TaskScheduler taskScheduler) {
@@ -33,23 +34,23 @@ public class SubscriptionStorage {
         this.taskScheduler.scheduleWithFixedDelay(() -> this.pruneOld(Duration.ofMinutes(35)), Duration.ofSeconds(20));
     }
 
-    private Preview<RequestTransferEvidenceUSIDTType> getRequestLockPair(String requestId) {
+    private Preview<ResponseEventSubscriptionType> getRequestLockPair(String requestId) {
         if (!subscriptionToPreview.containsKey(requestId)) {
             subscriptionToPreview.put(requestId, new Preview<>(null, "", null));
         }
         return subscriptionToPreview.get(requestId);
     }
 
-    public void addRequestToPreview(RequestTransferEvidenceUSIDTType request) {
-        Preview<RequestTransferEvidenceUSIDTType> preview = getRequestLockPair(request.getRequestId());
+    public void addRequestToPreview(ResponseEventSubscriptionType request) {
+        Preview<ResponseEventSubscriptionType> preview = getRequestLockPair(request.getRequestId());
         synchronized (preview.lock) {
             preview.object = request;
             preview.lock.notifyAll();
         }
     }
 
-    public CompletableFuture<RequestTransferEvidenceUSIDTType> getRequest(String requestId) throws InterruptedException {
-        Preview<RequestTransferEvidenceUSIDTType> preview =  getRequestLockPair(requestId);
+    public CompletableFuture<ResponseEventSubscriptionType> getRequest(String requestId) throws InterruptedException {
+        Preview<ResponseEventSubscriptionType> preview =  getRequestLockPair(requestId);
         while (subscriptionToPreview.containsKey(requestId)) {
             synchronized (preview.lock) {
                 if (preview.object != null) {

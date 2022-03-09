@@ -4,29 +4,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import eu.de4a.iem.jaxb.common.types.*;
-import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 
+import com.helger.commons.datetime.XMLOffsetDateTime;
+
+import eu.de4a.iem.core.DE4AResponseDocumentHelper;
+//import eu.de4a.iem.jaxb.common.types.*;
+import eu.de4a.iem.core.jaxb.common.ErrorType;
+import eu.de4a.iem.core.jaxb.common.EventNotificationItemType;
+import eu.de4a.iem.core.jaxb.common.EventNotificationType;
+import eu.de4a.iem.core.jaxb.common.EventSubscripRequestItemType;
+import eu.de4a.iem.core.jaxb.common.RequestEventSubscriptionType;
+import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceType;
+import eu.de4a.iem.core.jaxb.common.ResponseEventSubscriptionItemType;
+import eu.de4a.iem.core.jaxb.common.ResponseEventSubscriptionType;
+import eu.de4a.iem.core.jaxb.common.ResponseExtractMultiEvidenceType;
+
 public class Helper {
     public static final int ERROR_TEXT_MAX_LENGTH = 4000;
 
-    public static RequestExtractEvidenceType buildDoImRequest(RequestExtractEvidenceType drRequest) {
+    public static RequestExtractMultiEvidenceType buildDoImRequest(RequestExtractMultiEvidenceType drRequest) {
         return drRequest.clone ();
     }
 
-    public static RequestExtractEvidenceType buildDoUsiRequest(RequestExtractEvidenceType drRequest) {
+    public static RequestExtractMultiEvidenceType buildDoUsiRequest(RequestExtractMultiEvidenceType drRequest) {
         return drRequest.clone ();
     }
 
-    public static RequestTransferEvidenceUSIDTType buildDtUsiRequest(RequestExtractEvidenceType doRequest, CanonicalEvidenceType canonicalEvidence, DomesticsEvidencesType domesticEvidences, ErrorListType errorListType) {
-        RequestTransferEvidenceUSIDTType req = new RequestTransferEvidenceUSIDTType();
+  /*  public static RequestExtractMultiEvidenceUSIType buildDtUsiRequest(RequestExtractMultiEvidenceType doRequest, CanonicalEvidenceType canonicalEvidence, DomesticsEvidencesType domesticEvidences, ErrorListType errorListType) {
+    	RequestExtractMultiEvidenceUSIType req = new RequestExtractMultiEvidenceUSIType();
         req.setRequestId(doRequest.getRequestId());
         req.setSpecificationId(doRequest.getSpecificationId());
         req.setTimeStamp(LocalDateTime.now());
@@ -38,17 +52,76 @@ public class Helper {
         req.setDomesticEvidenceList(domesticEvidences);
         req.setErrorList(errorListType);
         return req;
-    }
+    }*/
 
-    public static RequestForwardEvidenceType buildDeUriRequest(RequestTransferEvidenceUSIDTType dtRequest) {
-        RequestForwardEvidenceType req = new RequestForwardEvidenceType();
-        req.setRequestId(dtRequest.getRequestId());
-        req.setTimeStamp(LocalDateTime.now());
-        req.setCanonicalEvidence(dtRequest.getCanonicalEvidence());
+    //public static RequestForwardEvidenceType buildDeUriRequest(RequestTransferEvidenceUSIDTType dtRequest) {
+   /* public static RequestExtractMultiEvidenceUSIType buildDeUriRequest(ResponseExtractMultiEvidenceType dtRequest) {
+    	RequestExtractMultiEvidenceUSIType req = new RequestExtractMultiEvidenceUSIType();
+        //req.setRequestId(dtRequest.getRequestId());
+        //req.setTimeStamp(LocalDateTime.now());
+    	req.setCanonicalEvidence(dtRequest.getCanonicalEvidence());
         req.setDomesticEvidenceList(dtRequest.getDomesticEvidenceList());
         req.setErrorList(dtRequest.getErrorList());
+        
+    	req.setRequestId(dtRequest.getRequestId());
+    	req.setSpecificationId(dtRequest.get);
+        req.setCanonicalEvidenceTypeId(dtRequest.get);
         return req;
+    }*/
+    
+    public static ResponseExtractMultiEvidenceType buildResponseRequest (RequestExtractMultiEvidenceType request) {
+    	ResponseExtractMultiEvidenceType response = new ResponseExtractMultiEvidenceType();
+    	response.setRequestId(request.getRequestId());
+    	response.setTimeStamp(request.getTimeStamp());
+    	response.setDataEvaluator(request.getDataEvaluator());
+    	response.setDataOwner(request.getDataOwner());
+    	return response;
     }
+    
+    public static ResponseEventSubscriptionType buildSubscriptionResponse (RequestEventSubscriptionType request) {
+    	ResponseEventSubscriptionType response = new ResponseEventSubscriptionType();
+    	response.setRequestId(request.getRequestId());
+    	response.setTimeStamp(request.getTimeStamp());
+    	response.setDataEvaluator(request.getDataEvaluator());
+    	response.setDataOwner(request.getDataOwner());
+    	return response;
+    }
+    
+    public static List<ResponseEventSubscriptionItemType> buildSubscriptionItem(List<EventSubscripRequestItemType> eventSubscripRequestItem) {
+    	List<ResponseEventSubscriptionItemType> itemListResponse = new ArrayList<ResponseEventSubscriptionItemType>();
+		for (EventSubscripRequestItemType item : eventSubscripRequestItem) {
+			ResponseEventSubscriptionItemType itemResponse = new ResponseEventSubscriptionItemType();
+			itemResponse.setRequestItemId(item.getRequestItemId());
+			itemResponse.setSubscriptionPeriod(item.getSubscriptionPeriod());
+			itemListResponse.add(itemResponse);
+		}
+		return itemListResponse;
+	}
+    
+    public static EventNotificationType buildNotificationFromSubscription(
+			ResponseEventSubscriptionType responseEventSubscriptionType) {
+    	EventNotificationType notification = new EventNotificationType();
+    	notification.setNotificationId(responseEventSubscriptionType.getRequestId());
+    	notification.setSpecificationId(null);
+    	notification.setTimeStamp(responseEventSubscriptionType.getTimeStamp());
+    	notification.setDataEvaluator(responseEventSubscriptionType.getDataEvaluator());
+    	notification.setDataOwner(responseEventSubscriptionType.getDataOwner());
+		return notification;
+	}
+    
+    public static List<EventNotificationItemType> buidNotificationItemList(
+			List<ResponseEventSubscriptionItemType> list) {
+    	List<EventNotificationItemType> itemListNotification = new ArrayList<EventNotificationItemType>();
+		for (ResponseEventSubscriptionItemType item : list) {
+			EventNotificationItemType notificationItem = new EventNotificationItemType();
+			notificationItem.setNotificationItemId(item.getRequestItemId());
+			notificationItem.setEventSubject(null);
+			notificationItem.setCanonicalEventCatalogUri("URI");
+			notificationItem.setEventDate(XMLOffsetDateTime.now());
+			itemListNotification.add(notificationItem);
+		}
+		return itemListNotification;
+	}
 
     public static String getStackTrace(Exception ex) {
         StringWriter stringWriter = new StringWriter();
@@ -167,5 +240,7 @@ public class Helper {
                 "evidence"
         );
     }
+
+	
 
 }

@@ -9,8 +9,8 @@ import { Client } from "@stomp/stompjs";
 import translate from 'translate-js'
 import trans_en from './translate/en'
 
-import Preview from "./Preview"
-import RequestList from "./RequestList";
+import PreviewSubscription from "./PreviewSubscription"
+import RequestSubscriptionList from "./RequestSubscriptionList";
 import {Col, Row} from "react-bootstrap";
 
 translate.add(trans_en, 'en')
@@ -96,7 +96,7 @@ const AppSubscription = () => {
     const fetchEvidence = (requestId) => {
         if (requestId && requestId !== "") {
             axios.get(
-                format(window.DO_CONST['previewEndpoint'],
+                format(window.DO_CONST['previewSubscriptionRequest'],
                     {requestId: requestId}))
                 .then(response => {
                     setEvidence(response.data)
@@ -115,7 +115,7 @@ const AppSubscription = () => {
     }
 
     const fetchPreviewEvidences = () =>
-        axios.get(window.DO_CONST['previewIdsEndpoint'])
+        axios.get(window.DO_CONST['previewSubscriptionIdsEndpoint'])
             .then(response => {
                 setEvidencesList(response.data)
             })
@@ -187,13 +187,13 @@ const AppSubscription = () => {
             case EvidenceStatus.FetchingEvidence:
                 return <ClipLoader/>
             case EvidenceStatus.NoEvidenceChosen:
-                return <RequestList requestIds={evidencesList}
+                return <RequestSubscriptionList requestIds={evidencesList}
                                     onSelect={fetchEvidence}
                                     translate={translate}/>
             case EvidenceStatus.NoSuchEvidence:
-                return <p>no evidence found for request with id: {requestId}</p>
+                return <p>no subscription found for request with id: {requestId}</p>
             case EvidenceStatus.Unanswered:
-                return <Preview evidence={evidence} evidenceRoot="//*[local-name() = 'CanonicalEvidence']"
+                return <PreviewSubscription evidence={evidence} evidenceRoot="//*[local-name() = 'ResponseEventSubscriptionItem']"
                                 evidenceIgnore={[]} acceptEvidence={acceptEvidence} rejectEvidence={rejectEvidence}
                                 translate={translate}/>
             case EvidenceStatus.Accepted:
