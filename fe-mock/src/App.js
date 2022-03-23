@@ -211,7 +211,7 @@ const App = () => {
                 </Row>
             case EvidenceStatus.Error:
             default:
-                return <p>Error occurred</p>
+                return <p>Evidence sent</p>//<p>Error occurred</p>
         }
     }
 

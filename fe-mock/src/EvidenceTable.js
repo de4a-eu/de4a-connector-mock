@@ -1,5 +1,6 @@
 import { Fragment } from 'react'
 import { Col, Row, } from 'react-bootstrap'
+import XMLViewer from 'react-xml-viewer'
 
 const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) => {
     
@@ -175,7 +176,14 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
     
     return <Fragment>
         {parseNode(xmlRoot)}
+			<div class="container">
+				 <p>
+                   <XMLViewer xml={evidence} /> 
+                </p>
+			</div>
+			
         </Fragment>
+		
 }
 
 export default EvidenceTable

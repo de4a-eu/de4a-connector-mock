@@ -16,6 +16,7 @@ import org.apache.http.entity.ContentType;
 
 import com.helger.commons.datetime.XMLOffsetDateTime;
 
+import eu.de4a.connector.mock.utils.MessagesHelper;
 import eu.de4a.iem.core.DE4AResponseDocumentHelper;
 //import eu.de4a.iem.jaxb.common.types.*;
 import eu.de4a.iem.core.jaxb.common.ErrorType;
@@ -92,6 +93,7 @@ public class Helper {
 		for (EventSubscripRequestItemType item : eventSubscripRequestItem) {
 			ResponseEventSubscriptionItemType itemResponse = new ResponseEventSubscriptionItemType();
 			itemResponse.setRequestItemId(item.getRequestItemId());
+			itemResponse.setCanonicalEventCatalogUri(item.getCanonicalEventCatalogUri());
 			itemResponse.setSubscriptionPeriod(item.getSubscriptionPeriod());
 			itemListResponse.add(itemResponse);
 		}
@@ -102,7 +104,7 @@ public class Helper {
 			ResponseEventSubscriptionType responseEventSubscriptionType) {
     	EventNotificationType notification = new EventNotificationType();
     	notification.setNotificationId(responseEventSubscriptionType.getRequestId());
-    	notification.setSpecificationId(null);
+    	notification.setSpecificationId(responseEventSubscriptionType.getRequestId());
     	notification.setTimeStamp(responseEventSubscriptionType.getTimeStamp());
     	notification.setDataEvaluator(responseEventSubscriptionType.getDataEvaluator());
     	notification.setDataOwner(responseEventSubscriptionType.getDataOwner());
@@ -111,11 +113,12 @@ public class Helper {
     
     public static List<EventNotificationItemType> buidNotificationItemList(
 			List<ResponseEventSubscriptionItemType> list) {
-    	List<EventNotificationItemType> itemListNotification = new ArrayList<EventNotificationItemType>();
+    	List<EventNotificationItemType> itemListNotification = new ArrayList<>();
 		for (ResponseEventSubscriptionItemType item : list) {
 			EventNotificationItemType notificationItem = new EventNotificationItemType();
 			notificationItem.setNotificationItemId(item.getRequestItemId());
-			notificationItem.setEventSubject(null);
+			notificationItem.setEventSubject(MessagesHelper._createDRS());
+			notificationItem.setEventId(item.getRequestItemId());
 			notificationItem.setCanonicalEventCatalogUri("URI");
 			notificationItem.setEventDate(XMLOffsetDateTime.now());
 			itemListNotification.add(notificationItem);

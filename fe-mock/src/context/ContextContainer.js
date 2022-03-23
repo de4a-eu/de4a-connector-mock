@@ -6,10 +6,12 @@ const defaultValues = {
   setDE: DE => (defaultValues.DE = DE),
   DO: "",
   setDO: DO => (defaultValues.DO = DO),
-  dataEvaluator: "",
-  setDataEvaluator: dataEvaluator => (defaultValues.dataEvaluator = dataEvaluator),
-  eventCatalogue: "",
-  setEventCatalogue: eventCatalogue => (defaultValues.eventCatalogue = eventCatalogue)
+  companyName: "",
+  setCompanyName: companyName => (defaultValues.companyName = companyName),
+  company: "",
+  setCompany: company => (defaultValues.company = company),
+  event: "",
+  setEvent: event => (defaultValues.event = event)
 };
 
 const ContextContainer = props => (

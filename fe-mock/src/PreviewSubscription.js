@@ -3,11 +3,11 @@ import React from 'react'
 import { Button, Col, Container, Row } from 'react-bootstrap'
 import SubscriptionTable from './SubscriptionTable'
 
-const PreviewSubscription = ({ evidence, evidenceRoot, evidenceIgnore, acceptEvidence, rejectEvidence, translate, }) => {
+const PreviewSubscription = ({ evidence, evidenceRoot, evidenceIgnore, buildNotifFromSubscrip, translate, }) => {
     
     return <Container>
         <Row><Col>
-            <h1>{translate('previewTitle')}</h1>
+            <h1>{translate('detailButton')}</h1>
         </Col></Row>
         <Row><Col>
             <Markdown>{translate('subscriptionExplanation')}</Markdown>
@@ -15,13 +15,13 @@ const PreviewSubscription = ({ evidence, evidenceRoot, evidenceIgnore, acceptEvi
         <Row><Col>
 			<SubscriptionTable evidence={evidence} evidenceRoot={evidenceRoot} evidenceIgnore={evidenceIgnore} translate={translate}/>
         </Col></Row>
-        <Row>
-            <Col><Button variant='primary' onClick={rejectEvidence}>{translate('sendNotification')}</Button></Col>
-        </Row>
+        
         <Row><Col>
-            <Markdown>{translate('legalText')}</Markdown> 
+			<p><Button variant='primary' onClick={buildNotifFromSubscrip}>{translate('buildNotification')}</Button></p>
         </Col></Row>
         
+
+		<p><Markdown>{translate('legalText')}</Markdown></p> 
     </Container>
 }
 

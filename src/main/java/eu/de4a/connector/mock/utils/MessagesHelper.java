@@ -138,6 +138,7 @@ public class MessagesHelper {
     	
     	fillEventNotificationType(notif, aTLR);
     	
+    	//notif.setNotificationId("test-notif-id-111");
     	notif.getDataEvaluator().setAgentUrn(dataEvaluator);
     	notif.getDataOwner().setAgentUrn(dataOwner);
     	
@@ -240,7 +241,7 @@ public class MessagesHelper {
     }
 
     @Nonnull
-    private static DataRequestSubjectCVType _createDRS() {
+    public static DataRequestSubjectCVType _createDRS() {
         final ThreadLocalRandom aTLR = ThreadLocalRandom.current();
         final DataRequestSubjectCVType ret = new DataRequestSubjectCVType();
         if (aTLR.nextBoolean())

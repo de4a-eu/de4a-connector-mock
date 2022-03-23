@@ -1,35 +1,50 @@
 import React, { useState, useContext } from "react";
-//import { Button } from 'react-bootstrap'
 import './index-it2.scss';
-//import { useHistory } from 'react-router-dom';
 import { Redirect } from "react-router-dom";
 import axios from "axios";
+import Containter from 'react-bootstrap/Container'
+import {Col, Row} from "react-bootstrap";
 
 import Context from "./context/context";
+import CreateNotif from "./CreateNotif"
+import ReviewNotif from "./ReviewNotif"
+import SentNotif from "./SentNotif"
 
-const  Notification = ({ translate }) => {
+import translate from 'translate-js'
+import trans_en from './translate/en'
+
+translate.add(trans_en, 'en')
+translate.whenUndefined = (key, locale) => {
+    return `${key}:undefined:${locale}`
+}
+
+
+const BrowsingStep = {
+    createNotif: 'createNotif',
+    reviewNotif: 'reviewNotif',
+	sentNotif:   'sentNotif',
+    Error: 'Error',
+}
+
+const  Notification = () => {
 	
+	const [browsingStep, setBrowsingStep] = useState(BrowsingStep.createNotif)
+	const [notification, setNotification] = useState("")
+	//const [notificationId, setNotificationId] = useState("")
+/*	
 	const context = useContext(Context);
 	const [redireccion, setRedireccion] = useState(false);
 
 	const [DE, setDE] = useState("");
 	const [DO, setDO] = useState("");
-	//const [companyId, setCompanyId] = useState("");
-	const [dataEvaluator, setDataEvaluator] = useState("");
-	const [eventCatalogue, setEventCatalogue] = useState("");
+	const [subject, setSubject] = useState("");
+	const [company, setCompany] = useState("");
+	const [notification, setNotification] = useState("")
 	
-	const [content, setContent] = useState("");
-	
-	/*
-	const handleCompanyNameChange = e => setCompanyName(e.target.value);
-	const handleCompanyIdChange = e => setCompanyId(e.target.value);
-	const handleDataEvaluatorChange = e => setDataEvaluator(e.target.value);
-	const handleEventCatalogueChange = e => setEventCatalogue(e.target.value);
-	*/
 	const handleDEChange = e => setDE(e.target.value);
 	const handleDOChange = e => setDO(e.target.value);
-	const handleSubjectChange = e => setDataEvaluator(e.target.value);
-	const handleCompanyChange = e => setEventCatalogue(e.target.value);
+	const handleSubjectChange = e => setSubject(e.target.value);
+	const handleCompanyChange = e => setCompany(e.target.value);
 	
 	const format = (str, args) => {
 	    console.log("args", args)
@@ -45,80 +60,124 @@ const  Notification = ({ translate }) => {
       e.preventDefault();
       context.setDE(DE);
 	  context.setDO(DO);
-	  //context.setCompanyId(companyId);
-	  context.setDataEvaluator(dataEvaluator);
-	  context.setEventCatalogue(eventCatalogue);
+	  context.setSubject(subject);
+	  context.setCompany(company);
       setRedireccion(true);
 	  
 	  console.log("Data Evaluator = ", DE)
 	  console.log("Data Owner = ", DO)
-	  onCreate(DE, DO);
+	  console.log("subject = ", subject)
+	  console.log("company = ", company)
+	  onCreate();
 	  
     };
 
 	const onCreate = () => {
 		console.log("onCreate DE = ", DE)
 		console.log("onCreate DO = ", DO)
+		console.log("onCreate subject = ", subject)
+		console.log("onCreate company = ", company)
 		axios.get(
                 format(window.DO_CONST['createNotif'],
-                    {dataEvaluator: DE, dataOwner: DO}))
+                    {dataEvaluator: DE, dataOwner: DO, subject: subject, company: company}))
                 .then(response => {
                     console.log(response)
+					setNotification(response.data)
                 })
 				.catch(error => {
                     console.error("Hay Error: ", error)
                 })
     }
+*/
+	const format = (str, args) => {
+	    console.log("args", args)
+	    var formatted = str;
+	    for (var prop in args) {
+	        var regexp = new RegExp('\\{' + prop + '\\}', 'gi');
+	        formatted = formatted.replace(regexp, args[prop]);
+	    }
+	    return formatted;
+	}
+	
+	const goToReview = (DE, DO, companyName, company) => {
+		console.log("inside goToReview")
+        setBrowsingStep(BrowsingStep.reviewNotif)
+		
+		console.log("goToReview DE = ", DE)
+		console.log("goToReview DO = ", DO)
+		console.log("goToReview companyName = ", companyName)
+		console.log("goToReview company = ", company)
+		axios.get(
+                format(window.DO_CONST['createNotif'],
+                    {dataEvaluator: DE, dataOwner: DO, companyName: companyName, company: company}))
+                .then(response => {
+                    console.log(response)
+					setNotification(response.data)
+                })
+				.catch(error => {
+                    console.error("Hay Error: ", error)
+                })
+	}
+	
+	const gotoSent = (notificationId) => {
+		console.log("gotoSent notificationId", notificationId)
+		sendNotification(notificationId)
+	}
+	
+	const gotoInit = (DE, DO, subject, company) => {
+		console.log("gotoInit")
+	}
+	
+	const sendNotification = (notificationId) => {
+		console.log("inside sendNotification")
+        setBrowsingStep(BrowsingStep.sentNotif)
+		
+		console.log("sending Notification = ", notification)
+		console.log("Notification Id= ", notificationId)
 
-	return <form  onSubmit={handleFormSubmit}>
-		<div class="container">
-			<div id="formulario">
-				<h2>Build Notification</h2>
-					<label>
-						<span>Data Evaluator:</span>
-						<select name="de" id="de" onChange={handleDEChange}>
-							<option value="" selected disabled hidden>Choose</option>
-							<option value="LegalName-1428738580">LegalName-1428738580</option>
-							<option value="LegalName-1428737845">LegalName-1428737845</option>
-							<option value="company3">Company3</option>
-							<option value="company4">Company4</option>
-						</select>
-					</label>
-					<label>
-						<span>Data Owner:</span>
-						<select name="do" id="do" onChange={handleDOChange}>
-							<option value="" selected disabled hidden>Choose</option>
-							<option value="LPI-ID-1018251099">LPI-ID-1018251099</option>
-							<option value="cid2">CompanyId2</option>
-							<option value="cid3">CompanyId3</option>
-							<option value="cid4">CompanyId4</option>
-						</select>
-					</label>
-					<label>
-						<span>Data subject:</span>
-						<select name="subject" id="subject" onChange={handleSubjectChange}>
-							<option value="" selected disabled hidden>Choose</option>
-							<option value="de1">dataEvaluator1</option>
-							<option value="de2">dataEvaluator2</option>
-							<option value="de3">dataEvaluator3</option>
-							<option value="de4">dataEvaluator4</option>
-						</select>
-					</label>
-					<label>
-						<span>Company:</span>
-						<select name="company" id="company" onChange={handleCompanyChange}>
-							<option value="" selected disabled hidden>Choose</option>
-							<option value="ev1">Event1</option>
-							<option value="ev2">Event2</option>
-							<option value="ev3">Event3</option>
-							<option value="ev4">Event4</option>
-						</select>
-					</label>
-					<input type="submit" value="Create mocked notification" />
-				</div>
-			</div>
-		</form>
+		axios.get(
+                format(window.DO_CONST['sendNotif'],
+                    {notificationId: notificationId}))
+                .then(response => {
+                    console.log(response)
+					setNotification(response.data)
+                })
+				.catch(error => {
+                    console.error("Hay Error: ", error)
+                })
+	}
+	
+	const renderSwitch = (browsingStep) => {
+        switch (browsingStep) {
+            case BrowsingStep.createNotif:
+                return <CreateNotif translate={translate} goToReview={goToReview} />
+            case BrowsingStep.reviewNotif:
+                return <ReviewNotif translate={translate} notification={notification} 
+					notificationRoot="//*[local-name() = 'EventNotification']" 
+					notificationId="//*[local-name() = 'NotificationId']" 
+					gotoSent={gotoSent} gotoInit={gotoInit} />
+            case BrowsingStep.sentNotif:
+                return <SentNotif/>
+            case BrowsingStep.Error:
+            default:
+                return <p>Error occurred</p>
+        }
+    }
+	
+		
+return <Containter>
+        <Row>
+            <Col><h1>Notification</h1></Col>
+        </Row>
+        <Row>
+            <Col>
+                {renderSwitch(browsingStep)}
+            </Col>
+        </Row>
+    </Containter>
 	
 }
+
+
 
 export default Notification;

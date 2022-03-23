@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState, useRef, useContext} from "react";
 import {useLocation} from "react-router-dom"
 import Containter from 'react-bootstrap/Container'
 import axios from "axios";
@@ -11,7 +11,9 @@ import trans_en from './translate/en'
 
 import PreviewSubscription from "./PreviewSubscription"
 import RequestSubscriptionList from "./RequestSubscriptionList";
+import ReviewNotif from "./ReviewNotif"
 import {Col, Row} from "react-bootstrap";
+import Context from "./context/context";
 
 translate.add(trans_en, 'en')
 translate.whenUndefined = (key, locale) => {
@@ -27,6 +29,7 @@ const EvidenceStatus = {
     NoSuchEvidence: 'NoSuchEvidence',
     NoEvidenceChosen: 'NoEvidenceChosen',
     Error: 'Error',
+	Build: 'Build,'
 }
 
 const format = (str, args) => {
@@ -41,10 +44,13 @@ const format = (str, args) => {
 
 const AppSubscription = () => {
 
+	const context = useContext(Context);
+	const [notifId, setNotifId] = useState("")
     const [evidence, setEvidence] = useState("")
     const [evidenceStatus, setEvidenceStatus] = useState(EvidenceStatus.FetchingEvidence)
     const [evidencesList, setEvidencesList] = useState([])
     const [requestId, setRequestId] = useState("")
+	const [notification, setNotification] = useState("")
 
     const evidencesListRef = useRef(evidencesList)
     const setEvidencesListRef = useRef(setEvidencesList)
@@ -54,7 +60,52 @@ const AppSubscription = () => {
     const requestIdParam = urlParams.get('requestId')
     const pathName = useLocation().pathname
 
+	const gotoSent = (notificationId) => {
+		console.log("gotoSent notificationId", notificationId)
+		sendNotification(notificationId)
+	}
+	
+	const gotoInit = (DE, DO, subject, company) => {
+		console.log("gotoInit")
+	}
+	
+	const sendNotification = (notificationId) => {
+		console.log("inside sendNotification")
+        setEvidenceStatus(EvidenceStatus.Accepted)
+		
+		console.log("sending Notification = ", notification)
+		console.log("Notification Id= ", notificationId)
 
+		axios.get(
+                format(window.DO_CONST['sendNotif'],
+                    {notificationId: notificationId}))
+                .then(response => {
+                    console.log(response)
+					setNotification(response.data)
+                })
+				.catch(error => {
+                    console.error("Hay Error: ", error)
+                })
+	}
+	
+	const buildNotifFromSubscrip = () => {
+		setEvidenceStatus(EvidenceStatus.Build)
+		console.log("inside buildNotifFromSubscrip")
+		console.log("buildNotifFromSubscrip requestId= ", requestId)
+		//context.setNotifId(requestId);
+		axios.get(
+                format(window.DO_CONST['buildNotifFromSubscrip'],
+                    {requestId: requestId}))
+                .then(response => {
+                    console.log(response)
+					setNotification(response.data)
+					setRequestId(requestId)
+                })
+				.catch(error => {
+                    console.error("Hay Error: ", error)
+                })
+	}
+	
     const acceptEvidence = () => {
         setEvidenceStatus(EvidenceStatus.Processing)
         axios.get(format(window.DO_CONST['previewAcceptEndpoint'], {requestId: requestId}))
@@ -194,10 +245,10 @@ const AppSubscription = () => {
                 return <p>no subscription found for request with id: {requestId}</p>
             case EvidenceStatus.Unanswered:
                 return <PreviewSubscription evidence={evidence} evidenceRoot="//*[local-name() = 'ResponseEventSubscriptionItem']"
-                                evidenceIgnore={[]} acceptEvidence={acceptEvidence} rejectEvidence={rejectEvidence}
+                                evidenceIgnore={[]} buildNotifFromSubscrip={buildNotifFromSubscrip} 
                                 translate={translate}/>
             case EvidenceStatus.Accepted:
-                return <p>Evidence accepted</p>
+                return <p>Notification sent</p>
             case EvidenceStatus.Rejected:
                 return <p>Evidence rejected</p>
             case EvidenceStatus.Processing:
@@ -209,6 +260,13 @@ const AppSubscription = () => {
                         <p>Processing answer</p>
                     </Col>
                 </Row>
+			case EvidenceStatus.Build:
+				console.log("case requestId ="+requestId)
+				
+				return <ReviewNotif translate={translate} notification={notification} 
+					notificationRoot="//*[local-name() = 'EventNotification']" 
+					requestId={requestId} 
+					gotoSent={gotoSent} gotoInit={gotoInit} />
             case EvidenceStatus.Error:
             default:
                 return <p>Error occurred</p>

@@ -32,7 +32,7 @@ const RequestSubscriptionList = ({ requestIds, onSelect, translate }) => {
         </Row>
         <Row>
             <Col md={{span: 4, offset: 8}}>
-                <Button type="submit">{translate('previewButton')}</Button>
+                <Button type="submit">{translate('detailButton')}</Button>
             </Col>
         </Row>
     </form>

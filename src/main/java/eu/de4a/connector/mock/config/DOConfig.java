@@ -9,6 +9,8 @@ import java.io.Serializable;
 @Profile("do")
 public class DOConfig implements Serializable {
 
+	private StringBuilder ret; 
+	
     @Getter
     @Value("${mock.do.preview.endpoint.base}")
     private String previewBaseEndpoint;
@@ -65,6 +67,46 @@ public class DOConfig implements Serializable {
     @Getter
     @Value("${mock.do.create.notification}")
     private String createNotif;
+    
+    @Getter
+    @Value("${mock.do.send.notification}")
+    private String sendNotif;
+    
+    @Getter
+    @Value("${mock.do.send.notif.subscrip}")
+    private String sendNotifFromSubscrip;
+
+    @Getter
+    @Value("${mock.do.build.notif.subscrip}")
+    private String buildNotifFromSubscrip;
+    
+    @Getter
+    @Value("${mock.do.dt.notification.url}")
+    private String notificationURL;
+    
+    @Getter
+    @Value("${mock.do.dt.usi.url}")
+    private String usiURL;
+    
+    @Getter
+    @Value("${mock.do.dt.im.url}")
+    private String imURL;
+    
+	public String getDTUrlNotification() {
+		ret = new StringBuilder();
+		return ret.append(previewDTUrl).append(notificationURL).toString();
+	}
+	
+	public String getDTUrlUSI() {
+		ret = new StringBuilder();
+		return ret.append(previewDTUrl).append(usiURL).toString();
+	}
+	
+	public String getDTUrlIM() {
+		ret = new StringBuilder();
+		return ret.append(previewDTUrl).append(imURL).toString();
+	}
+	
     /*
     @Getter
     @Value("${mock.do.preview.endpoint.notification.summary}")

@@ -5,10 +5,12 @@ const defaultValues = {
   setDE: () => {},
   DO: "",
   setDO: () => {},
-  dataEvaluator: "",
-  setDataEvaluator: () => {},
-  eventCatalogue: "",
-  setEventCatalogue: () => {}
+  companyName: "",
+  setCompanyName: () => {},
+  company: "",
+  setCompany: () => {},
+  event: "",
+  setEvent: () => {}
 };
 const context = React.createContext(defaultValues);
 export default context;

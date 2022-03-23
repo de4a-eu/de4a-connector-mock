@@ -109,7 +109,23 @@ const trans_en = {
 		"RequestItemId" : "Request item identifier",
 		"SubscriptionPeriod" : "Subscription period",
 		"StartDate" : "Start date",
-		"EndDate" : "End date"
+		"EndDate" : "End date",
+		
+		"NotificationId": "Notification Id",
+		"SpecificationId": "Specification Id",
+		"TimeStamp": "TimeStamp",
+		"AgentUrn": "Agent Urn",
+		"AgentName": "Agent Name",
+		"NotificationItemId": "Notification Item Id",
+		"EventId": "Event Id",
+		"LegalPersonIdentifier": "Legal Person Identifier",
+		"LegalName": "Legal Name",
+		"PersonIdentifier": "Person Identifier",
+		"FirstName": "First Name",
+		"CanonicalEventCatalogUri": "Canonical Event Catalog Uri",
+		"EventDate": "Event Date"
+		
+		
 		
 
     },
@@ -117,10 +133,12 @@ const trans_en = {
     "rejectButton": "Reject data",
     "legalText": "The DE4A project (https://www.de4a.eu/about-project) has been funded by the European Commission. This project pilots specific procedures of the Single Digital Gateway Regulation - Article 14 of the SDGR specifies the requirement for an explicit request.",
     "previewButton": "Preview",
+	"detailButton": "Detail",
     "requestListTitle": "Select an evidence to preview",
 
 	"requestSubscriptionListTitle": "Select a subscription to preview",
 	"sendNotification": "Send notification",
+	"buildNotification": "Build notification",
 	"subscriptionExplanation" : "The following information has been retrieved from the subscription message received. Please review the provided information. By selecting [Send notification] a notification will be sent to the subscribed participant. \n\n  The information is formatted according to the European standards, therefore some information might look different from the country specific presentation. ",
 	
 	"continue": "Continue"

@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.de4a.connector.mock.Helper;
 import eu.de4a.connector.mock.config.DOConfig;
 import eu.de4a.connector.mock.exampledata.DataOwner;
+import eu.de4a.connector.mock.preview.NotificationStorage;
 import eu.de4a.connector.mock.preview.PreviewMessage;
 import eu.de4a.connector.mock.preview.PreviewStorage;
 import eu.de4a.connector.mock.preview.SubscriptionStorage;
@@ -50,6 +51,9 @@ public class DOPreviewController {
 
     @Autowired
     SubscriptionStorage subscriptionStorage;
+    
+    @Autowired
+    NotificationStorage notificationStorage;
     
     @Autowired
     DOConfig doConfig;
@@ -117,7 +121,7 @@ public class DOPreviewController {
         }
         try {
             Boolean success = sendRequest(
-                    doConfig.getPreviewDTUrl(),
+                    doConfig.getDTUrlUSI(),
                     DE4ACoreMarshaller.dtResponseTransferEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(request),
                     log::error).get();
             if (!success) {
@@ -155,7 +159,7 @@ public class DOPreviewController {
         }
         try {
             Boolean success = sendRequest(
-                    doConfig.getPreviewDTUrl(),
+                    doConfig.getDTUrlUSI(),
                     DE4ACoreMarshaller.dtResponseTransferEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(request),
                     log::error).get();
             if (!success) {
@@ -191,54 +195,4 @@ public class DOPreviewController {
         return ResponseEntity.ok(subscriptionStorage.getAllRequestIds());
     }
 
-    @GetMapping(value = "${mock.do.preview.endpoint.subscription.base}${mock.do.preview.subscription.notify.endpoint}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> sendNotification(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
-    	EventNotificationType request = new EventNotificationType();
-    	request = Helper.buildNotificationFromSubscription(subscriptionStorage.getRequest(requestId).get());
-    	request.setEventNotificationItem(Helper.buidNotificationItemList(subscriptionStorage.getRequest(requestId).get().getResponseEventSubscriptionItem()));
-        
-        String redirectUrl = request.getDataEvaluator().getRedirectURL();
-        if (redirectUrl == null || redirectUrl.isEmpty()) {
-            log.error("no redirect url recieved");
-        }
-        try {
-            Boolean success = sendRequest(
-                    doConfig.getPreviewDTUrl(),
-                    DE4ACoreMarshaller.dtEventNotificationMarshaller().getAsInputStream(request),
-                    log::error).get();
-            if (!success) {
-                return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
-            }
-        } catch (InterruptedException | ExecutionException ex) {
-            log.debug("request inteupted: {}", ex.getMessage());
-            return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("request interupted");
-        }
-        subscriptionStorage.removePreview(requestId);
-
-        String message;
-        try {
-            message = objectMapper.writeValueAsString(new PreviewMessage(PreviewMessage.Action.RM, requestId));
-        } catch (JsonProcessingException ex) {
-            message = "{}";
-            log.error("json error");
-        }
-        String endpoint = String.format("%s%s", doConfig.getPreviewBaseEndpoint(), doConfig.getWebsocketMessagesEndpoint());
-        log.debug("sending websocket message {}: {}", endpoint, message);
-        websocketMessaging.convertAndSend(endpoint, message);
-
-        return ResponseEntity.ok().body(redirectUrl);
-    }
-
-    //@GetMapping(value = "${mock.do.preview.endpoint.subscription.base}${mock.do.create.notification}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @GetMapping(value = "${mock.do.create.notification}", produces = MediaType.APPLICATION_JSON_VALUE)
-    //public ResponseEntity<String> createNotification(@PathVariable String content) throws InterruptedException, TimeoutException, ExecutionException {
-    public ResponseEntity<String> createNotification(@PathVariable String dataEvaluator, @PathVariable String dataOwner) throws InterruptedException, TimeoutException, ExecutionException {
-
-    	EventNotificationType notification = MessagesHelper.createEventNotification(2, dataEvaluator, dataOwner);
-    	//creates a mock notification
-    	//EventNotificationType notification = MessagesHelper.createEventNotification(2);
-    	
-    	
-        return ResponseEntity.ok().body(DE4ACoreMarshaller.dtEventNotificationMarshaller().getAsString(notification));
-    }
 }

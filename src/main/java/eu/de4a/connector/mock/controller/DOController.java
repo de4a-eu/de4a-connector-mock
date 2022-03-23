@@ -47,6 +47,7 @@ import eu.de4a.iem.core.DE4ACoreMarshaller;
 import eu.de4a.iem.core.DE4AResponseDocumentHelper;
 import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
 import eu.de4a.iem.core.jaxb.common.CanonicalEvidenceType;
+import eu.de4a.iem.core.jaxb.common.DomesticEvidenceType;
 import eu.de4a.iem.core.jaxb.common.ErrorType;
 import eu.de4a.iem.core.jaxb.common.EventSubscripRequestItemType;
 import eu.de4a.iem.core.jaxb.common.RedirectUserType;
@@ -98,7 +99,7 @@ public class DOController {
 
         DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Receiving RequestExtractEvidence, requestId: %s", req.getRequestId()));
         
-        ResponseExtractMultiEvidenceType res = new ResponseExtractMultiEvidenceType();
+        ResponseExtractMultiEvidenceType res;
         ResponseExtractEvidenceItemType resElement = new ResponseExtractEvidenceItemType();
         DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
         if (dataOwner == null) {
@@ -151,7 +152,7 @@ public class DOController {
             }
         }
         
-        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
+       /* for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
         	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
 	        String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
 	        canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
@@ -164,7 +165,7 @@ public class DOController {
 	        	response.setAck(false);
 	        	return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
 	        }
-        }
+        }*/
         
         res = Helper.buildResponseRequest(req);
         
@@ -173,23 +174,16 @@ public class DOController {
         
         for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
         	resElement.setDataRequestSubject(reqElement.getDataRequestSubject());
+        	resElement.setCanonicalEvidenceTypeId(req.getSpecificationId());
         	resElement.setCanonicalEvidence(ce);
         	resElement.setRequestItemId(reqElement.getRequestItemId());
         	res.addResponseExtractEvidenceItem(resElement);
         }
         
-        //DE4ACoreMarshaller.dtResponseTransferEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsString(res);
-        /*resElement.setCanonicalEvidence(ce);
-        List<ResponseExtractEvidenceItemType> resList = new ArrayList<>();
-        resList.add(resElement);
-        res.setResponseExtractEvidenceItem(resList);
-        */
-        
-        //before ending store the evidence
         if (canonicalEvidence.getUsiAutoResponse().useAutoResp()) {
             taskScheduler.schedule(() ->
                     sendRequest(
-                            doConfig.getPreviewDTUrl(),
+                            doConfig.getDTUrlIM(),
                             DE4ACoreMarshaller.drRequestTransferEvidenceIMMarshaller().getAsInputStream(req),
                             log::error),
                     Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
@@ -296,6 +290,7 @@ public class DOController {
         
         for (RequestEvidenceItemType reqElement : req.getRequestEvidenceUSIItem()) {
         	resElement.setDataRequestSubject(reqElement.getDataRequestSubject());
+        	resElement.setCanonicalEvidenceTypeId(req.getSpecificationId());
         	resElement.setCanonicalEvidence(ce);
         	resElement.setRequestItemId(reqElement.getRequestItemId());
         	res.addResponseExtractEvidenceItem(resElement);
