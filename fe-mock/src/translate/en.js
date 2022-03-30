@@ -136,7 +136,7 @@ const trans_en = {
 	"detailButton": "Detail",
     "requestListTitle": "Select an evidence to preview",
 
-	"requestSubscriptionListTitle": "Select a subscription to preview",
+	"requestSubscriptionListTitle": "Select a subscription",
 	"sendNotification": "Send notification",
 	"buildNotification": "Build notification",
 	"subscriptionExplanation" : "The following information has been retrieved from the subscription message received. Please review the provided information. By selecting [Send notification] a notification will be sent to the subscribed participant. \n\n  The information is formatted according to the European standards, therefore some information might look different from the country specific presentation. ",

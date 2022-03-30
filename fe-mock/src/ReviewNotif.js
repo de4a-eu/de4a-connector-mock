@@ -22,7 +22,6 @@ const  ReviewNotif = ({ translate, notification, notificationRoot, notificationI
     console.log("xmlRoot", xmlRoot)
 	
 	const onSend = () => {
-		//console.log("onSend notifId", context.notifId)
 		console.log("onSend notificationId", notificationId)
 		gotoSent(notificationId)
 	}
@@ -52,7 +51,6 @@ const  ReviewNotif = ({ translate, notification, notificationRoot, notificationI
             return <Fragment>
                 {printNode(node)}
                 {Array.from(node.childNodes)
-                   // .filter((child) => !(child.localName in evidenceIgnore))
                     .map((child, i) => <Fragment key={i}> {parseNode(child)} </Fragment>)}
             </Fragment>
         }
@@ -83,9 +81,6 @@ const  ReviewNotif = ({ translate, notification, notificationRoot, notificationI
 			console.log("specialNode")
 			console.log("node.localName", node.localName)
 			console.log("node.innerHtml", node.innerHTML)
-			//setNotifId(node.innerHTML)
-			//context.setNotifId(node.innerHTML);
-			//console.log("node", node)
 			notificationId = node.innerHTML;
 			console.log("notificationId", notificationId)
 			console.log("node", node)
@@ -96,7 +91,6 @@ const  ReviewNotif = ({ translate, notification, notificationRoot, notificationI
             return <Fragment>
                 {printNode(node)}
                 {Array.from(node.childNodes)
-                    //.filter((child) => !(child.localName in evidenceIgnore))
                     .map((child, i) => <Fragment key={i}> {parseNode(child)} </Fragment>)}
             </Fragment>
         }
@@ -117,14 +111,9 @@ const  ReviewNotif = ({ translate, notification, notificationRoot, notificationI
 			</div>
 			<div class="container">
 				<Button onClick={onSend} variant='primary'>Send notification</Button>
-				<Button onClick={gotoInit} variant='primary'>Finish</Button>
+				<Button onClick={gotoInit} variant='primary'>Back</Button>
 			</div>
 		</div>
 	);
 }
-/*
-<div class="container">
-	<p>{parseNode(xmlRoot)}</p>
-</div>
-*/
 export default ReviewNotif;

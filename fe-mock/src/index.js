@@ -6,8 +6,6 @@ import './index.scss';
 import App from './App';
 import AppSubscription from './AppSubscription';
 import Notification from './Notification';
-import NotifSummary from './NotifSummary';
-import NotifSent from './NotifSent';
 import reportWebVitals from './reportWebVitals';
 
 import ContextContainer from "./context/ContextContainer";
@@ -25,12 +23,6 @@ ReactDOM.render(
             </Route>
 			<Route path='/notification'>
                 <Notification />
-            </Route>
-			<Route path='/notifsummary'>
-                <NotifSummary />
-            </Route>
-			<Route path='/notifsent'>
-                <NotifSent />
             </Route>
         </Switch>
       </BrowserRouter>

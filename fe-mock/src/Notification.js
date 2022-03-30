@@ -30,65 +30,7 @@ const  Notification = () => {
 	
 	const [browsingStep, setBrowsingStep] = useState(BrowsingStep.createNotif)
 	const [notification, setNotification] = useState("")
-	//const [notificationId, setNotificationId] = useState("")
-/*	
-	const context = useContext(Context);
-	const [redireccion, setRedireccion] = useState(false);
-
-	const [DE, setDE] = useState("");
-	const [DO, setDO] = useState("");
-	const [subject, setSubject] = useState("");
-	const [company, setCompany] = useState("");
-	const [notification, setNotification] = useState("")
 	
-	const handleDEChange = e => setDE(e.target.value);
-	const handleDOChange = e => setDO(e.target.value);
-	const handleSubjectChange = e => setSubject(e.target.value);
-	const handleCompanyChange = e => setCompany(e.target.value);
-	
-	const format = (str, args) => {
-	    console.log("args", args)
-	    var formatted = str;
-	    for (var prop in args) {
-	        var regexp = new RegExp('\\{' + prop + '\\}', 'gi');
-	        formatted = formatted.replace(regexp, args[prop]);
-	    }
-	    return formatted;
-	}
-	
-    const handleFormSubmit = e => {
-      e.preventDefault();
-      context.setDE(DE);
-	  context.setDO(DO);
-	  context.setSubject(subject);
-	  context.setCompany(company);
-      setRedireccion(true);
-	  
-	  console.log("Data Evaluator = ", DE)
-	  console.log("Data Owner = ", DO)
-	  console.log("subject = ", subject)
-	  console.log("company = ", company)
-	  onCreate();
-	  
-    };
-
-	const onCreate = () => {
-		console.log("onCreate DE = ", DE)
-		console.log("onCreate DO = ", DO)
-		console.log("onCreate subject = ", subject)
-		console.log("onCreate company = ", company)
-		axios.get(
-                format(window.DO_CONST['createNotif'],
-                    {dataEvaluator: DE, dataOwner: DO, subject: subject, company: company}))
-                .then(response => {
-                    console.log(response)
-					setNotification(response.data)
-                })
-				.catch(error => {
-                    console.error("Hay Error: ", error)
-                })
-    }
-*/
 	const format = (str, args) => {
 	    console.log("args", args)
 	    var formatted = str;
@@ -126,6 +68,7 @@ const  Notification = () => {
 	
 	const gotoInit = (DE, DO, subject, company) => {
 		console.log("gotoInit")
+		setBrowsingStep(BrowsingStep.createNotif)
 	}
 	
 	const sendNotification = (notificationId) => {

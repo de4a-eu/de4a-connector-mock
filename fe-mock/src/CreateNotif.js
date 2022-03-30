@@ -41,11 +41,6 @@ const  CreateNotif = ({ translate, goToReview }) => {
 	  context.setCompany(company);
 	  context.setEvent(event);
       setRedireccion(true);
-	  
-	 // console.log("Data Evaluator = ", DE)
-	  //console.log("Data Owner = ", DO)
-	 // console.log("subject = ", subject)
-	 // console.log("company = ", company)
 	  onCreate();
 	  
     };
@@ -58,16 +53,7 @@ const  CreateNotif = ({ translate, goToReview }) => {
 		console.log("onCreate company = ", company)
 		console.log("onCreate event = ", event)
 		goToReview(DE, DO, companyName, company)
-		/*axios.get(
-                format(window.DO_CONST['createNotif'],
-                    {dataEvaluator: DE, dataOwner: DO, subject: subject, company: company}))
-                .then(response => {
-                    console.log(response)
-					setNotification(response.data)
-                })
-				.catch(error => {
-                    console.error("Hay Error: ", error)
-                })*/
+		
     }
 
 	return <form  onSubmit={handleFormSubmit}>
@@ -126,7 +112,7 @@ const  CreateNotif = ({ translate, goToReview }) => {
 						</select>
 					</label>
 					
-					<Button type="submit">{translate('sendNotification')}</Button>
+					<Button type="submit">{translate('buildNotification')}</Button>
 				</div>
 			</div>
 		</form>
