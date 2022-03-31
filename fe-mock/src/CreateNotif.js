@@ -45,7 +45,7 @@ const  CreateNotif = ({ translate, goToReview }) => {
 
 	const onCreate = () => {
 		
-		goToReview(DE, DO, companyName, company)
+		goToReview(DE, DO, companyName, company, event)
 		
     }
 

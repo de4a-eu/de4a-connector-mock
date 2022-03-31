@@ -40,11 +40,11 @@ const  Notification = () => {
 	    return formatted;
 	}
 	
-	const goToReview = (DE, DO, companyName, company) => {
+	const goToReview = (DE, DO, companyName, company, event) => {
         setBrowsingStep(BrowsingStep.reviewNotif)
 		axios.get(
                 format(window.DO_CONST['createNotif'],
-                    {dataEvaluator: DE, dataOwner: DO, companyName: companyName, company: company}))
+                    {dataEvaluator: DE, dataOwner: DO, companyName: companyName, company: company, event: event}))
                 .then(response => {
 					setNotification(response.data)
                 })

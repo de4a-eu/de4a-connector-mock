@@ -138,12 +138,33 @@ public class MessagesHelper {
     	
     	fillEventNotificationType(notif, aTLR);
     	
-    	//notif.setNotificationId("test-notif-id-111");
     	notif.getDataEvaluator().setAgentUrn(dataEvaluator);
     	notif.getDataOwner().setAgentUrn(dataOwner);
     	
     	EventNotificationItemType item = new EventNotificationItemType();
     	fillEventNotificationItemType(item, aTLR, nItems);
+    	
+    	IntStream.range(1, nItems).forEach(i -> {
+    		EventNotificationItemType newItem = item.clone();
+            newItem.setNotificationItemId(UUID.randomUUID ().toString ());
+            newItem.setEventId(UUID.randomUUID ().toString ());
+            notif.addEventNotificationItem(newItem);
+        });
+    	return notif;
+	}
+    
+    public static EventNotificationType createEventNotification(int nItems, String dataEvaluator, String dataOwner,
+			String companyName, String company, String event) {
+    	final ThreadLocalRandom aTLR = ThreadLocalRandom.current ();
+    	final EventNotificationType notif = new EventNotificationType();
+    	
+    	fillEventNotificationType(notif, aTLR);
+    	
+    	notif.getDataEvaluator().setAgentUrn(dataEvaluator);
+    	notif.getDataOwner().setAgentUrn(dataOwner);
+    	
+    	EventNotificationItemType item = new EventNotificationItemType();
+    	fillEventNotificationItemType(item, aTLR, nItems, companyName, company, event);
     	
     	IntStream.range(1, nItems).forEach(i -> {
     		EventNotificationItemType newItem = item.clone();
@@ -202,7 +223,18 @@ public class MessagesHelper {
         });
 	}
     
-    @Nonnull
+    private static void fillEventNotificationItemType(EventNotificationItemType item, ThreadLocalRandom aTLR, int nItems, String companyName, String company, String event) {
+		item.setNotificationItemId(UUID.randomUUID ().toString ());
+		item.setEventId(UUID.randomUUID ().toString ());
+		item.setEventSubject(_createDRS (companyName, company, event));
+		item.setCanonicalEventCatalogUri("URI");
+		item.setEventDate(LocalDateTime.now());
+		IntStream.range(1, nItems).forEach(i -> {
+			item.addRelatedEventSubject(_createDRS());
+        });
+	}
+    
+	@Nonnull
     private static AgentType _createAgent() {
         final ThreadLocalRandom aTLR = ThreadLocalRandom.current();
         final AgentType ret = new AgentType();
@@ -239,6 +271,16 @@ public class MessagesHelper {
         // Ignore the optional stuff
         return ret;
     }
+    
+    @Nonnull
+    private static LegalPersonIdentifierType _createLP(String companyName, String company, String event) {
+        final ThreadLocalRandom aTLR = ThreadLocalRandom.current();
+        final LegalPersonIdentifierType ret = new LegalPersonIdentifierType();
+        ret.setLegalPersonIdentifier(company);
+        ret.setLegalName(companyName);
+        // Ignore the optional stuff
+        return ret;
+    }
 
     @Nonnull
     public static DataRequestSubjectCVType _createDRS() {
@@ -253,6 +295,19 @@ public class MessagesHelper {
         }
         return ret;
     }
+    
+    private static DataRequestSubjectCVType _createDRS(String companyName, String company, String event) {
+    	final ThreadLocalRandom aTLR = ThreadLocalRandom.current();
+        final DataRequestSubjectCVType ret = new DataRequestSubjectCVType();
+        if (aTLR.nextBoolean())
+            ret.setDataSubjectPerson(_createNP());
+        else {
+            ret.setDataSubjectCompany(_createLP(companyName,  company, event));
+            if (aTLR.nextBoolean())
+                ret.setDataSubjectRepresentative(_createNP());
+        }
+        return ret;
+	}
 
     @Nonnull
     private static RequestGroundsType _createRequestGrounds() {
@@ -264,5 +319,7 @@ public class MessagesHelper {
             ret.setExplicitRequest(random(ExplicitRequestType.values()));
         return ret;
     }
+
+	
 
 }

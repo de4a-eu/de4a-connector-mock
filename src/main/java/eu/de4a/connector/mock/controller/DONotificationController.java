@@ -94,9 +94,11 @@ public class DONotificationController {
     }
 
     @GetMapping(value = "${mock.do.create.notification}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> createNotification(@PathVariable String dataEvaluator, @PathVariable String dataOwner, @PathVariable String subject, @PathVariable String company) throws InterruptedException, TimeoutException, ExecutionException {
+    public ResponseEntity<String> createNotification(@PathVariable String dataEvaluator, @PathVariable String dataOwner, 
+    		@PathVariable String companyName, @PathVariable String company, @PathVariable String event) throws InterruptedException, TimeoutException, ExecutionException {
 
-    	EventNotificationType notification = MessagesHelper.createEventNotification(3, dataEvaluator, dataOwner);
+    	EventNotificationType notification = 
+    			MessagesHelper.createEventNotification(3, dataEvaluator, dataOwner, companyName, company, event);
     	//store  
     	notificationStorage.addRequestToPreview(notification);
     	
