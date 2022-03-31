@@ -61,7 +61,6 @@ const AppSubscription = () => {
     const pathName = useLocation().pathname
 
 	const gotoSent = (notificationId) => {
-		console.log("gotoSent notificationId", notificationId)
 		sendNotification(notificationId)
 	}
 	
@@ -70,7 +69,6 @@ const AppSubscription = () => {
 	}
 	
 	const sendNotification = (notificationId) => {
-		console.log("inside sendNotification")
         setEvidenceStatus(EvidenceStatus.Accepted)
 		
 		console.log("sending Notification = ", notification)
@@ -80,7 +78,6 @@ const AppSubscription = () => {
                 format(window.DO_CONST['sendNotif'],
                     {notificationId: notificationId}))
                 .then(response => {
-                    console.log(response)
 					setNotification(response.data)
                 })
 				.catch(error => {
@@ -90,14 +87,10 @@ const AppSubscription = () => {
 	
 	const buildNotifFromSubscrip = () => {
 		setEvidenceStatus(EvidenceStatus.Build)
-		console.log("inside buildNotifFromSubscrip")
-		console.log("buildNotifFromSubscrip requestId= ", requestId)
-		//context.setNotifId(requestId);
 		axios.get(
                 format(window.DO_CONST['buildNotifFromSubscrip'],
                     {requestId: requestId}))
                 .then(response => {
-                    console.log(response)
 					setNotification(response.data)
 					setRequestId(requestId)
                 })
@@ -106,7 +99,7 @@ const AppSubscription = () => {
                 })
 	}
 	
-    const acceptEvidence = () => {
+    /*const acceptEvidence = () => {
         setEvidenceStatus(EvidenceStatus.Processing)
         axios.get(format(window.DO_CONST['previewAcceptEndpoint'], {requestId: requestId}))
             .then(response => {
@@ -142,7 +135,7 @@ const AppSubscription = () => {
                 setEvidenceStatus(EvidenceStatus.Error)
                 console.log(error)
             })
-    }
+    }*/
 
     const fetchEvidence = (requestId) => {
         if (requestId && requestId !== "") {
@@ -153,7 +146,6 @@ const AppSubscription = () => {
                     setEvidence(response.data)
                     setRequestId(requestId)
                     setEvidenceStatus(EvidenceStatus.Unanswered)
-                    console.log(response)
                 })
                 .catch(error => {
                     setEvidenceStatus(EvidenceStatus.NoSuchEvidence)

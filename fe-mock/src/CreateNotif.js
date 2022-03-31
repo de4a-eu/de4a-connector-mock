@@ -1,7 +1,5 @@
 import React, { useState, useContext } from "react";
 import './index-it2.scss';
-import { Redirect } from "react-router-dom";
-import axios from "axios";
 import {Button } from "react-bootstrap";
 
 import Context from "./context/context";
@@ -47,11 +45,6 @@ const  CreateNotif = ({ translate, goToReview }) => {
 
 	const onCreate = () => {
 		
-		console.log("onCreate DE = ", DE)
-		console.log("onCreate DO = ", DO)
-		console.log("onCreate companyName = ", companyName)
-		console.log("onCreate company = ", company)
-		console.log("onCreate event = ", event)
 		goToReview(DE, DO, companyName, company)
 		
     }

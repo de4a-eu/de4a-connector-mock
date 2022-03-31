@@ -32,7 +32,6 @@ const  Notification = () => {
 	const [notification, setNotification] = useState("")
 	
 	const format = (str, args) => {
-	    console.log("args", args)
 	    var formatted = str;
 	    for (var prop in args) {
 	        var regexp = new RegExp('\\{' + prop + '\\}', 'gi');
@@ -42,18 +41,11 @@ const  Notification = () => {
 	}
 	
 	const goToReview = (DE, DO, companyName, company) => {
-		console.log("inside goToReview")
         setBrowsingStep(BrowsingStep.reviewNotif)
-		
-		console.log("goToReview DE = ", DE)
-		console.log("goToReview DO = ", DO)
-		console.log("goToReview companyName = ", companyName)
-		console.log("goToReview company = ", company)
 		axios.get(
                 format(window.DO_CONST['createNotif'],
                     {dataEvaluator: DE, dataOwner: DO, companyName: companyName, company: company}))
                 .then(response => {
-                    console.log(response)
 					setNotification(response.data)
                 })
 				.catch(error => {
@@ -62,17 +54,14 @@ const  Notification = () => {
 	}
 	
 	const gotoSent = (notificationId) => {
-		console.log("gotoSent notificationId", notificationId)
 		sendNotification(notificationId)
 	}
 	
 	const gotoInit = (DE, DO, subject, company) => {
-		console.log("gotoInit")
 		setBrowsingStep(BrowsingStep.createNotif)
 	}
 	
 	const sendNotification = (notificationId) => {
-		console.log("inside sendNotification")
         setBrowsingStep(BrowsingStep.sentNotif)
 		
 		console.log("sending Notification = ", notification)
@@ -82,7 +71,6 @@ const  Notification = () => {
                 format(window.DO_CONST['sendNotif'],
                     {notificationId: notificationId}))
                 .then(response => {
-                    console.log(response)
 					setNotification(response.data)
                 })
 				.catch(error => {

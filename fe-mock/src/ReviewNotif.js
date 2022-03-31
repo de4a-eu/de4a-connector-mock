@@ -76,14 +76,10 @@ const  ReviewNotif = ({ translate, notification, notificationRoot, notificationI
     }
 
 	const parseNode = (node) => {
-		//console.log("parseNode --> node:", node)
         if (Object.keys(specialNodes).includes(node.localName)) {
-			console.log("specialNode")
 			console.log("node.localName", node.localName)
 			console.log("node.innerHtml", node.innerHTML)
 			notificationId = node.innerHTML;
-			console.log("notificationId", notificationId)
-			console.log("node", node)
             return specialNodes[node.localName](node)
         } else if (node.childElementCount === 0) {
             return printLeaf(node)
