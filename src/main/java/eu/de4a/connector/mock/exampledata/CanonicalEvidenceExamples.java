@@ -69,11 +69,8 @@ public enum CanonicalEvidenceExamples {
     T41_ES_C("53377873WC", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-ES_C.xml"), DataOwner.SGAD_ES, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_40_SEC),
     T41_PT_D("123456789D", new ClassPathResource("examples/T4.1-examples/SA-UC1-11-02-2021-example-PT_D.xml"), DataOwner.UL_PT, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_240_SEC),
     T41_SI_D("123456D", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-SI_D.xml"), DataOwner.MIZS_SI, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_240_SEC),
-    T41_ES_D("53377873WD", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-ES_D.xml"), DataOwner.UJI_ES, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_240_SEC),
+    T41_ES_D("53377873WD", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-ES_D.xml"), DataOwner.UJI_ES, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_240_SEC);
 
-	T41_ES_EDU("53377873WD", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-ES_D.xml"), DataOwner.SGAD_ES_EDU, EvidenceID.TEST_EVIDENCE, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_240_SEC);
-	
-	
     @Getter
     final private String identifier;
     @Getter
