@@ -89,6 +89,10 @@ public class DOConfig implements Serializable {
     private String usiURL;
     
     @Getter
+    @Value("${mock.do.dt.evidence.url}")
+    private String evidenceURL;
+    
+    @Getter
     @Value("${mock.do.dt.im.url}")
     private String imURL;
     
@@ -105,6 +109,11 @@ public class DOConfig implements Serializable {
 	public String getDTUrlIM() {
 		ret = new StringBuilder();
 		return ret.append(previewDTUrl).append(imURL).toString();
+	}
+	
+	public String getDTEvidenceUrl() {
+		ret = new StringBuilder();
+		return ret.append(previewDTUrl).append(evidenceURL).toString();
 	}
 	
     /*

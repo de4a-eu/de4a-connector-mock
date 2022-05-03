@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {BrowserRouter, Switch, Route} from "react-router-dom";
+import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import 'bootstrap'
 import './index.scss';
 import App from './App';
@@ -13,7 +13,7 @@ import ContextContainer from "./context/ContextContainer";
 ReactDOM.render(
   <React.StrictMode>
 	<ContextContainer>	
-      <BrowserRouter>
+      <Router basename={'/de4a-mock-connector'}>
         <Switch>
             <Route path='/do1/preview/index'>
                 <App />
@@ -25,10 +25,11 @@ ReactDOM.render(
                 <Notification />
             </Route>
         </Switch>
-      </BrowserRouter>
+      </Router>
 	</ContextContainer>
   </React.StrictMode>,
   document.getElementById('do-root')
+
 );
 
 // If you want to start measuring performance in your app, pass a function
