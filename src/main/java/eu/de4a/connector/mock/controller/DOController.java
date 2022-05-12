@@ -10,7 +10,6 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +26,6 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.w3c.dom.Element;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,9 +43,7 @@ import eu.de4a.connector.mock.preview.PreviewStorage;
 import eu.de4a.connector.mock.preview.SubscriptionStorage;
 import eu.de4a.iem.core.DE4ACoreMarshaller;
 import eu.de4a.iem.core.DE4AResponseDocumentHelper;
-import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
 import eu.de4a.iem.core.jaxb.common.CanonicalEvidenceType;
-import eu.de4a.iem.core.jaxb.common.DomesticEvidenceType;
 import eu.de4a.iem.core.jaxb.common.ErrorType;
 import eu.de4a.iem.core.jaxb.common.EventSubscripRequestItemType;
 import eu.de4a.iem.core.jaxb.common.RedirectUserType;
@@ -107,7 +103,7 @@ public class DOController {
             errorType.setText(String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn()));
             response.addError(errorType);
             response.setAck(false);
-            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
         }
         for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
         	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
@@ -119,7 +115,7 @@ public class DOController {
                         )
                 );
                 response.setAck(false);
-                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
         	}
         }
         
@@ -132,7 +128,7 @@ public class DOController {
                         )
                 );
                 response.setAck(false);
-                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
             }
         }
         
@@ -148,7 +144,7 @@ public class DOController {
                                 MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
                                 String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
             	response.setAck(false);
-            	return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+            	return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
             }
         }
         
@@ -163,7 +159,7 @@ public class DOController {
 	                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
 	                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
 	        	response.setAck(false);
-	        	return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+	        	return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
 	        }
         }*/
         
@@ -184,7 +180,7 @@ public class DOController {
             taskScheduler.schedule(() ->
                     sendRequest(
                             doConfig.getDTUrlIM(),
-                            DE4ACoreMarshaller.drRequestTransferEvidenceIMMarshaller().getAsInputStream(req),
+                            DE4ACoreMarshaller.drRequestExtractMultiEvidenceIMMarshaller().getAsInputStream(req),
                             log::error),
                     Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
         } else {
@@ -207,7 +203,7 @@ public class DOController {
         
         response.setAck(true);
         
-        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
     }
     
 
@@ -236,7 +232,7 @@ public class DOController {
                     )
             );
         	response.setAck(false);
-            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
         }
         for (RequestEvidenceItemType reqElement : req.getRequestEvidenceUSIItem()) {
         	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
@@ -248,7 +244,7 @@ public class DOController {
                         )
                 );
         		response.setAck(false);
-                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
         	}
         }
         
@@ -261,7 +257,7 @@ public class DOController {
                         )
                 );
                 response.setAck(false);
-                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
             }
         }
         
@@ -279,7 +275,7 @@ public class DOController {
 	                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
 	                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
 	        	response.setAck(false);
-	            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+	            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
 	        }
         }
         
@@ -301,7 +297,7 @@ public class DOController {
             taskScheduler.schedule(() ->
                     sendRequest(
                             doConfig.getPreviewDTUrl(),
-                            DE4ACoreMarshaller.drRequestTransferEvidenceUSIMarshaller().getAsInputStream(req),
+                            DE4ACoreMarshaller.drRequestExtractMultiEvidenceUSIMarshaller().getAsInputStream(req),
                             log::error),
                     Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
         } else {
@@ -341,7 +337,7 @@ public class DOController {
                 String.format("Receiving USI RequestExtractEvidence, requestId: %s", req.getRequestId()));
 
         response.setAck(true);
-        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
     }
     
 
@@ -368,7 +364,7 @@ public class DOController {
                     )
             );
         	response.setAck(false);
-            ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+            ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
         }
         for (EventSubscripRequestItemType reqElement : req.getEventSubscripRequestItem()) {
         	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
@@ -380,7 +376,7 @@ public class DOController {
 	                    )
 	            );
         		response.setAck(false);
-                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
 	        }
         }
         CanonicalEventSubscriptionExamples canonicalEventSubscription = null;
@@ -393,7 +389,7 @@ public class DOController {
                         )
                 );
             	response.setAck(false);
-                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
             }
             
             String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
@@ -406,7 +402,7 @@ public class DOController {
                                 MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
                                 String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, subscriptionID.getId(), dataOwner.toString())));
                 response.setAck(false);
-                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
             }
         }
         
@@ -445,7 +441,7 @@ public class DOController {
        
         response.setAck(true);
         
-        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMessage().getAsString(response));
+        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
     }
 
     public static String responseBodyToString(HttpResponse response) {

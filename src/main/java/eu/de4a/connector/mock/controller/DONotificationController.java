@@ -6,7 +6,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,6 @@ import eu.de4a.connector.mock.Helper;
 import eu.de4a.connector.mock.config.DOConfig;
 import eu.de4a.connector.mock.preview.NotificationStorage;
 import eu.de4a.connector.mock.preview.PreviewMessage;
-import eu.de4a.connector.mock.preview.PreviewStorage;
 import eu.de4a.connector.mock.preview.SubscriptionStorage;
 import eu.de4a.connector.mock.utils.MessagesHelper;
 import eu.de4a.iem.core.DE4ACoreMarshaller;

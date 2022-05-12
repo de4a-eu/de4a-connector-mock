@@ -3,7 +3,6 @@ package eu.de4a.connector.mock.controller;
 import static eu.de4a.connector.mock.Helper.sendRequest;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -19,24 +18,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import eu.de4a.connector.mock.Helper;
 import eu.de4a.connector.mock.config.DOConfig;
 import eu.de4a.connector.mock.exampledata.DataOwner;
 import eu.de4a.connector.mock.preview.NotificationStorage;
 import eu.de4a.connector.mock.preview.PreviewMessage;
 import eu.de4a.connector.mock.preview.PreviewStorage;
 import eu.de4a.connector.mock.preview.SubscriptionStorage;
-import eu.de4a.connector.mock.utils.MessagesHelper;
 import eu.de4a.iem.core.DE4ACoreMarshaller;
 import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
-import eu.de4a.iem.core.jaxb.common.EventNotificationType;
-import eu.de4a.iem.core.jaxb.common.RequestEventSubscriptionType;
-import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceUSIType;
 import eu.de4a.iem.core.jaxb.common.ResponseEventSubscriptionType;
 import eu.de4a.iem.core.jaxb.common.ResponseExtractMultiEvidenceType;
 import lombok.extern.slf4j.Slf4j;
@@ -97,7 +90,7 @@ public class DOPreviewController {
         DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(DE4ACoreMarshaller.dtResponseTransferEvidenceMarshaller(
+                .body(DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(
                         dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(request));
     }
     
@@ -122,7 +115,7 @@ public class DOPreviewController {
         try {
             Boolean success = sendRequest(
                     doConfig.getDTEvidenceUrl(),
-                    DE4ACoreMarshaller.dtResponseTransferEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(request),
+                    DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(request),
                     log::error).get();
             if (!success) {
                 return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
@@ -160,7 +153,7 @@ public class DOPreviewController {
         try {
             Boolean success = sendRequest(
                     doConfig.getDTUrlUSI(),
-                    DE4ACoreMarshaller.dtResponseTransferEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(request),
+                    DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(request),
                     log::error).get();
             if (!success) {
                 return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");

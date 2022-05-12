@@ -1,10 +1,10 @@
 package eu.de4a.connector.mock.exampledata;
 
-import eu.de4a.iem.xml.de4a.EDE4ACanonicalEvidenceType;
+import java.util.Arrays;
+
+import eu.de4a.iem.cev.EDE4ACanonicalEvidenceType;
 import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
 import lombok.Getter;
-
-import java.util.Arrays;
 
 public enum SubscriptionID {
     MARRIAGE_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::MarriageEvidence", EDE4ACanonicalEvidenceType.T43_MARRIAGE_EVIDENCE_V16B),
