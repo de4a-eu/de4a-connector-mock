@@ -43,7 +43,7 @@
             <dependency>
                 <groupId>eu.de4a</groupId>
                 <artifactId>de4a-commons-parent-pom</artifactId>
-                <version>0.2.5-SNAPSHOT</version>
+                <version>0.2.5</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -133,10 +133,10 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-	<dependency>
-	    <groupId>com.helger.web</groupId>
-	    <artifactId>ph-httpclient</artifactId>
-	</dependency>
+      	<dependency>
+      	    <groupId>com.helger.web</groupId>
+      	    <artifactId>ph-httpclient</artifactId>
+      	</dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -208,7 +208,7 @@
                         </goals>
 
                          <!--<phase>process-resources</phase>-->
-						<phase>generate-resources</phase>  
+						            <phase>generate-resources</phase>  
 
                         <configuration>
                             <arguments>run webpack</arguments>
