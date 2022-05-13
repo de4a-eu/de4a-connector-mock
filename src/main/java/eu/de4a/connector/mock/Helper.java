@@ -30,8 +30,6 @@ import eu.de4a.iem.core.jaxb.common.ResponseEventSubscriptionType;
 import eu.de4a.iem.core.jaxb.common.ResponseExtractMultiEvidenceType;
 
 public class Helper {
-    public static final int ERROR_TEXT_MAX_LENGTH = 4000;
-
     public static RequestExtractMultiEvidenceType buildDoImRequest(RequestExtractMultiEvidenceType drRequest) {
         return drRequest.clone ();
     }
@@ -157,7 +155,6 @@ public class Helper {
                 "10503",
                 String
                         .format("Connection error with %s - %s", service, explanation)
-                        .substring(0, ERROR_TEXT_MAX_LENGTH)
         );
     }
 
@@ -166,7 +163,6 @@ public class Helper {
                 "10501",
                 String
                         .format("Service requested %s not found", service)
-                        .substring(0, ERROR_TEXT_MAX_LENGTH)
         );
     }
 
@@ -175,7 +171,6 @@ public class Helper {
                 "10506",
                 String
                         .format("Connection error with %s - %s", service, explanation)
-                        .substring(0, ERROR_TEXT_MAX_LENGTH)
         );
     }
 
@@ -184,14 +179,13 @@ public class Helper {
                 "10504",
                 String
                         .format("Error on response from %s - %s", service, explanation)
-                        .substring(0, ERROR_TEXT_MAX_LENGTH)
         );
     }
 
     public static ErrorType doGenericError(String explanation) {
         return DE4AResponseDocumentHelper.createError(
                 "10507",
-                explanation.substring(0, ERROR_TEXT_MAX_LENGTH)
+                explanation
         );
     }
 
