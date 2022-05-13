@@ -99,8 +99,7 @@ public class DOController {
         ResponseExtractEvidenceItemType resElement = new ResponseExtractEvidenceItemType();
         DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
         if (dataOwner == null) {
-            ErrorType errorType = new ErrorType();
-            errorType.setText(String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn()));
+            ErrorType errorType = DE4AResponseDocumentHelper.createError ("99999", "no known data owners with urn "+ req.getDataOwner().getAgentUrn());
             response.addError(errorType);
             response.setAck(false);
             return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
