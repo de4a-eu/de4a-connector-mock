@@ -12,9 +12,9 @@ public enum DataOwner {
     V_SE("iso6523-actorid-upis::9999:se000000013-mock-it2", "(BVE) BOLAGSVERKET (Companies Registration Office)", "SE", Pilot.T42),
     ONRC_RO("iso6523-actorid-upis::9999:ro000000006-mock-it2", "(ORNC) - OFICIUL NATIONAL AL REGISTRULUI COMERTULUI", "RO", Pilot.T42),
     DMDW_AT("iso6523-actorid-upis::9999:at000000271-mock-it2", "(BMDW) Bundesministerium Fuer Digitalisierung Und Wirtschaftsstandort", "AT", Pilot.T42),
-    UL_PT("iso6523-actorid-upis::9999:pt990000101-mock-it2", "Portuguese IST, University of Lisbon", "PT", Pilot.T41),
+    UL_PT("iso6523-actorid-upis::9999:pt990000101-mock-it2", "(INESC-ID) Institute for Systems and Computer Engineering, Technology and Science", "PT", Pilot.T41),
     JSI_SI("iso6523-actorid-upis::9999:si000000018-mock-it2", "(JSI) Institut Jozef Stefan", "SI", Pilot.T41),
-    MIZS_SI("iso6523-actorid-upis::9999:si000000016-mock-it2", "(MIZS) Ministrstvo za Izobrazevanje, Znanost in Sport", "SI", Pilot.T41),
+    MIZS_SI("iso6523-actorid-upis::9999:si000000016-mock-it2", "(MIZŠ) Ministrstvo za Izobrazevanje, Znanost in Sport (Ministry of Education, Science and Sport)", "SI", Pilot.T41),
     UJI_ES("iso6523-actorid-upis::9999:esq6250003h-mock-it2", "(UJI) Universitat Jaume I de Castellón", "ES", Pilot.T41),
     
     SGAD_ES("iso6523-actorid-upis::9999:ess2833002e-mock-it2", "(MPTFP-SGAD) Secretaría General de Administración Digital", "ES", PilotInterface.multiple(Pilot.T43, Pilot.T41)),

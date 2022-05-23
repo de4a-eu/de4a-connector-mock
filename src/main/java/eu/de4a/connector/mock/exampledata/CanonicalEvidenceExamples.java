@@ -42,7 +42,7 @@ public enum CanonicalEvidenceExamples {
   T42_SE("5591674170", new ClassPathResource("examples/T4.2-examples/sample company info SE -2.xml"),  DataOwner.V_SE, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
   T42_NL("90000471", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
   T42_RO("J40/12487/1998", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(),  USIAutoResponse.OFF),
-  T42_AT("???", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo AT.xml"),  DataOwner.BMDW_AT, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
+  T42_AT("???", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo AT.xml"),  DataOwner.DMDW_AT, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
 
     T43_M_PT("12345678", new ClassPathResource("examples/T4.3-examples/MA-example-Marriage-PT.xml"), DataOwner.AMA_PT, EvidenceID.MARRIAGE_EVIDENCE, DE4AT43Marshaller.marriageEvidence(), USIAutoResponse.OFF),
     T43_M_PT_A("12345678A", new ClassPathResource("examples/T4.3-examples/MA-example-Marriage-PT-A.xml"), DataOwner.AMA_PT, EvidenceID.MARRIAGE_EVIDENCE, DE4AT43Marshaller.marriageEvidence(), USIAutoResponse.IMMEDIATE),
