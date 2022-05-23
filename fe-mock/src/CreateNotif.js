@@ -57,7 +57,7 @@ const  CreateNotif = ({ translate, goToReview }) => {
 						<span>Data Evaluator:</span>
 						<select name="de" id="de" onChange={handleDEChange}>
 							<option value="" selected disabled hidden>Choose</option>
-							<option value="LegalName-1428738580">LegalName-1428738580</option>
+							<option value="iso6523-actorid-upis::9920:esq6250003h-it2">iso6523-actorid-upis::9920:esq6250003h-it2</option>
 							<option value="LegalName-1428737845">LegalName-1428737845</option>
 							<option value="LegalName-1424587921">LegalName-1424587921</option>
 							<option value="LegalName-1427456932">LegalName-1427456932</option>
@@ -67,7 +67,7 @@ const  CreateNotif = ({ translate, goToReview }) => {
 						<span>Data Owner:</span>
 						<select name="do" id="do" onChange={handleDOChange}>
 							<option value="" selected disabled hidden>Choose</option>
-							<option value="LPI-ID-1018251099">LPI-ID-1018251099</option>
+							<option value="iso6523-actorid-upis::9920:ess2833002e-it2">iso6523-actorid-upis::9920:ess2833002e-it2</option>
 							<option value="LPI-ID-1219045100">LPI-ID-1219045100</option>
 							<option value="LPI-ID-9871461955">LPI-ID-9871461955</option>
 							<option value="LPI-ID-1548892894">LPI-ID-1548892894</option>

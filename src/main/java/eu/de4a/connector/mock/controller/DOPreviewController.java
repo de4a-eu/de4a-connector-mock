@@ -152,7 +152,7 @@ public class DOPreviewController {
         }
         try {
             Boolean success = sendRequest(
-                    doConfig.getDTUrlUSI(),
+                    doConfig.getDTEvidenceUrl(),
                     DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(request),
                     log::error).get();
             if (!success) {

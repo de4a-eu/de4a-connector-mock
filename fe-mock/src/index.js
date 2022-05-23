@@ -13,7 +13,7 @@ import ContextContainer from "./context/ContextContainer";
 ReactDOM.render(
   <React.StrictMode>
 	<ContextContainer>	
-      <Router basename={'/de4a-mock-connector'}>
+      <Router>
         <Switch>
             <Route path='/do1/preview/index'>
                 <App />
@@ -31,7 +31,7 @@ ReactDOM.render(
   document.getElementById('do-root')
 
 );
-
+//<Router basename={'/de4a-mock-connector'}> for playground
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

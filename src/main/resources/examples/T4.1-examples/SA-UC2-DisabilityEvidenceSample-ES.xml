@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sauc2:Disability xmlns:edci="http://data.europa.eu/europass/model/credentials#" xmlns:sauc2="urn:eu-de4a:xsd:CanonicalEvidenceType::DisabilityEvidence:v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:eu-de4a:xsd:CanonicalEvidenceType::DisabilityEvidence:v1.0  SA-UC2-DisabilityEvidenceType.xsd">
+	<sauc2:beneficiary id="http://tempuri.org">
+		<edci:nationalId spatialID="http://publications.europa.eu/resource/authority/country/ESP">0</edci:nationalId>
+		<edci:givenNames>
+			<edci:text content-type="text/html" lang="es">JUAN</edci:text>
+		</edci:givenNames>
+		<edci:familyName>
+			<edci:text content-type="text/html" lang="es">ESPAÑOL MADRILEÑO</edci:text>
+		</edci:familyName>
+		<edci:dateOfBirth>1972-04-18</edci:dateOfBirth>
+	</sauc2:beneficiary>
+	<sauc2:disabilityCertificate>
+		<sauc2:certificateID>ECB1995GC00104</sauc2:certificateID>
+		<sauc2:effectiveDate>1995-04-18</sauc2:effectiveDate>
+		<!--sauc2:revisionDate>2025-01-01</sauc2:revisionDate-->
+		<sauc2:disabilityPercentage>83</sauc2:disabilityPercentage>
+	</sauc2:disabilityCertificate>
+</sauc2:Disability>

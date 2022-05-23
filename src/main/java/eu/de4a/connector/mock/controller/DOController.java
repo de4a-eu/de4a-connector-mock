@@ -43,6 +43,7 @@ import eu.de4a.connector.mock.preview.PreviewStorage;
 import eu.de4a.connector.mock.preview.SubscriptionStorage;
 import eu.de4a.iem.core.DE4ACoreMarshaller;
 import eu.de4a.iem.core.DE4AResponseDocumentHelper;
+import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
 import eu.de4a.iem.core.jaxb.common.CanonicalEvidenceType;
 import eu.de4a.iem.core.jaxb.common.ErrorType;
 import eu.de4a.iem.core.jaxb.common.EventSubscripRequestItemType;
@@ -147,21 +148,6 @@ public class DOController {
             }
         }
         
-       /* for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
-        	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
-	        String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
-	        canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
-	        if (canonicalEvidence == null) {
-	        	response.addError(doIdentityMatchingError());
-	        	response.addError(
-	                    DE4AResponseDocumentHelper.createError(
-	                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
-	                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
-	        	response.setAck(false);
-	        	return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
-	        }
-        }*/
-        
         res = Helper.buildResponseRequest(req);
         
         CanonicalEvidenceType ce = new CanonicalEvidenceType();
@@ -174,29 +160,11 @@ public class DOController {
         	resElement.setRequestItemId(reqElement.getRequestItemId());
         	res.addResponseExtractEvidenceItem(resElement);
         }
-        
-        if (canonicalEvidence.getUsiAutoResponse().useAutoResp()) {
-            taskScheduler.schedule(() ->
-                    sendRequest(
-                            doConfig.getDTUrlIM(),
-                            DE4ACoreMarshaller.drRequestExtractMultiEvidenceIMMarshaller().getAsInputStream(req),
-                            log::error),
-                    Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
-        } else {
-        	previewStorage.addRequestToPreview(res);
-            String message;
-            try {
-                message = objectMapper.writeValueAsString(new PreviewMessage(PreviewMessage.Action.ADD, req.getRequestId()));
-            } catch (JsonProcessingException ex) {
-                message = "{}";
-                log.error("json error");
-            }
-            String endpoint = String.format("%s%s", doConfig.getPreviewBaseEndpoint(), doConfig.getWebsocketMessagesEndpoint());
-            log.debug("sending websocket message {}: {}", endpoint, message);
-            websocketMessaging.convertAndSend(endpoint, message);
-
-            
-        }
+                
+        sendRequest(
+                doConfig.getDTUrlIM(),
+                DE4ACoreMarshaller.drRequestExtractMultiEvidenceIMMarshaller().getAsInputStream(req),
+                log::error);
         
         DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Responding to RequestExtractEvidence, requestId: %s", req.getRequestId()));
         
