@@ -6,6 +6,7 @@ import lombok.Getter;
 import java.util.Arrays;
 
 public enum DataOwner {
+
     AMA_PT("iso6523-actorid-upis::9999:pt000000026-mock-it2", "(AMA IP) Agencia para a Modernizacao Administrativa IP (Administration Modernization Agency)", "PT", Pilot.T43),
     COC_NL("iso6523-actorid-upis::9999:nl990000106-mock-it2", "(KVK) Chamber of Commerce of Netherlands", "NL", Pilot.T42),
     V_SE("iso6523-actorid-upis::9999:se000000013-mock-it2", "(BVE) BOLAGSVERKET (Companies Registration Office)", "SE", Pilot.T42),
@@ -16,7 +17,10 @@ public enum DataOwner {
     MIZS_SI("iso6523-actorid-upis::9999:si000000016-mock-it2", "(MIZS) Ministrstvo za Izobrazevanje, Znanost in Sport", "SI", Pilot.T41),
     UJI_ES("iso6523-actorid-upis::9999:esq6250003h-mock-it2", "(UJI) Universitat Jaume I de Castellón", "ES", Pilot.T41),
     
-    SGAD_ES("iso6523-actorid-upis::9999:ess2833002e-mock-it2", "(MPTFP-SGAD) Secretaría General de Administración Digital", "ES", PilotInterface.multiple(Pilot.T43, Pilot.T41));
+    SGAD_ES("iso6523-actorid-upis::9999:ess2833002e-mock-it2", "(MPTFP-SGAD) Secretaría General de Administración Digital", "ES", PilotInterface.multiple(Pilot.T43, Pilot.T41)),
+    MOCK_DO("iso6523-actorid-upis::9999:mock-do-localhost-it2", "Mocked DO (Localhost)", "ES", PilotInterface.multiple(Pilot.T41, Pilot.T43))
+    ;
+
 
     @Getter
     final private String urn;
