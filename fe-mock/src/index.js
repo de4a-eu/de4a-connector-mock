@@ -13,7 +13,7 @@ import ContextContainer from "./context/ContextContainer";
 ReactDOM.render(
   <React.StrictMode>
 	<ContextContainer>	
-      <Router>
+      <Router basename={'/de4a-mock-connector'}>
         <Switch>
             <Route path='/do1/preview/index'>
                 <App />
