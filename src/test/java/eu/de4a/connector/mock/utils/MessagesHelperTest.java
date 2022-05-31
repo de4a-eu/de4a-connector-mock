@@ -5,10 +5,12 @@ package eu.de4a.connector.mock.utils;
 import org.junit.jupiter.api.Test;
 
 import eu.de4a.iem.core.DE4ACoreMarshaller;
+import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
 import eu.de4a.iem.core.jaxb.common.EventNotificationType;
 import eu.de4a.iem.core.jaxb.common.RequestEventSubscriptionType;
 import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceIMType;
 import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceUSIType;
+import eu.de4a.iem.core.jaxb.common.ResponseExtractMultiEvidenceType;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -52,6 +54,15 @@ class MessagesHelperTest {
 		log.info("request: {}", request.toString());
 		var marshaller = DE4ACoreMarshaller.deEventNotificationMarshaller();
 		String req = marshaller.getAsString(request);
+	    log.info (req);
+	}
+	
+	@Test
+	void testResponseCreatorMultiEvidence() {
+		ResponseExtractMultiEvidenceType response = MessagesHelper.createResponseExtractMultiEvidence(2);
+		log.info("request: {}", response.toString());
+		var marshaller = DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE);
+		String req = marshaller.getAsString(response);
 	    log.info (req);
 	}
 }

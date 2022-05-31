@@ -50,6 +50,7 @@ import eu.de4a.iem.core.jaxb.common.EventSubscripRequestItemType;
 import eu.de4a.iem.core.jaxb.common.RedirectUserType;
 import eu.de4a.iem.core.jaxb.common.RequestEventSubscriptionType;
 import eu.de4a.iem.core.jaxb.common.RequestEvidenceItemType;
+import eu.de4a.iem.core.jaxb.common.RequestEvidenceUSIItemType;
 import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceIMType;
 import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceUSIType;
 import eu.de4a.iem.core.jaxb.common.ResponseErrorType;
@@ -162,8 +163,8 @@ public class DOController {
         }
                 
         sendRequest(
-                doConfig.getDTUrlIM(),
-                DE4ACoreMarshaller.drRequestExtractMultiEvidenceIMMarshaller().getAsInputStream(req),
+                doConfig.getDTEvidenceUrl(),
+                DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(res),
                 log::error);
         
         DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Responding to RequestExtractEvidence, requestId: %s", req.getRequestId()));
@@ -251,9 +252,9 @@ public class DOController {
         
         res = Helper.buildResponseRequest(req);
         
-        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceUSIItem()) {
+        for (RequestEvidenceUSIItemType reqElement : req.getRequestEvidenceUSIItem()) {
         	resElement.setDataRequestSubject(reqElement.getDataRequestSubject());
-        	resElement.setCanonicalEvidenceTypeId(req.getSpecificationId());
+        	resElement.setCanonicalEvidenceTypeId(reqElement.getCanonicalEvidenceTypeId());
         	resElement.setCanonicalEvidence(ce);
         	resElement.setRequestItemId(reqElement.getRequestItemId());
         	res.addResponseExtractEvidenceItem(resElement);
@@ -268,7 +269,10 @@ public class DOController {
                             log::error),
                     Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
         } else {
+        	res.getDataEvaluator().setRedirectURL(req.getRequestEvidenceUSIItemAtIndex(0).getDataEvaluatorURL());
+        	
         	previewStorage.addRequestToPreview(res);
+        	
             String message;
             try {
                 message = objectMapper.writeValueAsString(new PreviewMessage(PreviewMessage.Action.ADD, req.getRequestId()));
@@ -284,20 +288,29 @@ public class DOController {
             redirectUserType.setRequestId(req.getRequestId());
             redirectUserType.setSpecificationId(req.getSpecificationId());
             redirectUserType.setTimeStamp(LocalDateTime.now());
-            redirectUserType.setCanonicalEvidenceTypeId(endpoint);
             redirectUserType.setDataEvaluator(req.getDataEvaluator());
+            redirectUserType.setDataOwner(req.getDataOwner());
+            redirectUserType.setCanonicalEvidenceTypeId(req.getRequestEvidenceUSIItemAtIndex(0).getCanonicalEvidenceTypeId());
+            //redirectUserType.setRedirectUrl(req.getRequestEvidenceUSIItemAtIndex(0).getDataEvaluatorURL());
+
             redirectUserType.setRedirectUrl(
                     String.format("%s%s%s?requestId=%s",
                         baseUrl,
                         doConfig.getPreviewBaseEndpoint(),
                         doConfig.getIndexEndpoint(),
                         req.getRequestId()));
-           /*//works with a running & configured connector DT 
+            
+            
+            
+            log.debug("sending redirect message: {}", redirectUserType.getRedirectUrl());
+            
+            log.debug (DE4ACoreMarshaller.dtUSIRedirectUserMarshaller().formatted ().getAsString (redirectUserType));
+           //works with a running & configured connector DT 
             sendRequest(
                     doConfig.getPreviewDTRedirectUrl(),
                     DE4ACoreMarshaller.dtUSIRedirectUserMarshaller().getAsInputStream(redirectUserType),
                     log::error);
-                    */
+                    
         }
 
         DE4AKafkaClient.send(EErrorLevel.INFO, () ->

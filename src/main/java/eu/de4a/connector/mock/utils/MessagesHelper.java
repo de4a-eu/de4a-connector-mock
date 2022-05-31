@@ -10,7 +10,11 @@ import javax.annotation.Nonnull;
 import com.helger.commons.datetime.PDTFactory;
 import com.helger.commons.math.MathHelper;
 
+import eu.de4a.connector.mock.exampledata.CanonicalEvidenceExamples;
+import eu.de4a.connector.mock.exampledata.DataOwner;
+import eu.de4a.connector.mock.exampledata.EvidenceID;
 import eu.de4a.iem.core.jaxb.common.AgentType;
+import eu.de4a.iem.core.jaxb.common.CanonicalEvidenceType;
 import eu.de4a.iem.core.jaxb.common.DataRequestSubjectCVType;
 import eu.de4a.iem.core.jaxb.common.EventNotificationItemType;
 import eu.de4a.iem.core.jaxb.common.EventNotificationType;
@@ -27,10 +31,14 @@ import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceLUType;
 import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceType;
 import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceUSIType;
 import eu.de4a.iem.core.jaxb.common.RequestGroundsType;
+import eu.de4a.iem.core.jaxb.common.ResponseExtractEvidenceItemType;
+import eu.de4a.iem.core.jaxb.common.ResponseExtractMultiEvidenceType;
 import eu.de4a.iem.core.jaxb.common.TimePeriodType;
 import eu.de4a.iem.core.jaxb.eidas.np.GenderType;
 
 public class MessagesHelper {
+	
+	 public static final String CANONICAL_EVIDENCE = "<de4a:CanonicalEvidence><dba:LegalEntity xmlns:cvb=\"http://www.w3.org/ns/corevocabulary/BasicComponents\" xmlns:dba=\"urn:eu-de4a:xsd:CanonicalEvidenceType::CompanyRegistration:v0.6\"><dba:CompanyName><cvb:LegalEntityLegalName>Carl-Markus Piswanger e.U.</cvb:LegalEntityLegalName></dba:CompanyName><dba:CompanyType>Einzelunternehmen</dba:CompanyType><dba:CompanyStatus>economically active</dba:CompanyStatus><dba:CompanyActivity><dba:ActivityDescription>Erbringung von Dienstleistung im IT-Sektor</dba:ActivityDescription></dba:CompanyActivity><dba:RegistrationDate>2015-01-01</dba:RegistrationDate><dba:CompanyEUID>AT???</dba:CompanyEUID><dba:CompanyContactData><dba:Email>example@example.org</dba:Email></dba:CompanyContactData><dba:RegisteredAddress><dba:Thoroughfare>Hintere Zollamtstrasse</dba:Thoroughfare><dba:LocationDesignator>4</dba:LocationDesignator><dba:PostCode>1030</dba:PostCode><dba:PostName>Wien</dba:PostName><dba:AdminUnitL1>AT</dba:AdminUnitL1></dba:RegisteredAddress><dba:PostalAddress><dba:Thoroughfare>Hintere Zollamtstrasse</dba:Thoroughfare><dba:LocationDesignator>4</dba:LocationDesignator><dba:PostCode>1030</dba:PostCode><dba:PostName>Wien</dba:PostName><dba:AdminUnitL1>AT</dba:AdminUnitL1></dba:PostalAddress></dba:LegalEntity></de4a:CanonicalEvidence>";
 
     public static RequestExtractMultiEvidenceIMType createRequestExtractMultiEvidenceIM(int nItems) {
         final ThreadLocalRandom aTLR = ThreadLocalRandom.current ();
@@ -175,6 +183,50 @@ public class MessagesHelper {
     	return notif;
 	}
     
+    public static ResponseExtractMultiEvidenceType createResponseExtractMultiEvidence(int nItems) {
+        final ThreadLocalRandom aTLR = ThreadLocalRandom.current ();
+        final ResponseExtractMultiEvidenceType ret = new ResponseExtractMultiEvidenceType();
+
+        fillResponseExtractMultiEvidenceType(ret, aTLR);
+        
+        ResponseExtractEvidenceItemType item = new ResponseExtractEvidenceItemType();
+        fillResponseExtractEvidenceItemType(item, aTLR, ret);
+
+        ret.addResponseExtractEvidenceItem(item);
+        
+        IntStream.range(1, nItems).forEach(i -> {
+            ResponseExtractEvidenceItemType newItem = item.clone();
+            newItem.setRequestItemId(UUID.randomUUID ().toString ());
+            ret.addResponseExtractEvidenceItem(newItem);
+        });        
+        
+        return ret;
+    }
+    
+	private static void fillResponseExtractEvidenceItemType(ResponseExtractEvidenceItemType item,
+			ThreadLocalRandom aTLR, ResponseExtractMultiEvidenceType ret) {
+        item.setRequestItemId(UUID.randomUUID ().toString ());
+        item.setDataRequestSubject (_createDRS ());
+        item.setCanonicalEvidenceTypeId ("CanonicalEvidence-" + MathHelper.abs (aTLR.nextInt ()));
+        EvidenceID evidenceID = EvidenceID.selectEvidenceId("urn:de4a-eu:CanonicalEvidenceType::CompanyRegistration:1.0");
+        
+       // DataOwner dataOwner = DataOwner.selectDataOwner(ret.getDataOwner());
+        //String eIDASIdentifier = "???";//dataOwner.getPilot().getEIDASIdentifier(item.getDataRequestSubject());
+       // CanonicalEvidenceExamples canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(DataOwner.DMDW_AT, evidenceID, eIDASIdentifier);
+        CanonicalEvidenceExamples cee = CanonicalEvidenceExamples.T42_AT;
+        CanonicalEvidenceType ce = new CanonicalEvidenceType();
+        ce.setAny(cee.getDocumentElement());
+        item.setCanonicalEvidence(ce);
+	}
+
+	private static void fillResponseExtractMultiEvidenceType(ResponseExtractMultiEvidenceType req,
+			ThreadLocalRandom aTLR) {
+	    req.setRequestId (UUID.randomUUID ().toString ());
+	    req.setTimeStamp (PDTFactory.getCurrentLocalDateTime ());
+	    req.setDataEvaluator (_createAgent ());
+	    req.setDataOwner (_createAgent ());
+	}
+
 	private static void fillEventNotificationType(EventNotificationType notif, ThreadLocalRandom aTLR) {
 		notif.setNotificationId(UUID.randomUUID ().toString ());
 		notif.setSpecificationId ("Specification-" + MathHelper.abs (aTLR.nextInt ()));
