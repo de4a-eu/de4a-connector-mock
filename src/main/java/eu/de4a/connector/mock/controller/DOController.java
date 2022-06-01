@@ -155,13 +155,13 @@ public class DOController {
         ce.setAny(canonicalEvidence);
         
         for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
-        	resElement.setDataRequestSubject(reqElement.getDataRequestSubject());
-        	resElement.setCanonicalEvidenceTypeId(req.getSpecificationId());
-        	resElement.setCanonicalEvidence(ce);
         	resElement.setRequestItemId(reqElement.getRequestItemId());
+        	resElement.setDataRequestSubject(reqElement.getDataRequestSubject());
+        	resElement.setCanonicalEvidenceTypeId(reqElement.getCanonicalEvidenceTypeId());
+        	resElement.setCanonicalEvidence(ce);
         	res.addResponseExtractEvidenceItem(resElement);
         }
-                
+                       
         sendRequest(
                 doConfig.getDTEvidenceUrl(),
                 DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(res),
