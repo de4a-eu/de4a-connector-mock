@@ -10,8 +10,10 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -41,6 +43,7 @@ import eu.de4a.connector.mock.exampledata.SubscriptionID;
 import eu.de4a.connector.mock.preview.PreviewMessage;
 import eu.de4a.connector.mock.preview.PreviewStorage;
 import eu.de4a.connector.mock.preview.SubscriptionStorage;
+import eu.de4a.iem.cev.EDE4ACanonicalEvidenceType;
 import eu.de4a.iem.core.DE4ACoreMarshaller;
 import eu.de4a.iem.core.DE4AResponseDocumentHelper;
 import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
@@ -84,7 +87,7 @@ public class DOController {
     String baseUrl;
 
     @PostMapping("${mock.do.endpoint.im}")
-    public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) {
+    public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) throws InterruptedException, ExecutionException {
     	CanonicalEvidenceExamples canonicalEvidence = null;
         var marshaller = DE4ACoreMarshaller.doRequestExtractMultiEvidenceIMMarshaller();
         UUID errorKey = UUID.randomUUID();
@@ -97,7 +100,7 @@ public class DOController {
 
         DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Receiving RequestExtractEvidence, requestId: %s", req.getRequestId()));
         
-        ResponseExtractMultiEvidenceType res;
+        ResponseExtractMultiEvidenceType res = new ResponseExtractMultiEvidenceType();
         ResponseExtractEvidenceItemType resElement = new ResponseExtractEvidenceItemType();
         DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
         if (dataOwner == null) {
@@ -152,7 +155,8 @@ public class DOController {
         res = Helper.buildResponseRequest(req);
         
         CanonicalEvidenceType ce = new CanonicalEvidenceType();
-        ce.setAny(canonicalEvidence);
+        //ce.setAny(canonicalEvidence);
+        ce.setAny(canonicalEvidence.getDocumentElement());
         
         for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
         	resElement.setRequestItemId(reqElement.getRequestItemId());
@@ -161,11 +165,24 @@ public class DOController {
         	resElement.setCanonicalEvidence(ce);
         	res.addResponseExtractEvidenceItem(resElement);
         }
-                       
-        sendRequest(
-                doConfig.getDTEvidenceUrl(),
-                DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(res),
-                log::error);
+        
+        //ResponseExtractMultiEvidenceType request = previewStorage.getRequest("54aaac61-ba3a-4a19-99cf-a085e6fc5eUSI").get();
+       /* var marshall = DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(EDE4ACanonicalEvidenceType.T42_LEGAL_ENTITY_V06);
+        InputStream is2 = marshall.getAsInputStream(res);
+        InputStream is = DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(res);
+        */
+        try {
+            Boolean success = sendRequest(
+                    doConfig.getDTEvidenceUrl(),
+                    DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(res),
+                    log::error).get();
+            if (!success) {
+                return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
+            }
+        } catch (InterruptedException | ExecutionException ex) {
+            log.debug("request inteupted: {}", ex.getMessage());
+            return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("request interupted");
+        }
         
         DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Responding to RequestExtractEvidence, requestId: %s", req.getRequestId()));
         
@@ -231,6 +248,7 @@ public class DOController {
         
         
         CanonicalEvidenceExamples canonicalEvidence = null;
+        List <CanonicalEvidenceExamples> lCE = new ArrayList();
         for (RequestEvidenceItemType reqElement : req.getRequestEvidenceUSIItem()) {
         	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
         	String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
@@ -244,20 +262,28 @@ public class DOController {
 	                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
 	        	response.setAck(false);
 	            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+	        } else {
+	        	lCE.add(canonicalEvidence);
 	        }
         }
         
-        CanonicalEvidenceType ce = new CanonicalEvidenceType();
-        ce.setAny(canonicalEvidence.getDocumentElement());
+        //CanonicalEvidenceType ce = new CanonicalEvidenceType();
+        //ce.setAny(canonicalEvidence.getDocumentElement());
+        //canonicalEvidence = lCE.get(0);
+        //ce.setAny(canonicalEvidence.getDocumentElement());
         
         res = Helper.buildResponseRequest(req);
-        
+        int i = 0;
         for (RequestEvidenceUSIItemType reqElement : req.getRequestEvidenceUSIItem()) {
+        	CanonicalEvidenceType ce = new CanonicalEvidenceType();
         	resElement.setDataRequestSubject(reqElement.getDataRequestSubject());
         	resElement.setCanonicalEvidenceTypeId(reqElement.getCanonicalEvidenceTypeId());
-        	resElement.setCanonicalEvidence(ce);
+        	ce.setAny(lCE.get(i).getDocumentElement());
+    		resElement.setCanonicalEvidence(ce);
         	resElement.setRequestItemId(reqElement.getRequestItemId());
         	res.addResponseExtractEvidenceItem(resElement);
+        	resElement = new ResponseExtractEvidenceItemType();
+        	i++;
         }
         
         

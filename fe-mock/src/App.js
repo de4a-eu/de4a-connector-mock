@@ -193,7 +193,7 @@ const App = () => {
             case EvidenceStatus.NoSuchEvidence:
                 return <p>no evidence found for request with id: {requestId}</p>
             case EvidenceStatus.Unanswered:
-                return <Preview evidence={evidence} evidenceRoot="//*[local-name() = 'CanonicalEvidence']"
+                return <Preview evidence={evidence} evidenceRoot="//*[local-name() = 'ResponseTransferEvidence']"
                                 evidenceIgnore={[]} acceptEvidence={acceptEvidence} rejectEvidence={rejectEvidence}
                                 translate={translate}/>
             case EvidenceStatus.Accepted:
