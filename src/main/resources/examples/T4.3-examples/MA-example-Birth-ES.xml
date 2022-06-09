@@ -10,6 +10,9 @@
         <bi:PrefLabel>Registro Civil Central. Ministerio de Justicia</bi:PrefLabel>
     </bi:IssuingAuthority>
     <bi:IssuingPlace>
+        <cvb:Thoroughfare>Plaza Duque de Medinaceli, 2</cvb:Thoroughfare>
+        <cvb:PostName>Barcelona</cvb:PostName>
+        <cvb:PostCode>08071</cvb:PostCode>
         <bi:AdminUnitL2>Barcelona</bi:AdminUnitL2>
         <bi:AdminUnitL1>ES</bi:AdminUnitL1>
     </bi:IssuingPlace>
@@ -29,6 +32,9 @@
             </bi:DateOfBirth>
             <bi:Gender>FEMALE</bi:Gender>
             <bi:PlaceOfBirth>
+                <cvb:Thoroughfare>Sant Quintí, 89</cvb:Thoroughfare>
+                <cvb:PostName>Barcelona</cvb:PostName>
+                <cvb:PostCode>08025 </cvb:PostCode>
                 <bi:AdminUnitL2>Barcelona</bi:AdminUnitL2>
                 <bi:AdminUnitL1>ES</bi:AdminUnitL1>
             </bi:PlaceOfBirth>
