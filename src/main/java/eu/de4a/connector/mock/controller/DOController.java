@@ -43,7 +43,6 @@ import eu.de4a.connector.mock.exampledata.SubscriptionID;
 import eu.de4a.connector.mock.preview.PreviewMessage;
 import eu.de4a.connector.mock.preview.PreviewStorage;
 import eu.de4a.connector.mock.preview.SubscriptionStorage;
-import eu.de4a.iem.cev.EDE4ACanonicalEvidenceType;
 import eu.de4a.iem.core.DE4ACoreMarshaller;
 import eu.de4a.iem.core.DE4AResponseDocumentHelper;
 import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
@@ -88,107 +87,100 @@ public class DOController {
 
     @PostMapping("${mock.do.endpoint.im}")
     public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) throws InterruptedException, ExecutionException {
-    	CanonicalEvidenceExamples canonicalEvidence = null;
+    	
         var marshaller = DE4ACoreMarshaller.doRequestExtractMultiEvidenceIMMarshaller();
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> MarshallErrorHandler.getInstance().postError(errorKey, ex));
         
-        ResponseErrorType response = new ResponseErrorType();
-        RequestExtractMultiEvidenceIMType req = marshaller.read(body);
-        if (req == null) {
+        ResponseErrorType responseError = new ResponseErrorType();
+        RequestExtractMultiEvidenceIMType request = marshaller.read(body);
+        if (request == null) {
             throw new MarshallException(errorKey);       }
 
-        DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Receiving RequestExtractEvidence, requestId: %s", req.getRequestId()));
+        DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Receiving RequestExtractEvidence, requestId: %s", request.getRequestId()));
         
-        ResponseExtractMultiEvidenceType res = new ResponseExtractMultiEvidenceType();
-        ResponseExtractEvidenceItemType resElement = new ResponseExtractEvidenceItemType();
-        DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
+        ResponseExtractMultiEvidenceType response = new ResponseExtractMultiEvidenceType();
+        ResponseExtractEvidenceItemType responseItem;
+        DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
+        
+        response = Helper.buildResponseRequest(request);
+        
+        // no known data owner
         if (dataOwner == null) {
-            ErrorType errorType = DE4AResponseDocumentHelper.createError ("99999", "no known data owners with urn "+ req.getDataOwner().getAgentUrn());
-            response.addError(errorType);
-            response.setAck(false);
-            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
-        }
-        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
-        	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
-        		response.addError(doIdentityMatchingError());
-                response.addError(
-                        DE4AResponseDocumentHelper.createError(
-                                MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
-                                String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
-                        )
-                );
-                response.setAck(false);
-                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
-        	}
+            var errors = new ArrayList<ErrorType>();
+            ErrorType errorType = DE4AResponseDocumentHelper.createError("99999", "No known data owner with urn "+ request.getDataOwner().getAgentUrn());
+            errors.add(errorType);
+            responseError.addError(errorType);
+            responseError.setAck(false);
+            
+            // for each element set the error
+            for (RequestEvidenceItemType reqElement : request.getRequestEvidenceIMItem()) {
+            	responseItem = new ResponseExtractEvidenceItemType();
+                responseItem.setRequestItemId(reqElement.getRequestItemId());
+                responseItem.setDataRequestSubject(reqElement.getDataRequestSubject());
+                responseItem.setCanonicalEvidenceTypeId(reqElement.getCanonicalEvidenceTypeId());
+                responseItem.setCanonicalEvidence(null);
+                responseItem.setError(errors);
+            	response.addResponseExtractEvidenceItem(responseItem);
+            }
+            
+            return this.sendResponse(response, responseError);
         }
         
-        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
+        for (RequestEvidenceItemType reqElement : request.getRequestEvidenceIMItem()) {
+        	
+        	responseItem = new ResponseExtractEvidenceItemType();
+        	responseItem.setRequestItemId(reqElement.getRequestItemId());
+            responseItem.setDataRequestSubject(reqElement.getDataRequestSubject());
+            responseItem.setCanonicalEvidenceTypeId(reqElement.getCanonicalEvidenceTypeId());
+        	
+    		List<ErrorType> errors = new ArrayList<>();
+            CanonicalEvidenceExamples canonicalEvidence = null;
+            CanonicalEvidenceType ce = new CanonicalEvidenceType();
+            
+        	// bad request
+        	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
+        		
+        		errors.add(DE4AResponseDocumentHelper.createError(
+                        MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
+                        String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())));
+        		errors.add(doIdentityMatchingError());
+        	}
+        	
+        	// No evidece type found
         	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
         	if (evidenceID == null) {
-                response.addError(
-                        doGenericError(
-                                String.format("no known evidence type id '%s'", reqElement.getCanonicalEvidenceTypeId())
-                        )
-                );
-                response.setAck(false);
-                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+        		errors.add(doGenericError(
+                        String.format("No known evidence type id '%s'", reqElement.getCanonicalEvidenceTypeId())));
             }
-        }
-        
-       
-        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
-        	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
-        	String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
-            canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
-            if (canonicalEvidence == null) {
-            	response.addError(doIdentityMatchingError());
-            	response.addError(
-                        DE4AResponseDocumentHelper.createError(
-                                MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
-                                String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
-            	response.setAck(false);
-            	return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+        	else {
+        		// No evidence found for identifier
+            	String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
+                canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
+                if (canonicalEvidence == null) {
+                	errors.add(DE4AResponseDocumentHelper.createError(
+                            MockedErrorCodes.DE4A_ERROR_IDENTITY_MATCHING.getCode(),
+                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
+                }
+                else {
+                	ce.setAny(canonicalEvidence.getDocumentElement());
+                	responseItem.setCanonicalEvidence(ce);
+                }
+        	}
+        	
+            if(!errors.isEmpty()) {
+            	for(ErrorType error : errors) {
+            		responseError.addError(error);
+            		responseItem.addError(error);
+            	}
+            	responseError.setAck(false);
             }
+            
+            response.addResponseExtractEvidenceItem(responseItem);
+            
         }
         
-        res = Helper.buildResponseRequest(req);
-        
-        CanonicalEvidenceType ce = new CanonicalEvidenceType();
-        //ce.setAny(canonicalEvidence);
-        ce.setAny(canonicalEvidence.getDocumentElement());
-        
-        for (RequestEvidenceItemType reqElement : req.getRequestEvidenceIMItem()) {
-        	resElement.setRequestItemId(reqElement.getRequestItemId());
-        	resElement.setDataRequestSubject(reqElement.getDataRequestSubject());
-        	resElement.setCanonicalEvidenceTypeId(reqElement.getCanonicalEvidenceTypeId());
-        	resElement.setCanonicalEvidence(ce);
-        	res.addResponseExtractEvidenceItem(resElement);
-        }
-        
-        //ResponseExtractMultiEvidenceType request = previewStorage.getRequest("54aaac61-ba3a-4a19-99cf-a085e6fc5eUSI").get();
-       /* var marshall = DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(EDE4ACanonicalEvidenceType.T42_LEGAL_ENTITY_V06);
-        InputStream is2 = marshall.getAsInputStream(res);
-        InputStream is = DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(res);
-        */
-        try {
-            Boolean success = sendRequest(
-                    doConfig.getDTEvidenceUrl(),
-                    DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(res),
-                    log::error).get();
-            if (!success) {
-                return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
-            }
-        } catch (InterruptedException | ExecutionException ex) {
-            log.debug("request inteupted: {}", ex.getMessage());
-            return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("request interupted");
-        }
-        
-        DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Responding to RequestExtractEvidence, requestId: %s", req.getRequestId()));
-        
-        response.setAck(true);
-        
-        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+       return this.sendResponse(response, responseError);
     }
     
 
@@ -206,7 +198,6 @@ public class DOController {
         
         ResponseErrorType response = new ResponseErrorType();
         
-
         ResponseExtractMultiEvidenceType res = new ResponseExtractMultiEvidenceType();
         ResponseExtractEvidenceItemType resElement = new ResponseExtractEvidenceItemType();
         DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
@@ -219,6 +210,7 @@ public class DOController {
         	response.setAck(false);
             return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
         }
+        
         for (RequestEvidenceItemType reqElement : req.getRequestEvidenceUSIItem()) {
         	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
         		response.addError(doIdentityMatchingError());
@@ -458,5 +450,36 @@ public class DOController {
             return "";
         }
         return stringWriter.toString();
+    }
+    
+    private ResponseEntity<String> sendResponse(ResponseExtractMultiEvidenceType response, ResponseErrorType responseError) {
+    	 try {
+             Boolean success = sendRequest(
+                     doConfig.getDTEvidenceUrl(),
+                     DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(response),
+                     log::error).get();
+             if (!success) {
+                 return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
+             }
+         } catch (InterruptedException | ExecutionException ex) {
+             log.debug("request inteupted: {}", ex.getMessage());
+             return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("request interupted");
+         }
+         
+         DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Responding to RequestExtractEvidence, requestId: %s", response.getRequestId()));
+         responseError.setAck(true);
+         return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(responseError));
+    }
+    
+    private ResponseExtractEvidenceItemType FillEvidenceItemWithErrors(List<ErrorType> errors, RequestEvidenceItemType item) {
+    	
+    	ResponseExtractEvidenceItemType responseItem = new ResponseExtractEvidenceItemType();
+    	responseItem = new ResponseExtractEvidenceItemType();
+    	responseItem.setCanonicalEvidence(null);
+    	responseItem.setCanonicalEvidenceTypeId(item.getCanonicalEvidenceTypeId());
+    	responseItem.setRequestItemId(item.getRequestItemId());
+    	responseItem.setDataRequestSubject(item.getDataRequestSubject());
+    	responseItem.setError(errors);
+        return responseItem;
     }
 }
