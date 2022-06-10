@@ -17,19 +17,21 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
 
     console.log("xmlRoot", xmlRoot)
 
+	let count = 0;
+
     const printNode = (node) => {
+		if (evidenceElements.includes(node.localName)) {
+			++count;
+			return <Row className='evidenceHeading'>
+	            <Col>
+	                <h1>Evidence {count} - {node.localName}</h1>
+	            </Col>
+	        </Row>
+		}
 		if (elements.includes(node.localName))  {
 	        return <Row className='evidenceHeading'>
 	            <Col>
 	                <h2>{translate(`canonicalEvidenceFields.${node.localName}`)}</h2>
-	            </Col>
-	        </Row>
-		} else if (node.localName === 'ResponseExtractEvidenceItem'){
-			
-			 
-			return <Row className='evidenceHeading'>
-	            <Col>
-	                <h1>Evidence</h1>
 	            </Col>
 	        </Row>
 		}
@@ -170,8 +172,10 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
         return `${getIfExist(address, 'street')} ${getIfExist(address,'no')}, ${getIfExist(address,'pno')} ${getIfExist(address,'city')}, ${getIfExist(address,'al1')} ${getIfExist(address,'al2')}`
     }
     
- 	const [elements, setElements] = useState(['LegalEntity', 'CompanyName', 'LegalEntityLegalName', 'CompanyType', 'CompanyStatus', 'CompanyActivity', 'RegistrationDate', 'CompanyEUID', 'CompanyContactData', 'RegisteredAddress', 'PostalAddress']);
-
+ 	const [elements, setElements] = useState(['CompanyName', 'LegalEntityLegalName', 'CompanyType', 'CompanyStatus', 'CompanyActivity', 'RegistrationDate', 'CompanyEUID', 'CompanyContactData', 'RegisteredAddress', 'PostalAddress']);
+	
+	const [evidenceElements, setEvidenceElements] = useState(['BirthEvidence', 'MarriageEvidence', 'HigherEducationDiploma', 'LegalEntity' ]);
+	
     const parseNode = (node) => {
 		console.log("node.localName", node.localName)
 		if (Object.keys(specialNodes).includes(node.localName)) {
