@@ -12,12 +12,9 @@ import org.w3c.dom.Element;
 
 import com.helger.jaxb.GenericJAXBMarshaller;
 
-import eu.de4a.iem.cev.de4a.t41.v2021_04_13.DE4AT41Marshaller;
-import eu.de4a.iem.cev.de4a.t42.v0_6.DE4AT42Marshaller;
-import eu.de4a.iem.cev.de4a.t43.v1_6b.DE4AT43Marshaller;
-//import eu.de4a.iem.cev.de4a.t41.DE4AT41Marshaller;
-//import eu.de4a.iem.cev.de4a.t42.DE4AT42Marshaller;
-//import eu.de4a.iem.cev.de4a.t43.DE4AT43Marshaller;
+import eu.de4a.iem.cev.de4a.t41.DE4AT41Marshaller;
+import eu.de4a.iem.cev.de4a.t42.DE4AT42Marshaller;
+import eu.de4a.iem.cev.de4a.t43.DE4AT43Marshaller;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -42,6 +39,10 @@ public enum CanonicalEvidenceExamples {
   T41_SI_D("123456D", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-SI_D.xml"), DataOwner.MIZS_SI, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_240_SEC),
   T41_ES_D("53377873WD", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-ES_D.xml"), DataOwner.UJI_ES, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_240_SEC),
   T41_MOCK_DO("87654321", new ClassPathResource("examples/T4.1-examples/SA-UC1-11-02-2021-example-PT_A.xml"), DataOwner.MOCK_DO, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.IMMEDIATE),
+  T41_ES_E("99999142H", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-ES_G.xml"), DataOwner.UJI_ES, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.OFF),
+  
+  T41_ES_Z("99999142H", new ClassPathResource("examples/T4.1-examples/SA-UC1-SecondaryEducationEvidenceType-sample-ES.xml"), DataOwner.UJI_ES, EvidenceID.SECONDARY_EDUCATION_DIPLOMA, DE4AT41Marshaller.secondaryEducationDiploma(), USIAutoResponse.OFF),
+  
 
   T42_SE("5591674170", new ClassPathResource("examples/T4.2-examples/sample company info SE -2.xml"),  DataOwner.V_SE, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
   T42_NL("90000471", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),

@@ -90,7 +90,7 @@ public class DOPreviewController {
         DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(
+                .body(DE4ACoreMarshaller.dtResponseTransferEvidenceMarshaller(
                         dataOwner.getPilot().getCanonicalEvidenceType()).getAsString(request));
     }
     
@@ -115,7 +115,7 @@ public class DOPreviewController {
         try {
             Boolean success = sendRequest(
                     doConfig.getDTEvidenceUrl(),
-                    DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(request),
+                    DE4ACoreMarshaller.dtResponseTransferEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(request),
                     log::error).get();
             if (!success) {
                 return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
@@ -153,13 +153,13 @@ public class DOPreviewController {
         try {
             Boolean success = sendRequest(
                     doConfig.getDTEvidenceUrl(),
-                    DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(request),
+                    DE4ACoreMarshaller.dtResponseTransferEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(request),
                     log::error).get();
             if (!success) {
                 return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
             }
         } catch (InterruptedException | ExecutionException ex) {
-            log.debug("request inteupted: {}", ex.getMessage());
+            log.debug("request interrupted: {}", ex.getMessage());
             return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("request interupted");
         }
         previewStorage.removePreview(requestId);

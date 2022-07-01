@@ -123,9 +123,9 @@ const trans_en = {
 		"PersonIdentifier": "Person Identifier",
 		"FirstName": "First Name",
 		"CanonicalEventCatalogUri": "Canonical Event Catalog Uri",
-		"EventDate": "Event Date"
+		"EventDate": "Event Date",
 		
-		
+		"averageGrade": "Average Grade"
 		
 
     },

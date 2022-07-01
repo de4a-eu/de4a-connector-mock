@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<sa:HigherEducationDiploma
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:sa="urn:eu-de4a:xsd:CanonicalEvidenceType::HigherEducationEvidence:v1.0"
+  xmlns:eup="http://data.europa.eu/europass/model/credentials#"
+  xsi:schemaLocation="urn:eu-de4a:xsd:CanonicalEvidenceType::HigherEducationEvidence:v1.0 SA-UC1-20-04-2021.xsd"
+  
+  id="urn:credential:ef3b1a56-e668-4397-8dfd-c6a35f970c73"
+>
+  <eup:identifier spatialID="ES">2008171279</eup:identifier>
+  <eup:title>
+    <eup:text lang="en" content-type="text/plain">Degree in Computer Science Engineering (2001 Programme of Study)</eup:text>
+  </eup:title>
+
+  <sa:degree lang="en" content-type="text/plain">Degree in Computer Science Engineering (2001 Programme of Study)</sa:degree>
+  <sa:country>http://publications.europa.eu/resource/authority/country/ESP</sa:country>
+  <sa:institutionName lang="en" content-type="text/plain">Jaume I University</sa:institutionName>
+  <sa:studyProgramme lang="en" content-type="text/plain">Computer Science Engineering</sa:studyProgramme>
+  <sa:mainFieldOfStudy uri="http://data.europa.eu/snb/isced-f/0610"/>
+  <sa:modeOfStudy>http://data.europa.eu/europass/learningScheduleType/fullTime</sa:modeOfStudy>
+  <sa:durationOfEducation>P5Y</sa:durationOfEducation>
+  <sa:scope schemeID="http://data.europa.eu/europass/educationalCreditPointSystem/ects">352.0</sa:scope>
+  <sa:dateOfIssue>2008-07-22</sa:dateOfIssue>
+  <sa:placeOfIssue>
+    <eup:name>
+      <eup:text lang="en" content-type="text/plain">Castellon</eup:text>
+    </eup:name>
+  </sa:placeOfIssue>
+  
+  <sa:holderOfAchievement id="urn:person:es:99999142H">
+    <eup:nationalId spatialID="http://publications.europa.eu/resource/authority/country/ESP">99999142H</eup:nationalId>
+    <eup:givenNames>
+      <eup:text lang="en" content-type="text/plain">Usuario</eup:text>
+    </eup:givenNames>
+    <eup:familyName>
+      <eup:text lang="en" content-type="text/plain">Prueba</eup:text>
+    </eup:familyName>
+    <eup:dateOfBirth>1970-01-01</eup:dateOfBirth>
+  </sa:holderOfAchievement>
+  
+  <sa:averageGrade schemeID="http://educacion.gob.es/notas/grado"
+				explanation="Describe here the grading scheme, distribution, etc.">8,6</sa:averageGrade>
+
+</sa:HigherEducationDiploma>

@@ -208,7 +208,7 @@ public class DOController {
                     )
             );
         	response.setAck(false);
-            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
         }
         
         for (RequestEvidenceItemType reqElement : req.getRequestEvidenceUSIItem()) {
@@ -221,7 +221,7 @@ public class DOController {
                         )
                 );
         		response.setAck(false);
-                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
         	}
         }
         
@@ -234,7 +234,7 @@ public class DOController {
                         )
                 );
                 response.setAck(false);
-                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
             }
         }
         
@@ -253,7 +253,7 @@ public class DOController {
 	                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
 	                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
 	        	response.setAck(false);
-	            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+	            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
 	        } else {
 	        	lCE.add(canonicalEvidence);
 	        }
@@ -283,7 +283,7 @@ public class DOController {
             taskScheduler.schedule(() ->
                     sendRequest(
                             doConfig.getPreviewDTUrl(),
-                            DE4ACoreMarshaller.drRequestExtractMultiEvidenceUSIMarshaller().getAsInputStream(req),
+                            DE4ACoreMarshaller.drRequestTransferEvidenceUSIMarshaller().getAsInputStream(req),
                             log::error),
                     Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
         } else {
@@ -335,7 +335,7 @@ public class DOController {
                 String.format("Receiving USI RequestExtractEvidence, requestId: %s", req.getRequestId()));
 
         response.setAck(true);
-        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
     }
     
 
@@ -362,7 +362,7 @@ public class DOController {
                     )
             );
         	response.setAck(false);
-            ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+            ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
         }
         for (EventSubscripRequestItemType reqElement : req.getEventSubscripRequestItem()) {
         	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
@@ -374,7 +374,7 @@ public class DOController {
 	                    )
 	            );
         		response.setAck(false);
-                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
 	        }
         }
         CanonicalEventSubscriptionExamples canonicalEventSubscription = null;
@@ -387,7 +387,7 @@ public class DOController {
                         )
                 );
             	response.setAck(false);
-                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
             }
             
             String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
@@ -400,7 +400,7 @@ public class DOController {
                                 MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
                                 String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, subscriptionID.getId(), dataOwner.toString())));
                 response.setAck(false);
-                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
             }
         }
         
@@ -439,7 +439,7 @@ public class DOController {
        
         response.setAck(true);
         
-        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(response));
+        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
     }
 
     public static String responseBodyToString(HttpResponse response) {
@@ -456,7 +456,7 @@ public class DOController {
     	 try {
              Boolean success = sendRequest(
                      doConfig.getDTEvidenceUrl(),
-                     DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(response),
+                     DE4ACoreMarshaller.dtResponseTransferEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(response),
                      log::error).get();
              if (!success) {
                  return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
@@ -468,7 +468,7 @@ public class DOController {
          
          DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Responding to RequestExtractEvidence, requestId: %s", response.getRequestId()));
          responseError.setAck(true);
-         return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseErrorMarshaller().getAsString(responseError));
+         return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(responseError));
     }
     
     private ResponseExtractEvidenceItemType FillEvidenceItemWithErrors(List<ErrorType> errors, RequestEvidenceItemType item) {

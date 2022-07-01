@@ -1,12 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sauc1:SecondaryEducationDiploma id="http://tempuri.org" xmlns:edci="http://data.europa.eu/europass/model/credentials#" xmlns:sauc1="urn:eu-de4a:xsd:CanonicalEvidenceType::SecondaryEducationEvidence:v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:eu-de4a:xsd:CanonicalEvidenceType::SecondaryEducationEvidence:v1.0 SA-UC1-SecondaryEducationEvidenceType.xsd">
-	<edci:title>
-		<edci:text lang="es" content-type="text/plain">Bachillerato</edci:text>
-	</edci:title>
-	<sauc1:country>http://publications.europa.eu/resource/authority/country/ESP</sauc1:country>
-	<sauc1:degree lang="es" content-type="text/plain">Bachillerato</sauc1:degree>
-	<sauc1:nameOfSchool lang="es" content-type="text/plain">GUSTAVO ADOLFO BÉCQUER</sauc1:nameOfSchool>
-	<sauc1:nameOfProgram lang="es" content-type="text/plain">LGE</sauc1:nameOfProgram>
-	<sauc1:grade schemeID="Letter" explanation="Grading assuming values A, B, C, with A being the best">A</sauc1:grade>
-	<sauc1:issuingDate>1999-11-05</sauc1:issuingDate>
+<sauc1:SecondaryEducationDiploma id="http://tempuri.org"
+                           xmlns:edci="http://data.europa.eu/europass/model/credentials#"
+                           xmlns:sauc1="urn:eu-de4a:xsd:CanonicalEvidenceType::SecondaryEducationEvidence:v1.0"
+                           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                           xsi:schemaLocation="urn:eu-de4a:xsd:CanonicalEvidenceType::SecondaryEducationEvidence:v1.0 SA-UC1-SecondaryEducationDiplomaType.xsd">
+
+    <edci:title>
+        <edci:text lang="en" content-type="text/plain">
+            General upper secondary education degree
+        </edci:text>
+    </edci:title>
+    <sauc1:country>
+        http://publications.europa.eu/resource/authority/country/GBR
+    </sauc1:country>
+    <sauc1:nameOfSchool lang="en" content-type="text/plain">
+        DE4A Secondary School
+    </sauc1:nameOfSchool>
+    <sauc1:nameOfProgram lang="en" content-type="text/plain">
+        General secondary programme
+    </sauc1:nameOfProgram>
+    <sauc1:grade schemeID="Letter" explanation="Grading assuming values A, B, C, with A being the best">
+        100
+    </sauc1:grade>
+    <sauc1:issuingDate>
+        2021-01-31
+    </sauc1:issuingDate>
 </sauc1:SecondaryEducationDiploma>

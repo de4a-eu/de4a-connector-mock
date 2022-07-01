@@ -92,6 +92,9 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
         "familyName" : (node) => {
             return handleTextChild(node)
         },
+		"averageGrade" : (node) => {
+            return handleTextChild(node)
+        },
         "mainFieldOfStudy" : (node) => {
             const attUri = node.getAttribute("uri")
             if (attUri && attUri !== "") {
