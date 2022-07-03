@@ -116,7 +116,31 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
                     </Col>
                 </Row>
             }
-        }
+        },
+        "country": (node) => {
+            return handleTextChild(node)
+        },
+        "nameOfSchool": (node) => {
+            return handleTextChild(node)
+        },
+        "nameOfProgram": (node) => {
+            return handleTextChild(node)
+        },
+        "grade": (node) => {
+            return handleTextChild(node)
+        },
+        "issuingDate": (node) => {
+            return handleTextChild(node)
+        },
+        "certificateID": (node) => {
+            return handleTextChild(node)
+        },
+        "effectiveDate": (node) => {
+            return handleTextChild(node)
+        },
+        "disabilityPercentage": (node) => {
+            return handleTextChild(node)
+        },
     }
 
     const addressNode = (node) => {
@@ -177,7 +201,7 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
     
  	const [elements, setElements] = useState(['CompanyName', 'LegalEntityLegalName', 'CompanyType', 'CompanyStatus', 'CompanyActivity', 'RegistrationDate', 'CompanyEUID', 'CompanyContactData', 'RegisteredAddress', 'PostalAddress']);
 	
-	const [evidenceElements, setEvidenceElements] = useState(['BirthEvidence', 'MarriageEvidence', 'HigherEducationDiploma', 'LegalEntity' ]);
+	const [evidenceElements, setEvidenceElements] = useState(['BirthEvidence', 'MarriageEvidence', 'HigherEducationDiploma', 'LegalEntity', 'SecondaryEducationDiploma', 'Disability' ]);
 	
     const parseNode = (node) => {
 		console.log("node.localName", node.localName)

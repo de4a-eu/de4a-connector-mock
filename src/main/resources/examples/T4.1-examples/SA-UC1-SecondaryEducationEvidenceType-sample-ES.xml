@@ -20,7 +20,7 @@
         General secondary programme
     </sauc1:nameOfProgram>
     <sauc1:grade schemeID="Letter" explanation="Grading assuming values A, B, C, with A being the best">
-        100
+        A
     </sauc1:grade>
     <sauc1:issuingDate>
         2021-01-31

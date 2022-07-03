@@ -125,9 +125,14 @@ const trans_en = {
 		"CanonicalEventCatalogUri": "Canonical Event Catalog Uri",
 		"EventDate": "Event Date",
 		
-		"averageGrade": "Average Grade"
+		"averageGrade": "Average Grade",
+		"nameOfSchool": "Name of School",
+		"grade": "Grade",
+		"issuingDate": "Issuing Date",
+		"certificateID": "Certificate ID",
+		"effectiveDate": "Effective Date",
+		"disabilityPercentage": "Disability Percentage"
 		
-
     },
     "acceptButton": "Accept data",
     "rejectButton": "Reject data",
