@@ -15,6 +15,7 @@ public enum EvidenceID {
     
     SECONDARY_EDUCATION_DIPLOMA("urn:de4a-eu:CanonicalEvidenceType::SecondaryEducationDiploma:1.0", EDE4ACanonicalEvidenceType.T41_SECONDARY_EDUCATION_EVIDENCE_2022_05_12),
     DISABILITY_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::DisabilityEvidence:1.0", EDE4ACanonicalEvidenceType.T41_DISABILITY_EVIDENCE_2022_05_12),
+	LARGE_FAMILY_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::LargeFamilyEvidence:1.0", EDE4ACanonicalEvidenceType.T41_LARGE_FAMILY_EVIDENCE_2022_05_12),
 	
 	TEST_EVIDENCE("CanonicalEvidence-1626562515", EDE4ACanonicalEvidenceType.T43_MARRIAGE_EVIDENCE_V17);
     @Getter

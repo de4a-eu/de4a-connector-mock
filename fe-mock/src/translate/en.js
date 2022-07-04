@@ -131,7 +131,9 @@ const trans_en = {
 		"issuingDate": "Issuing Date",
 		"certificateID": "Certificate ID",
 		"effectiveDate": "Effective Date",
-		"disabilityPercentage": "Disability Percentage"
+		"disabilityPercentage": "Disability Percentage",
+		"expiryDate" : "Expiry Date",
+		"numberOfChildren" : "Number of Children"
 		
     },
     "acceptButton": "Accept data",

@@ -141,6 +141,12 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
         "disabilityPercentage": (node) => {
             return handleTextChild(node)
         },
+        "expiryDate": (node) => {
+            return handleTextChild(node)
+        },
+		"numberOfChildren": (node) => {
+            return handleTextChild(node)
+        },
     }
 
     const addressNode = (node) => {
