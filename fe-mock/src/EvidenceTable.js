@@ -207,7 +207,7 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
     
  	const [elements, setElements] = useState(['CompanyName', 'LegalEntityLegalName', 'CompanyType', 'CompanyStatus', 'CompanyActivity', 'RegistrationDate', 'CompanyEUID', 'CompanyContactData', 'RegisteredAddress', 'PostalAddress']);
 	
-	const [evidenceElements, setEvidenceElements] = useState(['BirthEvidence', 'MarriageEvidence', 'HigherEducationDiploma', 'LegalEntity', 'SecondaryEducationDiploma', 'Disability' ]);
+	const [evidenceElements, setEvidenceElements] = useState(['BirthEvidence', 'MarriageEvidence', 'HigherEducationDiploma', 'LegalEntity', 'SecondaryEducationDiploma', 'Disability', 'LargeFamily' ]);
 	
     const parseNode = (node) => {
 		console.log("node.localName", node.localName)
