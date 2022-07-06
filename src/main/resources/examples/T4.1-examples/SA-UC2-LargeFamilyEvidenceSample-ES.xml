@@ -7,12 +7,12 @@
     <sauc2:beneficiary id="http://tempuri.org">
         <edci:nationalId spatialID="http://publications.europa.eu/resource/authority/country/SVN">0</edci:nationalId>
         <edci:givenNames>
-            <edci:text content-type="text/html" lang="sl">Marjeta</edci:text>
+            <edci:text content-type="text/html" lang="sl">Juan</edci:text>
         </edci:givenNames>
         <edci:familyName>
-            <edci:text content-type="text/html" lang="sl">Maček</edci:text>
+            <edci:text content-type="text/html" lang="sl">Español Madrileño</edci:text>
         </edci:familyName>
-        <edci:dateOfBirth>1999-09-16</edci:dateOfBirth>
+        <edci:dateOfBirth>1972-04-18</edci:dateOfBirth>
     </sauc2:beneficiary>
     <sauc2:largeFamilyCertificate>
         <sauc2:certificateID>1</sauc2:certificateID>

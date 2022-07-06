@@ -3,10 +3,10 @@
 	<sauc2:beneficiary id="http://tempuri.org">
 		<edci:nationalId spatialID="http://publications.europa.eu/resource/authority/country/ESP">0</edci:nationalId>
 		<edci:givenNames>
-			<edci:text content-type="text/html" lang="es">JUAN</edci:text>
+			<edci:text content-type="text/html" lang="es">Juan</edci:text>
 		</edci:givenNames>
 		<edci:familyName>
-			<edci:text content-type="text/html" lang="es">ESPAÑOL MADRILEÑO</edci:text>
+			<edci:text content-type="text/html" lang="es">Español Madrileño</edci:text>
 		</edci:familyName>
 		<edci:dateOfBirth>1972-04-18</edci:dateOfBirth>
 	</sauc2:beneficiary>
