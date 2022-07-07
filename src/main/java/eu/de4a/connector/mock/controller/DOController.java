@@ -84,6 +84,8 @@ public class DOController {
 
     @Value("${mock.baseurl}")
     String baseUrl;
+    
+    private ResponseExtractMultiEvidenceType res = new ResponseExtractMultiEvidenceType();
 
     @PostMapping("${mock.do.endpoint.im}")
     public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) throws InterruptedException, ExecutionException {
@@ -198,7 +200,7 @@ public class DOController {
         
         ResponseErrorType response = new ResponseErrorType();
         
-        ResponseExtractMultiEvidenceType res = new ResponseExtractMultiEvidenceType();
+        
         ResponseExtractEvidenceItemType resElement = new ResponseExtractEvidenceItemType();
         DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
         if (dataOwner == null) {
@@ -281,10 +283,10 @@ public class DOController {
         
         if (canonicalEvidence.getUsiAutoResponse().useAutoResp()) {
             taskScheduler.schedule(() ->
-                    sendRequest(
-                            doConfig.getPreviewDTUrl(),
-                            DE4ACoreMarshaller.drRequestTransferEvidenceUSIMarshaller().getAsInputStream(req),
-                            log::error),
+            		sendRequest(
+            				doConfig.getDTEvidenceUrl(),
+            				DE4ACoreMarshaller.dtResponseTransferEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE).getAsInputStream(res),
+            				log::error),
                     Instant.now().plusMillis(canonicalEvidence.getUsiAutoResponse().getWait()));
         } else {
         	res.getDataEvaluator().setRedirectURL(req.getRequestEvidenceUSIItemAtIndex(0).getDataEvaluatorURL());
