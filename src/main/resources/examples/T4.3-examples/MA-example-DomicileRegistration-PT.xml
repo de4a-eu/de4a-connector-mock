@@ -24,7 +24,7 @@
                 <bi:GivenName>Nombre</bi:GivenName>
             </bi:PersonName>
             <bi:Identifier>
-                <cvb:Identifier>99999142H</cvb:Identifier>
+                <cvb:Identifier>12345678</cvb:Identifier>
             </bi:Identifier>
             <bi:DateOfBirth>
                 <bi:Year>2000</bi:Year>

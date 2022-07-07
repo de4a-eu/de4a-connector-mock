@@ -20,11 +20,11 @@
     <bi:CertifiesDomicile>
         <bi:Inhabitant>
             <bi:PersonName>
-                <bi:FamilyName>ApellidoPrimero ApellidoSegundo</bi:FamilyName>
-                <bi:GivenName>Nombre</bi:GivenName>
+                <bi:FamilyName>ApellidoPrimeroA ApellidoSegundoA</bi:FamilyName>
+                <bi:GivenName>NombreA</bi:GivenName>
             </bi:PersonName>
             <bi:Identifier>
-                <cvb:Identifier>99999142H</cvb:Identifier>
+                <cvb:Identifier>12345678A</cvb:Identifier>
             </bi:Identifier>
             <bi:DateOfBirth>
                 <bi:Year>2000</bi:Year>
