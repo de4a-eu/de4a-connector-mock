@@ -20,16 +20,16 @@
     <bi:CertifiesDomicile>
         <bi:Inhabitant>
             <bi:PersonName>
-                <bi:FamilyName>ApellidoPrimeroC ApellidoSegundoC</bi:FamilyName>
-                <bi:GivenName>NombreC</bi:GivenName>
+                <bi:FamilyName>Karakolisc Karakolisc</bi:FamilyName>
+                <bi:GivenName>Panagiótisc</bi:GivenName>
             </bi:PersonName>
             <bi:Identifier>
                 <cvb:Identifier>12345678C</cvb:Identifier>
             </bi:Identifier>
             <bi:DateOfBirth>
-                <bi:Year>2000</bi:Year>
-                <bi:Month>--01</bi:Month>
-                <bi:Day>---01</bi:Day>
+                <bi:Year>1980</bi:Year>
+                <bi:Month>12</bi:Month>
+                <bi:Day>20</bi:Day>
             </bi:DateOfBirth>
             <bi:Gender>MALE</bi:Gender>
         </bi:Inhabitant>

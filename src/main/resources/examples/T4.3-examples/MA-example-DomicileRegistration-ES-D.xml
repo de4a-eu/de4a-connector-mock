@@ -29,7 +29,7 @@
             <bi:DateOfBirth>
                 <bi:Year>2000</bi:Year>
                 <bi:Month>--01</bi:Month>
-                <bi:Day>---01</bi:Day>
+                <bi:Day>---05</bi:Day>
             </bi:DateOfBirth>
             <bi:Gender>MALE</bi:Gender>
         </bi:Inhabitant>
