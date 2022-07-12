@@ -52,7 +52,7 @@
                 <cvb:IssuingAuthorityID>PT-AMA-000123</cvb:IssuingAuthorityID>
             </n3:Identifier>
             <n3:Identifier>
-                <cvb:Identifier>12345678</cvb:Identifier>
+                <cvb:Identifier>12345678D</cvb:Identifier>
                 <cvb:IdentifierType>NIC</cvb:IdentifierType>
                 <cbc:IssueDate>2020-08-13</cbc:IssueDate>
                 <cvb:IssuingAuthority>IRN - Instituto dos Registos e do Notariado</cvb:IssuingAuthority>
