@@ -28,7 +28,7 @@
   </sa:placeOfIssue>
   
   <sa:holderOfAchievement id="urn:person:es:99999142H">
-    <eup:nationalId spatialID="http://publications.europa.eu/resource/authority/country/ESP">99999142H</eup:nationalId>
+    <eup:nationalId spatialID="http://publications.europa.eu/resource/authority/country/ESP">53377873W</eup:nationalId>
     <eup:givenNames>
       <eup:text lang="en" content-type="text/plain">Usuario</eup:text>
     </eup:givenNames>
