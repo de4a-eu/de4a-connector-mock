@@ -10,7 +10,7 @@
   width: calc(100% - 1.25rem);
   padding: .313rem 1.25rem;
   max-width: 85rem;
-
+	
 }
 #formulario{
   margin:0 auto;
@@ -40,7 +40,7 @@ form label input{
 form label select{
   border:solid 1px #dcdcdc;
   height: 38px;
-  width:150px;
+  width:500px;
 }
 input[type=submit] {
   padding:10px 20px; 
@@ -60,4 +60,9 @@ form button {
 
 .row {
 	width:100%;
+}
+
+.select{
+	width:75%;
+	display: inline-flex;
 }
