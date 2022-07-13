@@ -325,7 +325,8 @@ public class DOController {
             log.debug("sending redirect message: {}", redirectUserType.getRedirectUrl());
             
             log.debug (DE4ACoreMarshaller.dtUSIRedirectUserMarshaller().formatted ().getAsString (redirectUserType));
-           //works with a running & configured connector DT 
+           //works with a running & configured connector DT
+            // FIXME instead of doConfig.getPreviewDTRedirectUrl() an SMP lookup should be performed!
             sendRequest(
                     doConfig.getPreviewDTRedirectUrl(),
                     DE4ACoreMarshaller.dtUSIRedirectUserMarshaller().getAsInputStream(redirectUserType),
