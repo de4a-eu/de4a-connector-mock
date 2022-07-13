@@ -74,18 +74,18 @@ public enum CanonicalEventSubscriptionExamples {
     T41_ES_D("53377873WD", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-ES_D.xml"), DataOwner.UJI_ES, SubscriptionID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_240_SEC);
 
     @Getter
-    final private String identifier;
+    private final String identifier;
     @Getter
-    final private Resource resource;
+    private final Resource resource;
     @Getter
-    final private DataOwner dataOwner;
+    private final DataOwner dataOwner;
     @Getter
-    final private SubscriptionID subscriptionID;
+    private final SubscriptionID subscriptionID;
     @Getter
     @ToString.Exclude
-    final private GenericJAXBMarshaller marshaller;
+    private final GenericJAXBMarshaller marshaller;
     @Getter
-    final private USIAutoResponse usiAutoResponse;
+    private final USIAutoResponse usiAutoResponse;
     @ToString.Exclude
     private Element documentElement;
     private final Pattern eIDASIdentifierPattern;

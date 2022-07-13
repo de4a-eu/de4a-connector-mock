@@ -88,7 +88,7 @@ public class DOController {
     private ResponseExtractMultiEvidenceType res = new ResponseExtractMultiEvidenceType();
 
     @PostMapping("${mock.do.endpoint.im}")
-    public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) throws InterruptedException, ExecutionException {
+    public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) {
     	
         var marshaller = DE4ACoreMarshaller.doRequestExtractMultiEvidenceIMMarshaller();
         UUID errorKey = UUID.randomUUID();
@@ -101,7 +101,7 @@ public class DOController {
 
         DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Receiving RequestExtractEvidence, requestId: %s", request.getRequestId()));
         
-        ResponseExtractMultiEvidenceType response = new ResponseExtractMultiEvidenceType();
+        ResponseExtractMultiEvidenceType response;
         ResponseExtractEvidenceItemType responseItem;
         DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
         
@@ -242,7 +242,7 @@ public class DOController {
         
         
         CanonicalEvidenceExamples canonicalEvidence = null;
-        List <CanonicalEvidenceExamples> lCE = new ArrayList();
+        List <CanonicalEvidenceExamples> lCE = new ArrayList<>();
         for (RequestEvidenceItemType reqElement : req.getRequestEvidenceUSIItem()) {
         	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
         	String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
@@ -409,13 +409,13 @@ public class DOController {
         res = Helper.buildSubscriptionResponse(req);
         List<ResponseEventSubscriptionItemType> resElementList = Helper.buildSubscriptionItem(req.getEventSubscripRequestItem());
         res.setResponseEventSubscriptionItem(resElementList);
-        final ResponseEventSubscriptionType EventSubscription = res;
+        final ResponseEventSubscriptionType eventSubscription = res;
         
         if (canonicalEventSubscription.getUsiAutoResponse().useAutoResp()) {
             taskScheduler.schedule(() ->
                     sendRequest(
                             doConfig.getPreviewDTUrl(),
-                            DE4ACoreMarshaller.dtResponseEventSubscriptionMarshaller().getAsInputStream(EventSubscription),
+                            DE4ACoreMarshaller.dtResponseEventSubscriptionMarshaller().getAsInputStream(eventSubscription),
                             log::error),
                     Instant.now().plusMillis(canonicalEventSubscription.getUsiAutoResponse().getWait()));
         } else {

@@ -61,7 +61,7 @@ class MessagesHelperTest {
 	void testResponseCreatorMultiEvidence() {
 		ResponseExtractMultiEvidenceType response = MessagesHelper.createResponseExtractMultiEvidence(2);
 		log.info("request: {}", response.toString());
-		var marshaller = DE4ACoreMarshaller.dtResponseExtractMultiEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE);
+		var marshaller = DE4ACoreMarshaller.dtResponseTransferEvidenceMarshaller(IDE4ACanonicalEvidenceType.NONE);
 		String req = marshaller.getAsString(response);
 	    log.info (req);
 	}

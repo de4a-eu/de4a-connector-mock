@@ -87,7 +87,7 @@ public class Helper {
     }
     
     public static List<ResponseEventSubscriptionItemType> buildSubscriptionItem(List<EventSubscripRequestItemType> eventSubscripRequestItem) {
-    	List<ResponseEventSubscriptionItemType> itemListResponse = new ArrayList<ResponseEventSubscriptionItemType>();
+    	List<ResponseEventSubscriptionItemType> itemListResponse = new ArrayList<>();
 		for (EventSubscripRequestItemType item : eventSubscripRequestItem) {
 			ResponseEventSubscriptionItemType itemResponse = new ResponseEventSubscriptionItemType();
 			itemResponse.setRequestItemId(item.getRequestItemId());
