@@ -110,14 +110,14 @@ public class Helper {
 	}
     
     public static List<EventNotificationItemType> buidNotificationItemList(
-			List<ResponseEventSubscriptionItemType> list) {
+			List<ResponseEventSubscriptionItemType> list, ResponseEventSubscriptionType responseEventSubscriptionType) {
     	List<EventNotificationItemType> itemListNotification = new ArrayList<>();
 		for (ResponseEventSubscriptionItemType item : list) {
 			EventNotificationItemType notificationItem = new EventNotificationItemType();
 			notificationItem.setNotificationItemId(item.getRequestItemId());
 			notificationItem.setEventSubject(MessagesHelper._createDRS());
 			notificationItem.setEventId(item.getRequestItemId());
-			notificationItem.setCanonicalEventCatalogUri("URI");
+			notificationItem.setCanonicalEventCatalogUri(responseEventSubscriptionType.getResponseEventSubscriptionItem().get(0).getCanonicalEventCatalogUri());
 			notificationItem.setEventDate(XMLOffsetDateTime.now());
 			itemListNotification.add(notificationItem);
 		}

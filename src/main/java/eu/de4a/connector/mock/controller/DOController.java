@@ -344,12 +344,15 @@ public class DOController {
 
     @PostMapping("${mock.do.endpoint.subscription}")
     public ResponseEntity<String> DO1SubscriptionRequestEventSubscription(InputStream body) throws MarshallException {
-        var marshaller = DE4ACoreMarshaller.doRequestEventSubscriptionMarshaller();
+        
+    	log.info("EventSubscription received");
+    	var marshaller = DE4ACoreMarshaller.drRequestEventSubscriptionMarshaller();
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> {
             MarshallErrorHandler.getInstance().postError(errorKey, ex);
         });
         RequestEventSubscriptionType req = marshaller.read(body);
+        log.info("Unmarshalled: "+req.getRequestId());
         if (req == null) {
             throw new MarshallException(errorKey);
         }
@@ -406,6 +409,8 @@ public class DOController {
                 ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
             }
         }
+        
+        log.info("Validated");
         
         res = Helper.buildSubscriptionResponse(req);
         List<ResponseEventSubscriptionItemType> resElementList = Helper.buildSubscriptionItem(req.getEventSubscripRequestItem());

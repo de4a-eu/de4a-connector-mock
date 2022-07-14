@@ -49,7 +49,7 @@ public class DONotificationController {
     public ResponseEntity<String> sendNotification(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
     	EventNotificationType request = new EventNotificationType();
     	request = Helper.buildNotificationFromSubscription(subscriptionStorage.getRequest(requestId).get());
-    	request.setEventNotificationItem(Helper.buidNotificationItemList(subscriptionStorage.getRequest(requestId).get().getResponseEventSubscriptionItem()));
+    	request.setEventNotificationItem(Helper.buidNotificationItemList(subscriptionStorage.getRequest(requestId).get().getResponseEventSubscriptionItem(), subscriptionStorage.getRequest(requestId).get()));
         
         try {
             Boolean success = sendRequest(
@@ -83,7 +83,7 @@ public class DONotificationController {
     public ResponseEntity<String> buildNotification(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
     	EventNotificationType notification = new EventNotificationType();
     	notification = Helper.buildNotificationFromSubscription(subscriptionStorage.getRequest(requestId).get());
-    	notification.setEventNotificationItem(Helper.buidNotificationItemList(subscriptionStorage.getRequest(requestId).get().getResponseEventSubscriptionItem()));
+    	notification.setEventNotificationItem(Helper.buidNotificationItemList(subscriptionStorage.getRequest(requestId).get().getResponseEventSubscriptionItem(), subscriptionStorage.getRequest(requestId).get()));
         
     	//store  
     	notificationStorage.addRequestToPreview(notification);
