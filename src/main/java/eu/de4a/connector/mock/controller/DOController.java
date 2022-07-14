@@ -96,6 +96,7 @@ public class DOController {
 
     @PostMapping("${mock.do.endpoint.im}")
     public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) {
+        log.info ("Serving DO Endpoint IM");
     	
         var marshaller = DE4ACoreMarshaller.doRequestExtractMultiEvidenceIMMarshaller();
         UUID errorKey = UUID.randomUUID();
@@ -195,6 +196,8 @@ public class DOController {
 
     @PostMapping("${mock.do.endpoint.usi}")
     public ResponseEntity<String> DO1USIRequestExtractEvidence(InputStream body) throws MarshallException {
+        log.info ("Serving DO Endpoint USI");
+      
         var marshaller = DE4ACoreMarshaller.doRequestExtractMultiEvidenceUSIMarshaller();
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> {
@@ -202,8 +205,10 @@ public class DOController {
         });
         RequestExtractMultiEvidenceUSIType req = marshaller.read(body);
         if (req == null) {
+            log.error ("Failed to read the payload as RequestExtractMultiEvidenceUSIType");
             throw new MarshallException(errorKey);
         }
+        log.info ("Successfully read the payload as RequestExtractMultiEvidenceUSIType");
         
         ResponseErrorType response = new ResponseErrorType();
         
@@ -211,6 +216,7 @@ public class DOController {
         ResponseExtractEvidenceItemType resElement = new ResponseExtractEvidenceItemType();
         DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
         if (dataOwner == null) {
+          log.error ("Failed to resolve DataOwner");
         	response.addError(
                     doGenericError(
                             String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
@@ -222,6 +228,7 @@ public class DOController {
         
         for (RequestEvidenceItemType reqElement : req.getRequestEvidenceUSIItem()) {
         	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
+            log.error ("DataOwner Pilot cannot handle subject '" + reqElement.getDataRequestSubject() + "'");
         		response.addError(doIdentityMatchingError());
         		response.addError(
                         DE4AResponseDocumentHelper.createError(
@@ -237,6 +244,7 @@ public class DOController {
         for (RequestEvidenceItemType reqElement : req.getRequestEvidenceUSIItem()) {
         	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
             if (evidenceID == null) {
+              log.error ("Failed to resolve Evidence ID '" + reqElement.getCanonicalEvidenceTypeId() + "'");
             	response.addError(
                         doGenericError(
                                 String.format("no known evidence type id '%s'", reqElement.getCanonicalEvidenceTypeId())
@@ -256,12 +264,13 @@ public class DOController {
 	        
 	        canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
 	        if (canonicalEvidence == null) {
-	        	response.addError(doIdentityMatchingError());
-	        	response.addError(
-	                    DE4AResponseDocumentHelper.createError(
-	                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
-	                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
-	        	response.setAck(false);
+              log.error ("Failed to extract CanonicalEvidence");
+  	        	response.addError(doIdentityMatchingError());
+  	        	response.addError(
+  	                    DE4AResponseDocumentHelper.createError(
+  	                            MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
+  	                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
+  	        	response.setAck(false);
 	            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
 	        } else {
 	        	lCE.add(canonicalEvidence);
@@ -337,13 +346,31 @@ public class DOController {
             EndpointType endpointType = DcngApiHelper.querySMPEndpoint(
             		SimpleIdentifierFactory.INSTANCE.parseParticipantIdentifier(redirectUserType.getDataEvaluator().getAgentUrn()), 
             		SimpleIdentifierFactory.INSTANCE.parseDocumentTypeIdentifier(redirectUserType.getCanonicalEvidenceTypeId()), 
-            		SimpleIdentifierFactory.INSTANCE.createProcessIdentifier (DcngIdentifierFactory.PROCESS_SCHEME, "request"), 
+            		SimpleIdentifierFactory.INSTANCE.createProcessIdentifier (DcngIdentifierFactory.PROCESS_SCHEME, "response"), 
             		EMEProtocol.AS4.getTransportProfileID ());
-           String redirectionEndpoint =  StringUtils.remove(endpointType.getEndpointURI(), "phase4") + "response/usi/redirectUser";
+            if (endpointType == null)
+            {
+              log.error ("Failed to resolve SMP Endpoint for response");
+              response.addError(
+                        DE4AResponseDocumentHelper.createError(
+                                MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
+                                "Failed to resolve the SMP endpoint of '"+
+                                   redirectUserType.getDataEvaluator().getAgentUrn()+
+                                   "' for the response of a '"+
+                                   redirectUserType.getCanonicalEvidenceTypeId()+
+                                   "' request"));
+              response.setAck(false);
+              return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
+            }
+            
+            // FIXME hack to use the direct URL
+            // This should instead end up in an AS4 call
+            String redirectionEndpoint =  StringUtils.remove(endpointType.getEndpointURI(), "phase4") + "response/usi/redirectUser";
             sendRequest(
             		redirectionEndpoint,
                     DE4ACoreMarshaller.dtUSIRedirectUserMarshaller().getAsInputStream(redirectUserType),
                     log::error);
+            log.info ("SMP lookup was successful. Sending response [ideally via AS4] to '" + redirectionEndpoint + "'");
                     
         }
 
@@ -351,14 +378,15 @@ public class DOController {
                 String.format("Receiving USI RequestExtractEvidence, requestId: %s", req.getRequestId()));
 
         response.setAck(true);
+        log.info ("Done handling request");
         return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
     }
     
 
     @PostMapping("${mock.do.endpoint.subscription}")
     public ResponseEntity<String> DO1SubscriptionRequestEventSubscription(InputStream body) throws MarshallException {
-        
-    	log.info("EventSubscription received");
+      log.info ("Serving DO Endpoint EventSubscription");
+       
     	var marshaller = DE4ACoreMarshaller.drRequestEventSubscriptionMarshaller();
         UUID errorKey = UUID.randomUUID();
         marshaller.readExceptionCallbacks().set((ex) -> {
