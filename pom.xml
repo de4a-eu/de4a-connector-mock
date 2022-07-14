@@ -66,6 +66,21 @@
     
     <dependencies>
     	<dependency>
+          <groupId>com.helger.dcng</groupId>
+          <artifactId>dcng-web-api</artifactId>
+          <version>0.2.6-SNAPSHOT</version>
+          <exclusions>
+            <exclusion>
+              <groupId>xml-apis</groupId>
+              <artifactId>xml-apis</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+	      <groupId>com.helger.peppol</groupId>
+	      <artifactId>peppol-smp-client</artifactId>
+	    </dependency>
+    	<dependency>
             <groupId>eu.de4a.ial</groupId>
             <artifactId>ial-api</artifactId>
         </dependency>

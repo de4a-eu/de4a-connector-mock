@@ -16,6 +16,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.helger.commons.error.level.EErrorLevel;
+import com.helger.dcng.api.DcngIdentifierFactory;
+import com.helger.dcng.api.me.EMEProtocol;
+import com.helger.dcng.core.api.DcngApiHelper;
+import com.helger.peppolid.factory.SimpleIdentifierFactory;
+import com.helger.xsds.bdxr.smp1.EndpointType;
 
 import eu.de4a.connector.mock.Helper;
 import eu.de4a.connector.mock.config.DOConfig;
@@ -43,6 +49,7 @@ import eu.de4a.connector.mock.exampledata.SubscriptionID;
 import eu.de4a.connector.mock.preview.PreviewMessage;
 import eu.de4a.connector.mock.preview.PreviewStorage;
 import eu.de4a.connector.mock.preview.SubscriptionStorage;
+import eu.de4a.ial.api.jaxb.ResponseLookupRoutingInformationType;
 import eu.de4a.iem.core.DE4ACoreMarshaller;
 import eu.de4a.iem.core.DE4AResponseDocumentHelper;
 import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
@@ -326,9 +333,15 @@ public class DOController {
             
             log.debug (DE4ACoreMarshaller.dtUSIRedirectUserMarshaller().formatted ().getAsString (redirectUserType));
            //works with a running & configured connector DT
-            // FIXME instead of doConfig.getPreviewDTRedirectUrl() an SMP lookup should be performed!
+            
+            EndpointType endpointType = DcngApiHelper.querySMPEndpoint(
+            		SimpleIdentifierFactory.INSTANCE.parseParticipantIdentifier(redirectUserType.getDataEvaluator().getAgentUrn()), 
+            		SimpleIdentifierFactory.INSTANCE.parseDocumentTypeIdentifier(redirectUserType.getCanonicalEvidenceTypeId()), 
+            		SimpleIdentifierFactory.INSTANCE.createProcessIdentifier (DcngIdentifierFactory.PROCESS_SCHEME, "request"), 
+            		EMEProtocol.AS4.getTransportProfileID ());
+           String redirectionEndpoint =  StringUtils.remove(endpointType.getEndpointURI(), "phase4") + "response/usi/redirectUser";
             sendRequest(
-                    doConfig.getPreviewDTRedirectUrl(),
+            		redirectionEndpoint,
                     DE4ACoreMarshaller.dtUSIRedirectUserMarshaller().getAsInputStream(redirectUserType),
                     log::error);
                     
