@@ -28,8 +28,8 @@
             </bi:Identifier>
             <bi:DateOfBirth>
                 <bi:Year>1980</bi:Year>
-                <bi:Month>12</bi:Month>
-                <bi:Day>17</bi:Day>
+                <bi:Month>--12</bi:Month>
+                <bi:Day>---17</bi:Day>
             </bi:DateOfBirth>
             <bi:Gender>MALE</bi:Gender>
         </bi:Inhabitant>

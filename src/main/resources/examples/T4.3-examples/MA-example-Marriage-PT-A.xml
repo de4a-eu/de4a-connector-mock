@@ -35,8 +35,8 @@
 		<n3:Spouse>
 			<n3:DateOfBirth>
 				<n3:Year>1987</n3:Year>
-				<n3:Month>12</n3:Month>
-				<n3:Day>18</n3:Day>
+				<n3:Month>--12</n3:Month>
+				<n3:Day>---18</n3:Day>
 			</n3:DateOfBirth>
 			<n3:PersonName>
 				<n3:FamilyName languageID="en-us" languageLocaleID="normalizedString">Karakolisa</n3:FamilyName>
