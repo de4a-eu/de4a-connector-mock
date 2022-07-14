@@ -84,7 +84,7 @@ public class DOPreviewController {
     }
 
     @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.get.endpoint}", produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<String> getEvidence(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
+    public ResponseEntity<String> getEvidence(@PathVariable String requestId) throws InterruptedException, ExecutionException {
     	ResponseExtractMultiEvidenceType request;
         request = previewStorage.getRequest(requestId).get();
         DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
@@ -95,7 +95,7 @@ public class DOPreviewController {
     }
     
     @GetMapping(value = "${mock.do.preview.endpoint.subscription.base}${mock.do.preview.subscription.get.endpoint}", produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<String> getSubscription(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
+    public ResponseEntity<String> getSubscription(@PathVariable String requestId) throws InterruptedException, ExecutionException {
     	ResponseEventSubscriptionType request = subscriptionStorage.getRequest(requestId).get();
         DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
         return ResponseEntity
@@ -104,7 +104,7 @@ public class DOPreviewController {
     }
 
     @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.accept.endpoint}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> acceptEvidence(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
+    public ResponseEntity<String> acceptEvidence(@PathVariable String requestId) throws InterruptedException, ExecutionException {
     	ResponseExtractMultiEvidenceType request;
         request = previewStorage.getRequest(requestId).get();
 
@@ -141,7 +141,7 @@ public class DOPreviewController {
     }
 
     @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.evidence.reject.endpoint}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> rejectEvidence(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
+    public ResponseEntity<String> rejectEvidence(@PathVariable String requestId) throws InterruptedException, ExecutionException {
     	ResponseExtractMultiEvidenceType request;
         request = previewStorage.getRequest(requestId).get();
         request.setResponseExtractEvidenceItem(null);
