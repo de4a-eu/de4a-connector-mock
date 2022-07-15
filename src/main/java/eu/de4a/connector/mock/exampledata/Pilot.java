@@ -39,10 +39,15 @@ public enum Pilot implements PilotInterface {
 
     public String getEIDASIdentifier(DataRequestSubjectCVType dataRequestSubjectCVType) {
         if (dataRequestSubjectRestrictions == DataRequestSubjectRestrictions.LEGAL_ENTITY_REQUIRED) {
+            if (dataRequestSubjectCVType.getDataSubjectCompany () == null)
+                throw new IllegalStateException ("DRS has no DataSubjectCompany");
             return dataRequestSubjectCVType.getDataSubjectCompany().getLegalPersonIdentifier();
-        } else { // DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED
-            return dataRequestSubjectCVType.getDataSubjectPerson().getPersonIdentifier();
-        }
+        } 
+        
+        // DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED
+        if (dataRequestSubjectCVType.getDataSubjectPerson () == null)
+          throw new IllegalStateException ("DRS has no DataSubjectPerson");
+        return dataRequestSubjectCVType.getDataSubjectPerson().getPersonIdentifier();
     }
 
     public String restrictionDescription() {
