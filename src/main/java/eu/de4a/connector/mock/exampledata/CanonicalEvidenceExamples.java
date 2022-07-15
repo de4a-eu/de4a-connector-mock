@@ -105,6 +105,7 @@ public enum CanonicalEvidenceExamples {
   T42_AT_2("????", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.DMDW_AT, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
   T41_MOCK_DO("87654320", new ClassPathResource("examples/T4.1-examples/SA-UC1-11-02-2021-example-PT_A.xml"), DataOwner.MOCK_DO, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.OFF),
   T41_MOCK_DO_A("87654321", new ClassPathResource("examples/T4.1-examples/SA-UC1-11-02-2021-example-PT_A.xml"), DataOwner.MOCK_DO, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.IMMEDIATE),
+  T42_MOCK_DO("87654320", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"), DataOwner.MOCK_DO, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
   T43_MOCK_DO("87654320", new ClassPathResource("examples/T4.3-examples/MA-example-Birth-PT-A.xml"), DataOwner.MOCK_DO, EvidenceID.BIRTH_EVIDENCE, DE4AT43Marshaller.birthEvidence(), USIAutoResponse.OFF),
   T43_MOCK_DO_A("87654321", new ClassPathResource("examples/T4.3-examples/MA-example-Birth-PT-A.xml"), DataOwner.MOCK_DO, EvidenceID.BIRTH_EVIDENCE, DE4AT43Marshaller.birthEvidence(), USIAutoResponse.IMMEDIATE);
 	

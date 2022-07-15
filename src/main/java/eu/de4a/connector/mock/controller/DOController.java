@@ -107,13 +107,16 @@ public class DOController {
         ResponseErrorType responseError = new ResponseErrorType();
         RequestExtractMultiEvidenceIMType request = marshaller.read(body);
         if (request == null) {
-            throw new MarshallException(errorKey);       }
+            log.error ("Failed to read payload as RequestExtractMultiEvidenceIMType");
+            throw new MarshallException(errorKey);
+        }
 
         DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Receiving RequestExtractEvidence, requestId: %s", request.getRequestId()));
         
         ResponseExtractMultiEvidenceType response;
         ResponseExtractEvidenceItemType responseItem;
         DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
+        log.info ("Selected the following Data Owner: " + dataOwner);
         
         response = Helper.buildResponseRequest(request);
         
@@ -140,31 +143,33 @@ public class DOController {
         }
         
         for (RequestEvidenceItemType reqElement : request.getRequestEvidenceIMItem()) {
-        	
-        	responseItem = new ResponseExtractEvidenceItemType();
-        	responseItem.setRequestItemId(reqElement.getRequestItemId());
+        	  log.info ("Dealing with RequestItem " + reqElement);
+        	  responseItem = new ResponseExtractEvidenceItemType();
+        	  responseItem.setRequestItemId(reqElement.getRequestItemId());
             responseItem.setDataRequestSubject(reqElement.getDataRequestSubject());
             responseItem.setCanonicalEvidenceTypeId(reqElement.getCanonicalEvidenceTypeId());
         	
-    		List<ErrorType> errors = new ArrayList<>();
+    		   List<ErrorType> errors = new ArrayList<>();
             CanonicalEvidenceExamples canonicalEvidence = null;
             CanonicalEvidenceType ce = new CanonicalEvidenceType();
             
         	// bad request
         	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
-        		
+        		log.error ("Failed to validate DRS");
         		errors.add(DE4AResponseDocumentHelper.createError(
                         MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
                         String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())));
         		errors.add(doIdentityMatchingError());
         	}
         	
-        	// No evidece type found
+        	// No evidence type found
         	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
+        	log.info ("Selected Evidence ID is " + evidenceID);
+        	
         	if (evidenceID == null) {
         		errors.add(doGenericError(
                         String.format("No known evidence type id '%s'", reqElement.getCanonicalEvidenceTypeId())));
-            }
+          }
         	else {
         		// No evidence found for identifier
             	String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
