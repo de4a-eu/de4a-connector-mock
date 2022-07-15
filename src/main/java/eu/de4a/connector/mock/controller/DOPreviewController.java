@@ -23,14 +23,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eu.de4a.connector.mock.config.DOConfig;
+import eu.de4a.connector.mock.exampledata.CanonicalEvidenceExamples;
 import eu.de4a.connector.mock.exampledata.DataOwner;
+import eu.de4a.connector.mock.exampledata.EvidenceID;
 import eu.de4a.connector.mock.preview.NotificationStorage;
 import eu.de4a.connector.mock.preview.PreviewMessage;
 import eu.de4a.connector.mock.preview.PreviewStorage;
 import eu.de4a.connector.mock.preview.SubscriptionStorage;
 import eu.de4a.iem.core.DE4ACoreMarshaller;
 import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
+import eu.de4a.iem.core.jaxb.common.CanonicalEvidenceType;
 import eu.de4a.iem.core.jaxb.common.ResponseEventSubscriptionType;
+import eu.de4a.iem.core.jaxb.common.ResponseExtractEvidenceItemType;
 import eu.de4a.iem.core.jaxb.common.ResponseExtractMultiEvidenceType;
 import lombok.extern.slf4j.Slf4j;
 
@@ -144,7 +148,19 @@ public class DOPreviewController {
     public ResponseEntity<String> rejectEvidence(@PathVariable String requestId) throws InterruptedException, ExecutionException {
     	ResponseExtractMultiEvidenceType request;
         request = previewStorage.getRequest(requestId).get();
-        request.setResponseExtractEvidenceItem(null);
+        //FIXME avoiding nullpointer
+        request.getDataOwner().setAgentUrn("iso6523-actorid-upis::9999:ess2833002e-mock-it2-reject");
+        DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
+        request.getResponseExtractEvidenceItemAtIndex(0).setCanonicalEvidenceTypeId("urn:de4a-eu:CanonicalEvidenceType::RejectEvidence:1.0");
+        EvidenceID evidenceID = EvidenceID.selectEvidenceId(request.getResponseExtractEvidenceItemAtIndex(0).getCanonicalEvidenceTypeId());
+        String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(request.getResponseExtractEvidenceItemAtIndex(0).getDataRequestSubject());
+        eIDASIdentifier = "ES/SI/!!!";
+        CanonicalEvidenceExamples canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
+        CanonicalEvidenceType ce = new CanonicalEvidenceType();
+        for (ResponseExtractEvidenceItemType response :request.getResponseExtractEvidenceItem()) {
+        	ce.setAny(canonicalEvidence.getDocumentElement());
+        	response.setCanonicalEvidence(ce);
+        }
 
         String redirectUrl = request.getDataEvaluator().getRedirectURL();
         if (redirectUrl == null || redirectUrl.isEmpty()) {

@@ -18,7 +18,8 @@ public enum DataOwner {
     UJI_ES("iso6523-actorid-upis::9999:esq6250003h-mock-it2", "(UJI) Universitat Jaume I de Castellón", "ES", Pilot.T41),
     
     SGAD_ES("iso6523-actorid-upis::9999:ess2833002e-mock-it2", "(MPTFP-SGAD) Secretaría General de Administración Digital", "ES", PilotInterface.multiple(Pilot.T43, Pilot.T41)),
-    MOCK_DO("iso6523-actorid-upis::9999:mock-do-localhost-it2", "Mocked DO (Localhost)", "ES", PilotInterface.multiple(Pilot.T41, Pilot.T43))
+    MOCK_DO("iso6523-actorid-upis::9999:mock-do-localhost-it2", "Mocked DO (Localhost)", "ES", PilotInterface.multiple(Pilot.T41, Pilot.T43)),
+    REJECT("iso6523-actorid-upis::9999:ess2833002e-mock-it2-reject", "(MPTFP-SGAD) Secretaría General de Administración Digital", "ES", PilotInterface.multiple(Pilot.T43, Pilot.T41))
     ;
 
 

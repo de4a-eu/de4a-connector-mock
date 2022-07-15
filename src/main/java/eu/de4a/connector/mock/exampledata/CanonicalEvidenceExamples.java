@@ -31,6 +31,8 @@ public enum CanonicalEvidenceExamples {
   T41_PT_C("123456789C", new ClassPathResource("examples/T4.1-examples/SA-UC1-11-02-2021-example-PT_C.xml"), DataOwner.UL_PT, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_40_SEC),
   T41_PT_D("123456789D", new ClassPathResource("examples/T4.1-examples/SA-UC1-11-02-2021-example-PT_D.xml"), DataOwner.UL_PT, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.DELAY_240_SEC),
   
+  T41_REJECTED("!!!", new ClassPathResource("examples/T4.1-examples/SA-rejected.xml"), DataOwner.REJECT, EvidenceID.REJECT_EVIDENCE, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.OFF),
+  
   // SI Higher Education Dimploma
   T41_SI("123456", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-SI.xml"), DataOwner.MIZS_SI, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.OFF),
   T41_SI_A("123456A", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-SI_A.xml"), DataOwner.MIZS_SI, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.OFF),
@@ -105,6 +107,8 @@ public enum CanonicalEvidenceExamples {
   T41_MOCK_DO_A("87654321", new ClassPathResource("examples/T4.1-examples/SA-UC1-11-02-2021-example-PT_A.xml"), DataOwner.MOCK_DO, EvidenceID.HIGHER_EDUCATION_DIPLOMA, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.IMMEDIATE),
   T43_MOCK_DO("87654320", new ClassPathResource("examples/T4.3-examples/MA-example-Birth-PT-A.xml"), DataOwner.MOCK_DO, EvidenceID.BIRTH_EVIDENCE, DE4AT43Marshaller.birthEvidence(), USIAutoResponse.OFF),
   T43_MOCK_DO_A("87654321", new ClassPathResource("examples/T4.3-examples/MA-example-Birth-PT-A.xml"), DataOwner.MOCK_DO, EvidenceID.BIRTH_EVIDENCE, DE4AT43Marshaller.birthEvidence(), USIAutoResponse.IMMEDIATE);
+	
+	
 
     @Getter
     final private String identifier;

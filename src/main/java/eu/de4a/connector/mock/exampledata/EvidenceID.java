@@ -18,6 +18,7 @@ public enum EvidenceID {
     DISABILITY_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::DisabilityEvidence:1.0", EDE4ACanonicalEvidenceType.T41_DISABILITY_EVIDENCE_2022_05_12),
 	LARGE_FAMILY_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::LargeFamilyEvidence:1.0", EDE4ACanonicalEvidenceType.T41_LARGE_FAMILY_EVIDENCE_2022_05_12),
 	
+	REJECT_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::RejectEvidence:1.0", EDE4ACanonicalEvidenceType.T41_HIGHER_EDUCATION_EVIDENCE_2022_06_23),
 	TEST_EVIDENCE("CanonicalEvidence-1626562515", EDE4ACanonicalEvidenceType.T43_MARRIAGE_EVIDENCE_V17);
     @Getter
     private final String id;
