@@ -21,10 +21,12 @@ import eu.de4a.connector.mock.Helper;
 import eu.de4a.connector.mock.config.DOConfig;
 import eu.de4a.connector.mock.preview.NotificationStorage;
 import eu.de4a.connector.mock.preview.PreviewMessage;
+import eu.de4a.connector.mock.preview.SubscriptionRequestStorage;
 import eu.de4a.connector.mock.preview.SubscriptionStorage;
 import eu.de4a.connector.mock.utils.MessagesHelper;
 import eu.de4a.iem.core.DE4ACoreMarshaller;
 import eu.de4a.iem.core.jaxb.common.EventNotificationType;
+import eu.de4a.iem.core.jaxb.common.RequestEventSubscriptionType;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -34,6 +36,9 @@ public class DONotificationController {
 
     @Autowired
     SubscriptionStorage subscriptionStorage;
+    
+    @Autowired
+    SubscriptionRequestStorage subscriptionRequestStorage;
     
     @Autowired
     NotificationStorage notificationStorage;
@@ -83,8 +88,29 @@ public class DONotificationController {
     public ResponseEntity<String> buildNotification(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
     	EventNotificationType notification = new EventNotificationType();
     	notification = Helper.buildNotificationFromSubscription(subscriptionStorage.getRequest(requestId).get());
+    	
     	notification.setEventNotificationItem(Helper.buidNotificationItemList(subscriptionStorage.getRequest(requestId).get().getResponseEventSubscriptionItem(), subscriptionStorage.getRequest(requestId).get()));
         
+    	RequestEventSubscriptionType subscriptionRequest = subscriptionRequestStorage.getRequest(requestId).get();
+    	if(subscriptionRequest != null 
+    			&& subscriptionRequest.getEventSubscripRequestItemAtIndex(0) != null
+    			&& subscriptionRequest.getEventSubscripRequestItemAtIndex(0).getDataRequestSubject() != null 
+    			&& subscriptionRequest.getEventSubscripRequestItemAtIndex(0).getDataRequestSubject().getDataSubjectCompany() != null) {
+        	
+    		String eidasIdentifier = subscriptionRequest.getEventSubscripRequestItemAtIndex(0).getDataRequestSubject().getDataSubjectCompany().getLegalPersonIdentifier();
+        	
+        	notification.getEventNotificationItem().forEach((item) -> {
+        		if(item.getEventSubject() != null) {
+        			if(item.getEventSubject().getDataSubjectCompany() != null)
+        				item.getEventSubject().getDataSubjectCompany().setLegalPersonIdentifier(eidasIdentifier);
+        			if(item.getEventSubject().getDataSubjectRepresentative() != null)
+        				item.getEventSubject().getDataSubjectRepresentative().setPersonIdentifier(eidasIdentifier);
+        			if(item.getEventSubject().getDataSubjectPerson() != null)
+        				item.getEventSubject().getDataSubjectPerson().setPersonIdentifier(eidasIdentifier);
+        		}
+        	});
+    	}
+
     	//store  
     	notificationStorage.addRequestToPreview(notification);
     	

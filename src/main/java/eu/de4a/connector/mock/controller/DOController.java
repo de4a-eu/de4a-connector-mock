@@ -48,8 +48,8 @@ import eu.de4a.connector.mock.exampledata.EvidenceID;
 import eu.de4a.connector.mock.exampledata.SubscriptionID;
 import eu.de4a.connector.mock.preview.PreviewMessage;
 import eu.de4a.connector.mock.preview.PreviewStorage;
+import eu.de4a.connector.mock.preview.SubscriptionRequestStorage;
 import eu.de4a.connector.mock.preview.SubscriptionStorage;
-import eu.de4a.ial.api.jaxb.ResponseLookupRoutingInformationType;
 import eu.de4a.iem.core.DE4ACoreMarshaller;
 import eu.de4a.iem.core.DE4AResponseDocumentHelper;
 import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
@@ -84,6 +84,8 @@ public class DOController {
     private PreviewStorage previewStorage;
     @Autowired
     private SubscriptionStorage subscriptionStorage;
+    @Autowired
+    private SubscriptionRequestStorage subscriptionRequestStorage;
     @Autowired
     private SimpMessagingTemplate websocketMessaging;
     @Autowired
@@ -467,6 +469,7 @@ public class DOController {
                     Instant.now().plusMillis(canonicalEventSubscription.getUsiAutoResponse().getWait()));
         } else {
         	subscriptionStorage.addRequestToPreview(res);
+        	subscriptionRequestStorage.saveRequest(req); // Save subscription request with person identifier, to send it on the notification
             String message;
             try {
                 message = objectMapper.writeValueAsString(new PreviewMessage(PreviewMessage.Action.ADD, req.getRequestId()));
