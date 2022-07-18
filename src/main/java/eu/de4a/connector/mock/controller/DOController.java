@@ -334,8 +334,7 @@ public class DOController {
             redirectUserType.setDataEvaluator(req.getDataEvaluator());
             redirectUserType.setDataOwner(req.getDataOwner());
             redirectUserType.setCanonicalEvidenceTypeId(req.getRequestEvidenceUSIItemAtIndex(0).getCanonicalEvidenceTypeId());
-            //redirectUserType.setRedirectUrl(req.getRequestEvidenceUSIItemAtIndex(0).getDataEvaluatorURL());
-
+            
             redirectUserType.setRedirectUrl(
                     String.format("%s%s%s?requestId=%s",
                         baseUrl,
@@ -348,36 +347,12 @@ public class DOController {
             log.debug("sending redirect message: {}", redirectUserType.getRedirectUrl());
             
             log.debug (DE4ACoreMarshaller.dtUSIRedirectUserMarshaller().formatted ().getAsString (redirectUserType));
-           //works with a running & configured connector DT
-            
-            EndpointType endpointType = DcngApiHelper.querySMPEndpoint(
-            		SimpleIdentifierFactory.INSTANCE.parseParticipantIdentifier(redirectUserType.getDataEvaluator().getAgentUrn()), 
-            		SimpleIdentifierFactory.INSTANCE.parseDocumentTypeIdentifier(redirectUserType.getCanonicalEvidenceTypeId()), 
-            		SimpleIdentifierFactory.INSTANCE.createProcessIdentifier (DcngIdentifierFactory.PROCESS_SCHEME, "response"), 
-            		EMEProtocol.AS4.getTransportProfileID ());
-            if (endpointType == null)
-            {
-              log.error ("Failed to resolve SMP Endpoint for response");
-              response.addError(
-                        DE4AResponseDocumentHelper.createError(
-                                MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
-                                "Failed to resolve the SMP endpoint of '"+
-                                   redirectUserType.getDataEvaluator().getAgentUrn()+
-                                   "' for the response of a '"+
-                                   redirectUserType.getCanonicalEvidenceTypeId()+
-                                   "' request"));
-              response.setAck(false);
-              return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
-            }
-            
-            // FIXME hack to use the direct URL
-            // This should instead end up in an AS4 call
-            String redirectionEndpoint =  StringUtils.remove(endpointType.getEndpointURI(), "phase4") + "response/usi/redirectUser";
+           
             sendRequest(
-            		redirectionEndpoint,
+            		doConfig.getRedirectDTURL(),
                     DE4ACoreMarshaller.dtUSIRedirectUserMarshaller().getAsInputStream(redirectUserType),
                     log::error);
-            log.info ("SMP lookup was successful. Sending response [ideally via AS4] to '" + redirectionEndpoint + "'");
+            log.info ("Sending redirect response [via AS4] to '" + doConfig.getRedirectDTURL() + "'");
                     
         }
 
