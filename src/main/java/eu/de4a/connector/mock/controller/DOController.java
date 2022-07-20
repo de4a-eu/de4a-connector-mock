@@ -61,6 +61,7 @@ import eu.de4a.iem.core.jaxb.common.RequestEventSubscriptionType;
 import eu.de4a.iem.core.jaxb.common.RequestEvidenceItemType;
 import eu.de4a.iem.core.jaxb.common.RequestEvidenceUSIItemType;
 import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceIMType;
+import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceLUType;
 import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceUSIType;
 import eu.de4a.iem.core.jaxb.common.ResponseErrorType;
 import eu.de4a.iem.core.jaxb.common.ResponseEventSubscriptionItemType;
@@ -170,6 +171,105 @@ public class DOController {
         		errors.add(doGenericError(
                         String.format("No known evidence type id '%s'", reqElement.getCanonicalEvidenceTypeId())));
           }
+        	else {
+        		// No evidence found for identifier
+            	String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
+                canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
+                if (canonicalEvidence == null) {
+                	errors.add(DE4AResponseDocumentHelper.createError(
+                            MockedErrorCodes.DE4A_ERROR_IDENTITY_MATCHING.getCode(),
+                            String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, evidenceID.getId(), dataOwner.toString())));
+                }
+                else {
+                	ce.setAny(canonicalEvidence.getDocumentElement());
+                	responseItem.setCanonicalEvidence(ce);
+                }
+        	}
+        	
+            if(!errors.isEmpty()) {
+            	for(ErrorType error : errors) {
+            		responseError.addError(error);
+            		responseItem.addError(error);
+            	}
+            	responseError.setAck(false);
+            }
+            
+            response.addResponseExtractEvidenceItem(responseItem);
+            
+        }
+        
+       return this.sendResponse(response, responseError);
+    }
+    
+    @PostMapping("${mock.do.endpoint.lu}")
+    public ResponseEntity<String> DO1LuRequestExtractEvidence(InputStream body) {
+        log.info ("Serving DO Endpoint LU");
+    	
+        var marshaller = DE4ACoreMarshaller.doRequestExtractMultiEvidenceLUMarshaller();
+        UUID errorKey = UUID.randomUUID();
+        marshaller.readExceptionCallbacks().set((ex) -> MarshallErrorHandler.getInstance().postError(errorKey, ex));
+        
+        ResponseErrorType responseError = new ResponseErrorType();
+        RequestExtractMultiEvidenceLUType request = marshaller.read(body);
+        if (request == null) {
+            throw new MarshallException(errorKey);       }
+
+        DE4AKafkaClient.send(EErrorLevel.INFO, String.format("Receiving RequestExtractEvidence, requestId: %s", request.getRequestId()));
+        
+        ResponseExtractMultiEvidenceType response;
+        ResponseExtractEvidenceItemType responseItem;
+        DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
+        
+        response = Helper.buildResponseRequest(request);
+        
+        // no known data owner
+        if (dataOwner == null) {
+            var errors = new ArrayList<ErrorType>();
+            ErrorType errorType = DE4AResponseDocumentHelper.createError("99999", "No known data owner with urn "+ request.getDataOwner().getAgentUrn());
+            errors.add(errorType);
+            responseError.addError(errorType);
+            responseError.setAck(false);
+            
+            // for each element set the error
+            for (RequestEvidenceItemType reqElement : request.getRequestEvidenceLUItem()) {
+            	responseItem = new ResponseExtractEvidenceItemType();
+                responseItem.setRequestItemId(reqElement.getRequestItemId());
+                responseItem.setDataRequestSubject(reqElement.getDataRequestSubject());
+                responseItem.setCanonicalEvidenceTypeId(reqElement.getCanonicalEvidenceTypeId());
+                responseItem.setCanonicalEvidence(null);
+                responseItem.setError(errors);
+            	response.addResponseExtractEvidenceItem(responseItem);
+            }
+            
+            return this.sendResponse(response, responseError);
+        }
+        
+        for (RequestEvidenceItemType reqElement : request.getRequestEvidenceLUItem()) {
+        	
+        	responseItem = new ResponseExtractEvidenceItemType();
+        	responseItem.setRequestItemId(reqElement.getRequestItemId());
+            responseItem.setDataRequestSubject(reqElement.getDataRequestSubject());
+            responseItem.setCanonicalEvidenceTypeId(reqElement.getCanonicalEvidenceTypeId());
+        	
+    		List<ErrorType> errors = new ArrayList<>();
+            CanonicalEvidenceExamples canonicalEvidence = null;
+            CanonicalEvidenceType ce = new CanonicalEvidenceType();
+            
+        	// bad request
+        	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
+        		
+        		errors.add(DE4AResponseDocumentHelper.createError(
+                        MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
+                        String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())));
+        		errors.add(doIdentityMatchingError());
+        	}
+        	
+        	// No evidece type found
+        	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
+        	if (evidenceID == null) {
+        		errors.add(doGenericError(
+                        String.format("No known evidence type id '%s'", reqElement.getCanonicalEvidenceTypeId())));
+            }
         	else {
         		// No evidence found for identifier
             	String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
