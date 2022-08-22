@@ -1,7 +1,5 @@
 package eu.de4a.connector.mock.controller;
 
-import static eu.de4a.connector.mock.Helper.doGenericError;
-import static eu.de4a.connector.mock.Helper.doIdentityMatchingError;
 import static eu.de4a.connector.mock.Helper.sendRequest;
 
 import java.io.IOException;
@@ -46,7 +44,6 @@ import eu.de4a.connector.mock.preview.SubscriptionRequestStorage;
 import eu.de4a.connector.mock.preview.SubscriptionStorage;
 import eu.de4a.connector.mock.utils.MessageUtils;
 import eu.de4a.iem.core.DE4ACoreMarshaller;
-import eu.de4a.iem.core.DE4AResponseDocumentHelper;
 import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
 import eu.de4a.iem.core.jaxb.common.CanonicalEvidenceType;
 import eu.de4a.iem.core.jaxb.common.ErrorType;
@@ -92,7 +89,7 @@ public class DOController {
     String baseUrl;
     
     private ResponseExtractMultiEvidenceType res = new ResponseExtractMultiEvidenceType();
-    private final String mockUseCase = "[UC#1.1]"; //TODO create a function to determine the use case.
+    private final String mockUseCase = "[UC#TEST]"; //TODO create a function to determine the use case.
 
     @PostMapping("${mock.do.endpoint.im}")
     public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) {
@@ -521,38 +518,44 @@ public class DOController {
                 
         DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
         if (dataOwner == null) {
-        	response.addError(
-                    doGenericError(
-                            String.format("no known data owners with urn %s", req.getDataOwner().getAgentUrn())
-                    )
-            );
+        	
+        	ErrorType errorType = MessageUtils.GetErrorType(
+            		ELogMessage.LOG_DO_ERROR_IDENTITY_MATCHING, 
+            		mockUseCase,
+            		"No known data owner with urn " + req.getDataOwner().getAgentUrn());
+        	
+        	var errors = new ArrayList<ErrorType>();
+            errors.add(errorType);
+            response.addError(errorType);
         	response.setAck(false);
-            ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
+        	return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
         }
         for (EventSubscripRequestItemType reqElement : req.getEventSubscripRequestItem()) {
         	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
-        		response.addError(doIdentityMatchingError());
-        		response.addError(
-	                    DE4AResponseDocumentHelper.createError(
-	                            MockedErrorCodes.DE4A_BAD_REQUEST.getCode(),
-	                            String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString())
-	                    )
-	            );
+        		
+        		ErrorType errorType = MessageUtils.GetErrorType(
+	            		ELogMessage.LOG_DO_ERROR_EXTRACT_EVIDENCE, 
+	            		mockUseCase,
+	            		String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString()));
+	    		
+	    		response.addError(errorType);
         		response.setAck(false);
-                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
+        		return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
 	        }
         }
         CanonicalEventSubscriptionExamples canonicalEventSubscription = null;
         for (EventSubscripRequestItemType reqElement : req.getEventSubscripRequestItem()) {
         	SubscriptionID subscriptionID = SubscriptionID.selectSubscriptionID(reqElement.getCanonicalEventCatalogUri());
             if (subscriptionID == null) {
-            	response.addError(
-                        doGenericError(
-                                String.format("no known subscription type id '%s'", reqElement.getCanonicalEventCatalogUri())
-                        )
-                );
+            	
+            	ErrorType errorType = MessageUtils.GetErrorType(
+	              		ELogMessage.LOG_DO_ERROR_EVIDENCE_NOT_AVAILABLE, 
+	              		mockUseCase,
+	              		String.format("No known subscription type id '%s'", reqElement.getCanonicalEventCatalogUri()));
+      		
+      			response.addError(errorType);
             	response.setAck(false);
-                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
+            	return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
             }
             
             String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
@@ -560,12 +563,14 @@ public class DOController {
             canonicalEventSubscription = CanonicalEventSubscriptionExamples.getCanonicalEventSubscription(dataOwner, subscriptionID, eIDASIdentifier);
             if (canonicalEventSubscription == null) {
                 
-                response.addError(
-                        DE4AResponseDocumentHelper.createError(
-                                MockedErrorCodes.DE4A_NOT_FOUND.getCode(),
-                                String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", eIDASIdentifier, subscriptionID.getId(), dataOwner.toString())));
+            	ErrorType errorType = MessageUtils.GetErrorType(
+                  		ELogMessage.LOG_DO_ERROR_IDENTITY_MATCHING, mockUseCase,
+                  		String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", 
+                  				eIDASIdentifier, subscriptionID.getId(), dataOwner.toString()));
+          		
+          		response.addError(errorType);
                 response.setAck(false);
-                ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
+                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
             }
         }
         
