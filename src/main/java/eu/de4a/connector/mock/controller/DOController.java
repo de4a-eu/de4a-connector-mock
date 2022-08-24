@@ -89,7 +89,7 @@ public class DOController {
     String baseUrl;
     
     private ResponseExtractMultiEvidenceType res = new ResponseExtractMultiEvidenceType();
-    private final String mockUseCase = "[UC#TEST]"; //TODO create a function to determine the use case.
+    private final String mockUseCase = "[UC#TEST]";
 
     @PostMapping("${mock.do.endpoint.im}")
     public ResponseEntity<String> DO1ImRequestExtractEvidence(InputStream body) {
@@ -127,7 +127,7 @@ public class DOController {
             var errors = new ArrayList<ErrorType>();
             errors.add(errorType);
             responseError.addError(errorType);
-            responseError.setAck(false);
+            responseError.setAck(true);
             
             // for each element set the error
             for (RequestEvidenceItemType reqElement : request.getRequestEvidenceIMItem()) {
@@ -203,7 +203,7 @@ public class DOController {
             		responseError.addError(error);
             		responseItem.addError(error);
             	}
-            	responseError.setAck(false);
+            	responseError.setAck(true);
             }
             
             response.addResponseExtractEvidenceItem(responseItem);
@@ -246,7 +246,7 @@ public class DOController {
             var errors = new ArrayList<ErrorType>();
             errors.add(errorType);
             responseError.addError(errorType);
-            responseError.setAck(false);
+            responseError.setAck(true);
             
             // for each element set the error
             for (RequestEvidenceItemType reqElement : request.getRequestEvidenceLUItem()) {
@@ -284,7 +284,7 @@ public class DOController {
         		errors.add(errorType);
         	}
         	
-        	// No evidece type found
+        	// No evidence type found
         	EvidenceID evidenceID = EvidenceID.selectEvidenceId(reqElement.getCanonicalEvidenceTypeId());
         	if (evidenceID == null) {
         		ErrorType errorType = MessageUtils.GetErrorType(
@@ -317,7 +317,7 @@ public class DOController {
             		responseError.addError(error);
             		responseItem.addError(error);
             	}
-            	responseError.setAck(false);
+            	responseError.setAck(true);
             }
             
             response.addResponseExtractEvidenceItem(responseItem);
@@ -417,11 +417,6 @@ public class DOController {
 	        }
         }
         
-        //CanonicalEvidenceType ce = new CanonicalEvidenceType();
-        //ce.setAny(canonicalEvidence.getDocumentElement());
-        //canonicalEvidence = lCE.get(0);
-        //ce.setAny(canonicalEvidence.getDocumentElement());
-        
         res = Helper.buildResponseRequest(request);
         int i = 0;
         for (RequestEvidenceUSIItemType reqElement : request.getRequestEvidenceUSIItem()) {
@@ -514,8 +509,13 @@ public class DOController {
         }
 
         ResponseEventSubscriptionType res = new ResponseEventSubscriptionType();
-        ResponseErrorType response = new ResponseErrorType();
-                
+        ResponseEventSubscriptionItemType responseItem = new ResponseEventSubscriptionItemType();
+        ResponseErrorType responseError = new ResponseErrorType();
+        CanonicalEventSubscriptionExamples canonicalEventSubscription = null;
+        List<ErrorType> errors = new ArrayList<ErrorType>();
+        //filling message header
+        res = Helper.buildSubscriptionResponse(req);
+        
         DataOwner dataOwner = DataOwner.selectDataOwner(req.getDataOwner());
         if (dataOwner == null) {
         	
@@ -524,13 +524,25 @@ public class DOController {
             		mockUseCase,
             		"No known data owner with urn " + req.getDataOwner().getAgentUrn());
         	
-        	var errors = new ArrayList<ErrorType>();
             errors.add(errorType);
-            response.addError(errorType);
-        	response.setAck(false);
-        	return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
+            responseError.addError(errorType);
+        	
+        	// for each element set the error
+            for (EventSubscripRequestItemType reqElement : req.getEventSubscripRequestItem()) {
+                responseItem.setRequestItemId(reqElement.getRequestItemId());
+                responseItem.setCanonicalEventCatalogUri(reqElement.getCanonicalEventCatalogUri());
+                responseItem.setError(errors);
+            	res.addResponseEventSubscriptionItem(responseItem);
+            }
+        	
+            return this.sendSubscriptionResponse(res, responseError);
         }
         for (EventSubscripRequestItemType reqElement : req.getEventSubscripRequestItem()) {
+        	
+        	responseItem.setRequestItemId(reqElement.getRequestItemId());
+            responseItem.setCanonicalEventCatalogUri(reqElement.getCanonicalEventCatalogUri());
+            responseItem.setSubscriptionPeriod(reqElement.getSubscriptionPeriod());
+            
         	if (!dataOwner.getPilot().validDataRequestSubject(reqElement.getDataRequestSubject())) {
         		
         		ErrorType errorType = MessageUtils.GetErrorType(
@@ -538,13 +550,11 @@ public class DOController {
 	            		mockUseCase,
 	            		String.format("%s for requests to %s", dataOwner.getPilot().restrictionDescription(), dataOwner.toString()));
 	    		
-	    		response.addError(errorType);
-        		response.setAck(false);
-        		return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
+        		responseItem.setSubscriptionPeriod(null);
+        		errors.add(errorType);
 	        }
-        }
-        CanonicalEventSubscriptionExamples canonicalEventSubscription = null;
-        for (EventSubscripRequestItemType reqElement : req.getEventSubscripRequestItem()) {
+        	
+        	
         	SubscriptionID subscriptionID = SubscriptionID.selectSubscriptionID(reqElement.getCanonicalEventCatalogUri());
             if (subscriptionID == null) {
             	
@@ -553,41 +563,53 @@ public class DOController {
 	              		mockUseCase,
 	              		String.format("No known subscription type id '%s'", reqElement.getCanonicalEventCatalogUri()));
       		
-      			response.addError(errorType);
-            	response.setAck(false);
-            	return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
+            	responseItem.setSubscriptionPeriod(null);
+            	errors.add(errorType);
             }
-            
-            String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
-            
-            canonicalEventSubscription = CanonicalEventSubscriptionExamples.getCanonicalEventSubscription(dataOwner, subscriptionID, eIDASIdentifier);
-            if (canonicalEventSubscription == null) {
-                
-            	ErrorType errorType = MessageUtils.GetErrorType(
-                  		ELogMessage.LOG_DO_ERROR_IDENTITY_MATCHING, mockUseCase,
-                  		String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", 
-                  				eIDASIdentifier, subscriptionID.getId(), dataOwner.toString()));
-          		
-          		response.addError(errorType);
-                response.setAck(false);
-                return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
+            if (reqElement.getDataRequestSubject().getDataSubjectCompany () != null) {
+	            String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(reqElement.getDataRequestSubject());
+	            
+	            canonicalEventSubscription = CanonicalEventSubscriptionExamples.getCanonicalEventSubscription(dataOwner, subscriptionID, eIDASIdentifier);
+	            if (canonicalEventSubscription == null && subscriptionID != null) {
+	                
+	            	ErrorType errorType = MessageUtils.GetErrorType(
+	                  		ELogMessage.LOG_DO_ERROR_IDENTITY_MATCHING, mockUseCase,
+	                  		String.format("No evidence with eIDASIdentifier '%s' found with evidenceID '%s' for %s", 
+	                  				eIDASIdentifier, subscriptionID.getId(), dataOwner.toString()));
+	          		
+	            	errors.add(errorType);
+	            	responseItem.setSubscriptionPeriod(null);
+	            }
             }
+        
+	        if(!errors.isEmpty()) {
+	        	for(ErrorType error : errors) {
+	        		responseError.addError(error);
+	        		responseItem.addError(error);
+	        	}
+	        }
+	        res.addResponseEventSubscriptionItem(responseItem);
         }
         
-        log.info("Validated");
-        
-        res = Helper.buildSubscriptionResponse(req);
-        List<ResponseEventSubscriptionItemType> resElementList = Helper.buildSubscriptionItem(req.getEventSubscripRequestItem());
-        res.setResponseEventSubscriptionItem(resElementList);
         final ResponseEventSubscriptionType eventSubscription = res;
         
-        if (canonicalEventSubscription.getUsiAutoResponse().useAutoResp()) {
+        if (canonicalEventSubscription != null && canonicalEventSubscription.getUsiAutoResponse().useAutoResp()) {
             taskScheduler.schedule(() ->
-                    sendRequest(
-                            doConfig.getPreviewDTUrl(),
+                    
+            		sendRequest(
+                            doConfig.getEventSubscriptionURL(),
                             DE4ACoreMarshaller.dtResponseEventSubscriptionMarshaller().getAsInputStream(eventSubscription),
                             log::error),
                     Instant.now().plusMillis(canonicalEventSubscription.getUsiAutoResponse().getWait()));
+            
+            final ResponseEventSubscriptionType fResponse = res;
+            
+            DE4AKafkaClient.send(EErrorLevel.INFO, () ->
+                    String.format("[%s] Receiving ResponseEventSubscriptionType, requestId: %s", MessageUtils.getConnectorId(), fResponse.getRequestId()));
+            
+            responseError.setAck(true);
+            
+            return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(responseError));
         } else {
         	subscriptionStorage.addRequestToPreview(res);
         	subscriptionRequestStorage.saveRequest(req); // Save subscription request with person identifier, to send it on the notification
@@ -602,16 +624,8 @@ public class DOController {
             log.debug("sending websocket message {}: {}", endpoint, message);
             websocketMessaging.convertAndSend(endpoint, message);
 
+            return this.sendSubscriptionResponse(res, responseError);
         }
-
-        final ResponseEventSubscriptionType fResponse = res;
-        
-        DE4AKafkaClient.send(EErrorLevel.INFO, () ->
-                String.format("[%s] Receiving USI ResponseEventSubscriptionType, requestId: %s", MessageUtils.getConnectorId(), fResponse.getRequestId()));
-        
-        response.setAck(true);
-        
-        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(response));
     }
 
     public static String responseBodyToString(HttpResponse response) {
@@ -643,6 +657,27 @@ public class DOController {
          
          responseError.setAck(true);
          return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(responseError));
+    }
+    
+    private ResponseEntity<String> sendSubscriptionResponse(ResponseEventSubscriptionType response, ResponseErrorType responseError) {
+   	 try {
+            Boolean success = sendRequest(
+                    doConfig.getEventSubscriptionURL(),
+                    DE4ACoreMarshaller.dtResponseEventSubscriptionMarshaller().getAsInputStream(response),
+                    log::error).get();
+            if (!success) {
+                return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("Error sending message");
+            }
+        } catch (InterruptedException | ExecutionException ex) {
+            log.debug("request interrupted: {}", ex.getMessage());
+            return ResponseEntity.status(500).contentType(MediaType.TEXT_PLAIN).body("request interupted");
+        }
+        
+        DE4AKafkaClient.send(EErrorLevel.INFO, String.format("[%s] Responding to RequestEventSubscription, requestId: %s", 
+       		 MessageUtils.getConnectorId(), response.getRequestId()));
+        
+        responseError.setAck(true);
+        return ResponseEntity.status(HttpStatus.OK).body(DE4ACoreMarshaller.defResponseMarshaller().getAsString(responseError));
     }
     
     private ResponseExtractEvidenceItemType FillEvidenceItemWithErrors(List<ErrorType> errors, RequestEvidenceItemType item) {

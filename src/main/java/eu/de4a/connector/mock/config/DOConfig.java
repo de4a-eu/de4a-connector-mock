@@ -97,6 +97,10 @@ public class DOConfig implements Serializable {
     @Value("${mock.do.preview.dt.redirect.url}")
     private String redirectDTURL;
     
+    @Getter
+    @Value("${mock.do.preview.dt.eventsubscription.url}")
+    private String eventSubscriptionURL;
+    
 	public String getDTUrlNotification() {
 		ret = new StringBuilder();
 		return ret.append(previewDTUrl).append(notificationURL).toString();
