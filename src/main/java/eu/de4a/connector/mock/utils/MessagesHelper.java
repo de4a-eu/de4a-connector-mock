@@ -348,6 +348,14 @@ public class MessagesHelper {
         return ret;
     }
     
+    @Nonnull
+    public static DataRequestSubjectCVType _createDRSLegalPerson() {
+        final DataRequestSubjectCVType ret = new DataRequestSubjectCVType();
+        ret.setDataSubjectCompany(_createLP());
+        ret.setDataSubjectRepresentative(_createNP());
+        return ret;
+    }
+    
     private static DataRequestSubjectCVType _createDRS(String companyName, String company, String event) {
     	final ThreadLocalRandom aTLR = ThreadLocalRandom.current();
         final DataRequestSubjectCVType ret = new DataRequestSubjectCVType();

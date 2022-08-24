@@ -115,7 +115,7 @@ public class Helper {
 		for (ResponseEventSubscriptionItemType item : list) {
 			EventNotificationItemType notificationItem = new EventNotificationItemType();
 			notificationItem.setNotificationItemId(item.getRequestItemId());
-			notificationItem.setEventSubject(MessagesHelper._createDRS());
+			notificationItem.setEventSubject(MessagesHelper._createDRSLegalPerson());
 			notificationItem.setEventId(item.getRequestItemId());
 			notificationItem.setCanonicalEventCatalogUri(responseEventSubscriptionType.getResponseEventSubscriptionItem().get(0).getCanonicalEventCatalogUri());
 			notificationItem.setEventDate(XMLOffsetDateTime.now());
