@@ -2,6 +2,7 @@ package eu.de4a.connector.mock.controller;
 
 import static eu.de4a.connector.mock.Helper.sendRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -30,12 +31,15 @@ import eu.de4a.connector.mock.preview.NotificationStorage;
 import eu.de4a.connector.mock.preview.PreviewMessage;
 import eu.de4a.connector.mock.preview.PreviewStorage;
 import eu.de4a.connector.mock.preview.SubscriptionStorage;
+import eu.de4a.connector.mock.utils.MessageUtils;
 import eu.de4a.iem.core.DE4ACoreMarshaller;
 import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
 import eu.de4a.iem.core.jaxb.common.CanonicalEvidenceType;
+import eu.de4a.iem.core.jaxb.common.ErrorType;
 import eu.de4a.iem.core.jaxb.common.ResponseEventSubscriptionType;
 import eu.de4a.iem.core.jaxb.common.ResponseExtractEvidenceItemType;
 import eu.de4a.iem.core.jaxb.common.ResponseExtractMultiEvidenceType;
+import eu.de4a.kafkaclient.model.ELogMessage;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -61,6 +65,8 @@ public class DOPreviewController {
 
     @Value("${mock.baseurl}")
     String baseUrl;
+    
+    private final String mockUseCase = "[UC#TEST]";
 
 
     @GetMapping(value = "${mock.do.preview.endpoint.base}${mock.do.preview.endpoint.index}")
@@ -148,20 +154,20 @@ public class DOPreviewController {
     public ResponseEntity<String> rejectEvidence(@PathVariable String requestId) throws InterruptedException, ExecutionException {
     	ResponseExtractMultiEvidenceType request;
         request = previewStorage.getRequest(requestId).get();
-        //FIXME avoiding nullpointer
-        request.getDataOwner().setAgentUrn("iso6523-actorid-upis::9999:ess2833002e-mock-it2-reject");
-        DataOwner dataOwner = DataOwner.selectDataOwner(request.getDataOwner());
-        request.getResponseExtractEvidenceItemAtIndex(0).setCanonicalEvidenceTypeId("urn:de4a-eu:CanonicalEvidenceType::RejectEvidence:1.0");
-        EvidenceID evidenceID = EvidenceID.selectEvidenceId(request.getResponseExtractEvidenceItemAtIndex(0).getCanonicalEvidenceTypeId());
-        String eIDASIdentifier = dataOwner.getPilot().getEIDASIdentifier(request.getResponseExtractEvidenceItemAtIndex(0).getDataRequestSubject());
-        eIDASIdentifier = "ES/SI/!!!";
-        CanonicalEvidenceExamples canonicalEvidence = CanonicalEvidenceExamples.getCanonicalEvidence(dataOwner, evidenceID, eIDASIdentifier);
-        CanonicalEvidenceType ce = new CanonicalEvidenceType();
-        for (ResponseExtractEvidenceItemType response :request.getResponseExtractEvidenceItem()) {
-        	ce.setAny(canonicalEvidence.getDocumentElement());
-        	response.setCanonicalEvidence(ce);
+       
+        var errors = new ArrayList<ErrorType>();
+        ErrorType errorType = MessageUtils.GetErrorType(
+        		ELogMessage.LOG_DO_ERROR_PREVIEW_REJECTED, 
+        		mockUseCase,
+        		"");
+		
+		errors.add(errorType);
+		
+		for (ResponseExtractEvidenceItemType responseItem :request.getResponseExtractEvidenceItem()) {
+			responseItem.setCanonicalEvidence(null);
+			responseItem.setError(errors);
         }
-
+		
         String redirectUrl = request.getDataEvaluator().getRedirectURL();
         if (redirectUrl == null || redirectUrl.isEmpty()) {
             log.error("no redirect url recieved");
