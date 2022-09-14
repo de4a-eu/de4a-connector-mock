@@ -9,6 +9,7 @@ public enum DataOwner {
 
     AMA_PT("iso6523-actorid-upis::9999:pt000000026-mock-it2", "(AMA IP) Agencia para a Modernizacao Administrativa IP (Administration Modernization Agency)", "PT", Pilot.T43),
     COC_NL("iso6523-actorid-upis::9999:nl990000106-mock-it2", "(KVK) Chamber of Commerce of Netherlands", "NL", Pilot.T42),
+    RVO_NL("iso6523-actorid-upis::9999:nl000000024-mock-it2", "(RVO) Rijksdienst voor Ondernemend Nederland (Netherlands Enterprise Agency)", "NL", Pilot.T42),
     V_SE("iso6523-actorid-upis::9999:se000000013-mock-it2", "(BVE) BOLAGSVERKET (Companies Registration Office)", "SE", Pilot.T42),
     ONRC_RO("iso6523-actorid-upis::9999:ro000000006-mock-it2", "(ORNC) - OFICIUL NATIONAL AL REGISTRULUI COMERTULUI", "RO", Pilot.T42),
     DMDW_AT("iso6523-actorid-upis::9999:at000000271-mock-it2", "(BMDW) Bundesministerium Fuer Digitalisierung Und Wirtschaftsstandort", "AT", Pilot.T42),

@@ -49,6 +49,7 @@ public enum CanonicalEvidenceExamples {
   
   // New IT2 Evidences
   T41_HIGHER_EDUCATION_DIPLOMA_IT2 ("53377873W", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-ES_G.xml"), DataOwner.SGAD_ES, EvidenceID.HIGHER_EDUCATION_DIPLOMA_IT2, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.OFF),
+  T41_HIGHER_EDUCATION_DIPLOMA_IT2_A("99999142H", new ClassPathResource("examples/T4.1-examples/SA-UC1-example-ES_H.xml"), DataOwner.SGAD_ES, EvidenceID.HIGHER_EDUCATION_DIPLOMA_IT2, DE4AT41Marshaller.higherEducationDiploma(), USIAutoResponse.OFF),
   T41_SECONDARY_EDUCATION_DIPLOMA("53377873W", new ClassPathResource("examples/T4.1-examples/SA-UC1-SecondaryEducationEvidenceType-sample-ES.xml"), DataOwner.SGAD_ES, EvidenceID.SECONDARY_EDUCATION_DIPLOMA, DE4AT41Marshaller.secondaryEducationDiploma(), USIAutoResponse.OFF),
   T41_DISABILITY("53377873W", new ClassPathResource("examples/T4.1-examples/SA-UC2-DisabilityEvidenceSample-ES.xml"), DataOwner.SGAD_ES, EvidenceID.DISABILITY_EVIDENCE, DE4AT41Marshaller.disability(), USIAutoResponse.OFF),
   T41_LARGE_FAMILY("53377873W", new ClassPathResource("examples/T4.1-examples/SA-UC2-LargeFamilyEvidenceSample-ES.xml"), DataOwner.SGAD_ES, EvidenceID.LARGE_FAMILY_EVIDENCE, DE4AT41Marshaller.largeFamily(), USIAutoResponse.OFF),
@@ -56,6 +57,8 @@ public enum CanonicalEvidenceExamples {
   // Company Registration
   T42_SE("5591674170", new ClassPathResource("examples/T4.2-examples/sample company info SE -2.xml"),  DataOwner.V_SE, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
   T42_NL("90000471", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.COC_NL, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
+  T42_NL_A("90001966", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.RVO_NL, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
+  T42_NL_B("90002636", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo NL KVK.xml"),  DataOwner.RVO_NL, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
   T42_RO("J40/12487/1998", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo RO ONRC-2.xml"),  DataOwner.ONRC_RO, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(),  USIAutoResponse.OFF),
   T42_AT("???", new ClassPathResource("examples/T4.2-examples/sample CompanyInfo AT.xml"),  DataOwner.DMDW_AT, EvidenceID.COMPANY_REGISTRATION, DE4AT42Marshaller.legalEntity(), USIAutoResponse.OFF),
 
