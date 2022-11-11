@@ -109,18 +109,29 @@ public class Helper {
 		return notification;
 	}
     
-    public static List<EventNotificationItemType> buidNotificationItemList(
-			List<ResponseEventSubscriptionItemType> list, ResponseEventSubscriptionType responseEventSubscriptionType) {
+    public static List<EventNotificationItemType> buidNotificationItemList(List<ResponseEventSubscriptionItemType> list, 
+    		ResponseEventSubscriptionType responseEventSubscriptionType, RequestEventSubscriptionType subscriptionRequest) {
     	List<EventNotificationItemType> itemListNotification = new ArrayList<>();
-		for (ResponseEventSubscriptionItemType item : list) {
-			EventNotificationItemType notificationItem = new EventNotificationItemType();
+    	
+    	for (int i = 0; i< list.size(); i++) {
+    		ResponseEventSubscriptionItemType item = list.get(i);
+    		EventNotificationItemType notificationItem = new EventNotificationItemType();
 			notificationItem.setNotificationItemId(item.getRequestItemId());
-			notificationItem.setEventSubject(MessagesHelper._createDRSLegalPerson());
+			if (subscriptionRequest != null && subscriptionRequest.getEventSubscripRequestItemAtIndex(i) != null) {
+				String companyName = subscriptionRequest.getEventSubscripRequestItemAtIndex(i).getDataRequestSubject().getDataSubjectCompany().getLegalNameValue();
+				String company = subscriptionRequest.getEventSubscripRequestItemAtIndex(i).getDataRequestSubject().getDataSubjectCompany().getLegalPersonIdentifier();
+				String event = subscriptionRequest.getEventSubscripRequestItemAtIndex(i).getCanonicalEventCatalogUri();
+				notificationItem.setEventSubject(MessagesHelper._createDRSLegalPerson(companyName, company, event));
+			}else {
+				notificationItem.setEventSubject(MessagesHelper._createDRSLegalPerson());
+			}
+			
 			notificationItem.setEventId(item.getRequestItemId());
 			notificationItem.setCanonicalEventCatalogUri(responseEventSubscriptionType.getResponseEventSubscriptionItem().get(0).getCanonicalEventCatalogUri());
 			notificationItem.setEventDate(XMLOffsetDateTime.now());
 			itemListNotification.add(notificationItem);
-		}
+    	}
+    	
 		return itemListNotification;
 	}
 

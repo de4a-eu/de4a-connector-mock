@@ -54,8 +54,10 @@ public class DONotificationController {
     public ResponseEntity<String> sendNotification(@PathVariable String requestId) throws InterruptedException, TimeoutException, ExecutionException {
     	EventNotificationType request = new EventNotificationType();
     	request = Helper.buildNotificationFromSubscription(subscriptionStorage.getRequest(requestId).get());
-    	request.setEventNotificationItem(Helper.buidNotificationItemList(subscriptionStorage.getRequest(requestId).get().getResponseEventSubscriptionItem(), subscriptionStorage.getRequest(requestId).get()));
-        
+    	RequestEventSubscriptionType subscriptionRequest = subscriptionRequestStorage.getRequest(requestId).get();
+    	
+    	request.setEventNotificationItem(Helper.buidNotificationItemList(subscriptionStorage.getRequest(requestId).get().getResponseEventSubscriptionItem(),
+    			subscriptionStorage.getRequest(requestId).get(), subscriptionRequest));
         try {
             Boolean success = sendRequest(
                     doConfig.getDTUrlNotification(),
@@ -89,9 +91,11 @@ public class DONotificationController {
     	EventNotificationType notification = new EventNotificationType();
     	notification = Helper.buildNotificationFromSubscription(subscriptionStorage.getRequest(requestId).get());
     	
-    	notification.setEventNotificationItem(Helper.buidNotificationItemList(subscriptionStorage.getRequest(requestId).get().getResponseEventSubscriptionItem(), subscriptionStorage.getRequest(requestId).get()));
-        
     	RequestEventSubscriptionType subscriptionRequest = subscriptionRequestStorage.getRequest(requestId).get();
+    	
+    	notification.setEventNotificationItem(Helper.buidNotificationItemList(subscriptionStorage.getRequest(requestId).get().getResponseEventSubscriptionItem(), subscriptionStorage.getRequest(requestId).get(), subscriptionRequest));
+        
+    	
     	if(subscriptionRequest != null 
     			&& subscriptionRequest.getEventSubscripRequestItemAtIndex(0) != null
     			&& subscriptionRequest.getEventSubscripRequestItemAtIndex(0).getDataRequestSubject() != null 
