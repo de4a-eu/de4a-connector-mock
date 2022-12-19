@@ -77,6 +77,9 @@ public enum CanonicalEvidenceExamples {
   T43_DR_PT_B("12345678B", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-PT-B.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.DELAY_5_SEC),
   T43_DR_PT_C("12345678C", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-PT-C.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.DELAY_40_SEC),
   T43_DR_PT_D("12345678D", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileRegistration-PT-D.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileRegistrationEvidence(), USIAutoResponse.DELAY_240_SEC),
+  
+  //PT Domicile Deregistration
+  T43_DDR_PT("12345678", new ClassPathResource("examples/T4.3-examples/MA-example-DomicileDeregistration-PT.xml"), DataOwner.AMA_PT, EvidenceID.DOMICILE_DEREGISTRATION_EVIDENCE, DE4AT43Marshaller.domicileDeregistrationEvidence(), USIAutoResponse.OFF),
 	
   // PT Birth Evidence
   T43_B_PT("12345678", new ClassPathResource("examples/T4.3-examples/MA-example-Birth-PT.xml"), DataOwner.AMA_PT, EvidenceID.BIRTH_EVIDENCE, DE4AT43Marshaller.birthEvidence(), USIAutoResponse.OFF),

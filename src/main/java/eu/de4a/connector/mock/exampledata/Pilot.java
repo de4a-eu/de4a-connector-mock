@@ -7,7 +7,7 @@ import lombok.Getter;
 import java.util.Arrays;
 
 public enum Pilot implements PilotInterface {
-    T43(DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED, EvidenceID.MARRIAGE_EVIDENCE, EvidenceID.BIRTH_EVIDENCE, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE),
+    T43(DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED, EvidenceID.MARRIAGE_EVIDENCE, EvidenceID.BIRTH_EVIDENCE, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, EvidenceID.DOMICILE_DEREGISTRATION_EVIDENCE),
     T42(DataRequestSubjectRestrictions.LEGAL_ENTITY_REQUIRED, EvidenceID.COMPANY_REGISTRATION),
     T41(DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED, EvidenceID.HIGHER_EDUCATION_DIPLOMA);
 
