@@ -1,14 +1,13 @@
 package eu.de4a.connector.mock.exampledata;
 
-import eu.de4a.iem.jaxb.common.types.DataRequestSubjectCVType;
-import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
+import eu.de4a.iem.core.jaxb.common.DataRequestSubjectCVType;
+import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
 import lombok.Getter;
 
 import java.util.Arrays;
 
 public enum Pilot implements PilotInterface {
-    T43(DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED,
-            EvidenceID.MARRIAGE_EVIDENCE, EvidenceID.BIRTH_EVIDENCE, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE),
+    T43(DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED, EvidenceID.MARRIAGE_EVIDENCE, EvidenceID.BIRTH_EVIDENCE, EvidenceID.DOMICILE_REGISTRATION_EVIDENCE, EvidenceID.DOMICILE_DEREGISTRATION_EVIDENCE),
     T42(DataRequestSubjectRestrictions.LEGAL_ENTITY_REQUIRED, EvidenceID.COMPANY_REGISTRATION),
     T41(DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED, EvidenceID.HIGHER_EDUCATION_DIPLOMA);
 
@@ -40,10 +39,15 @@ public enum Pilot implements PilotInterface {
 
     public String getEIDASIdentifier(DataRequestSubjectCVType dataRequestSubjectCVType) {
         if (dataRequestSubjectRestrictions == DataRequestSubjectRestrictions.LEGAL_ENTITY_REQUIRED) {
+            if (dataRequestSubjectCVType.getDataSubjectCompany () == null)
+                throw new IllegalStateException ("DRS has no DataSubjectCompany");
             return dataRequestSubjectCVType.getDataSubjectCompany().getLegalPersonIdentifier();
-        } else { // DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED
-            return dataRequestSubjectCVType.getDataSubjectPerson().getPersonIdentifier();
-        }
+        } 
+        
+        // DataRequestSubjectRestrictions.NATURAL_PERSON_REQUIRED
+        if (dataRequestSubjectCVType.getDataSubjectPerson () == null)
+          throw new IllegalStateException ("DRS has no DataSubjectPerson");
+        return dataRequestSubjectCVType.getDataSubjectPerson().getPersonIdentifier();
     }
 
     public String restrictionDescription() {

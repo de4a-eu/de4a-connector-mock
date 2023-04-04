@@ -1,7 +1,7 @@
 package eu.de4a.connector.mock.exampledata;
 
-import eu.de4a.iem.jaxb.common.types.DataRequestSubjectCVType;
-import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
+import eu.de4a.iem.core.jaxb.common.DataRequestSubjectCVType;
+import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
 
 import java.util.Arrays;
 

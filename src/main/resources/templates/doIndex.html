@@ -18,6 +18,12 @@
         "previewMessages": [[${doConfig.websocketMessagesEndpoint}]],
         "previewIdsEndpoint": [[${doConfig.previewRequestIdsEndpoint}]],
         "previewRedirectUrlEndpoint": [[${doConfig.previewRedirectUrlEndpoint}]],
+        
+        "previewSubscriptionIdsEndpoint": [[${doConfig.previewSubscriptionRequestIdsEndpoint}]],
+        "previewSubscriptionRequest": [[${doConfig.previewSubscriptionRequest}]],
+        "buildNotifFromSubscrip": [[${doConfig.buildNotifFromSubscrip}]],
+        "createNotif": [[${doConfig.createNotif}]],
+        "sendNotif": [[${doConfig.sendNotif}]],
     }
 </script>
 <script src="/built/bundle.js" th:src="${doConfig.bundlePath}"></script>

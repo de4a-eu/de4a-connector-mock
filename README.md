@@ -70,4 +70,8 @@ Note that the following settings should be changed from their default values:
       where the mocked dt should forward to
     
 
+**Iteration 2**
+
+Information related to iteration-2 features can be found at [README-it2.md](README-it2.MD) file.
+
  [Change-log](CHANGELOG.md)   

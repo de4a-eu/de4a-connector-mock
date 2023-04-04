@@ -41,9 +41,23 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.helger.commons</groupId>
+                <artifactId>ph-commons-parent-pom</artifactId>
+                <version>10.1.8</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>eu.de4a</groupId>
                 <artifactId>de4a-commons-parent-pom</artifactId>
-                <version>0.2.1</version>
+                <version>0.2.13</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>eu.de4a.ial</groupId>
+                <artifactId>ial-parent-pom</artifactId>
+                <version>0.1.6</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -51,13 +65,42 @@
     </dependencyManagement>
     
     <dependencies>
+    	<dependency>
+          <groupId>com.helger.dcng</groupId>
+          <artifactId>dcng-web-api</artifactId>
+          <version>0.2.9</version>
+          <exclusions>
+            <exclusion>
+              <groupId>xml-apis</groupId>
+              <artifactId>xml-apis</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+	      <groupId>com.helger.peppol</groupId>
+	      <artifactId>peppol-smp-client</artifactId>
+	    </dependency>
+    	<dependency>
+            <groupId>eu.de4a.ial</groupId>
+            <artifactId>ial-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>eu.de4a</groupId>
-            <artifactId>de4a-iem</artifactId>
+            <artifactId>de4a-canonical-evidences</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.de4a</groupId>
+            <artifactId>de4a-core-schemas</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.de4a</groupId>
             <artifactId>de4a-kafka-client</artifactId>
+            <exclusions>
+            	<exclusion>
+            		<groupId>com.fasterxml.jackson.core</groupId>
+            		<artifactId>jackson-databind</artifactId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -77,18 +120,24 @@
                     <groupId>org.apache.logging.log4j</groupId>
                     <artifactId>log4j-api</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>com.fasterxml.jackson.core</groupId>
+                	<artifactId>jackson-databind</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		</dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-to-slf4j</artifactId>
-            <version>2.17.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.17.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -106,10 +155,10 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-	<dependency>
-	    <groupId>com.helger.web</groupId>
-	    <artifactId>ph-httpclient</artifactId>
-	</dependency>
+      	<dependency>
+      	    <groupId>com.helger.web</groupId>
+      	    <artifactId>ph-httpclient</artifactId>
+      	</dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -180,7 +229,8 @@
                             <goal>npm</goal>
                         </goals>
 
-                        <phase>generate-resources</phase>
+                         <!--<phase>process-resources</phase>-->
+						            <phase>generate-resources</phase>  
 
                         <configuration>
                             <arguments>run webpack</arguments>

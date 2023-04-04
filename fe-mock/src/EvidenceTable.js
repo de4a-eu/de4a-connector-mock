@@ -1,5 +1,7 @@
 import { Fragment } from 'react'
 import { Col, Row, } from 'react-bootstrap'
+import XMLViewer from 'react-xml-viewer'
+import {useState} from 'react'
 
 const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) => {
     
@@ -15,12 +17,24 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
 
     console.log("xmlRoot", xmlRoot)
 
+	let count = 0;
+
     const printNode = (node) => {
-        return <Row className='evidenceHeading'>
-            <Col>
-                <h2>{translate(`canonicalEvidenceFields.${node.localName}`)}</h2>
-            </Col>
-        </Row>
+		if (evidenceElements.includes(node.localName)) {
+			++count;
+			return <Row className='evidenceHeading'>
+	            <Col>
+	                <h1>Evidence {count} - {node.localName}</h1>
+	            </Col>
+	        </Row>
+		}
+		if (elements.includes(node.localName))  {
+	        return <Row className='evidenceHeading'>
+	            <Col>
+	                <h2>{translate(`canonicalEvidenceFields.${node.localName}`)}</h2>
+	            </Col>
+	        </Row>
+		}
     }
 
     const printLeaf = (node) => {
@@ -41,7 +55,7 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
             .map((child) => ret[map[child.localName]] = child.innerHTML)
         return ret
     }
-    
+
     const specialNodes = {
         "CanonicalEvidence" : (node) => {
             return Array.from(node.childNodes)
@@ -78,6 +92,9 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
         "familyName" : (node) => {
             return handleTextChild(node)
         },
+		"averageGrade" : (node) => {
+            return handleTextChild(node)
+        },
         "mainFieldOfStudy" : (node) => {
             const attUri = node.getAttribute("uri")
             if (attUri && attUri !== "") {
@@ -99,7 +116,37 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
                     </Col>
                 </Row>
             }
-        }
+        },
+        "country": (node) => {
+            return handleTextChild(node)
+        },
+        "nameOfSchool": (node) => {
+            return handleTextChild(node)
+        },
+        "nameOfProgram": (node) => {
+            return handleTextChild(node)
+        },
+        "grade": (node) => {
+            return handleTextChild(node)
+        },
+        "issuingDate": (node) => {
+            return handleTextChild(node)
+        },
+        "certificateID": (node) => {
+            return handleTextChild(node)
+        },
+        "effectiveDate": (node) => {
+            return handleTextChild(node)
+        },
+        "disabilityPercentage": (node) => {
+            return handleTextChild(node)
+        },
+        "expiryDate": (node) => {
+            return handleTextChild(node)
+        },
+		"numberOfChildren": (node) => {
+            return handleTextChild(node)
+        },
     }
 
     const addressNode = (node) => {
@@ -158,11 +205,20 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
         return `${getIfExist(address, 'street')} ${getIfExist(address,'no')}, ${getIfExist(address,'pno')} ${getIfExist(address,'city')}, ${getIfExist(address,'al1')} ${getIfExist(address,'al2')}`
     }
     
+ 	const [elements, setElements] = useState(['CompanyName', 'LegalEntityLegalName', 'CompanyType', 'CompanyStatus', 'CompanyActivity', 'RegistrationDate', 'CompanyEUID', 'CompanyContactData', 'RegisteredAddress', 'PostalAddress']);
+	
+	const [evidenceElements, setEvidenceElements] = useState(['BirthEvidence', 'MarriageEvidence', 'HigherEducationDiploma', 'LegalEntity', 'SecondaryEducationDiploma', 'Disability', 'LargeFamily', 'DomicileRegistrationEvidence' ]);
+	
     const parseNode = (node) => {
-        if (Object.keys(specialNodes).includes(node.localName)) {
+		console.log("node.localName", node.localName)
+		if (Object.keys(specialNodes).includes(node.localName)) {
             return specialNodes[node.localName](node)
         } else if (node.childElementCount === 0) {
-            return printLeaf(node)
+			if (elements.includes(node.localName))  {
+            	return printLeaf(node)
+			} else {
+				return <div></div>
+			}
         } else {
             return <Fragment>
                 {printNode(node)}
@@ -170,12 +226,20 @@ const EvidenceTable = ({ evidence, evidenceRoot, evidenceIgnore, translate }) =>
                     .filter((child) => !(child.localName in evidenceIgnore))
                     .map((child, i) => <Fragment key={i}> {parseNode(child)} </Fragment>)}
             </Fragment>
+			
         }
     }
     
     return <Fragment>
         {parseNode(xmlRoot)}
+			<div class="container">
+				 <p>
+                   <XMLViewer xml={evidence} /> 
+                </p>
+			</div>
+			
         </Fragment>
+		
 }
 
 export default EvidenceTable

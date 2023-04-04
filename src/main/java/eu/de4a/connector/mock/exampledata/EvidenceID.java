@@ -1,18 +1,26 @@
 package eu.de4a.connector.mock.exampledata;
 
-import eu.de4a.iem.xml.de4a.EDE4ACanonicalEvidenceType;
-import eu.de4a.iem.xml.de4a.IDE4ACanonicalEvidenceType;
-import lombok.Getter;
-
 import java.util.Arrays;
 
-public enum EvidenceID {
-    MARRIAGE_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::MarriageEvidence", EDE4ACanonicalEvidenceType.T43_MARRIAGE_EVIDENCE_V16B),
-    BIRTH_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::BirthEvidence", EDE4ACanonicalEvidenceType.T43_BIRTH_EVIDENCE_V16B),
-    DOMICILE_REGISTRATION_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::DomicileRegistrationEvidence", EDE4ACanonicalEvidenceType.T43_DOMREG_EVIDENCE_V16B),
-    COMPANY_REGISTRATION("urn:de4a-eu:CanonicalEvidenceType::CompanyRegistration", EDE4ACanonicalEvidenceType.T42_COMPANY_INFO_V06),
-    HIGHER_EDUCATION_DIPLOMA("urn:de4a-eu:CanonicalEvidenceType::HigherEducationDiploma", EDE4ACanonicalEvidenceType.T41_UC1_2021_04_13);
+import eu.de4a.iem.cev.EDE4ACanonicalEvidenceType;
+import eu.de4a.iem.core.IDE4ACanonicalEvidenceType;
+import lombok.Getter;
 
+public enum EvidenceID {
+    MARRIAGE_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::MarriageEvidence:1.0", EDE4ACanonicalEvidenceType.T43_MARRIAGE_EVIDENCE_V17),
+    BIRTH_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::BirthEvidence:1.0", EDE4ACanonicalEvidenceType.T43_BIRTH_EVIDENCE_V17),
+    DOMICILE_REGISTRATION_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::DomicileRegistrationEvidence:1.0", EDE4ACanonicalEvidenceType.T43_DOMREG_EVIDENCE_V17),
+    DOMICILE_DEREGISTRATION_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::DomicileDeregistrationEvidence:1.0", EDE4ACanonicalEvidenceType.T43_DOMDEREG_EVIDENCE_V10),
+    COMPANY_REGISTRATION("urn:de4a-eu:CanonicalEvidenceType::CompanyRegistration:1.0", EDE4ACanonicalEvidenceType.T42_LEGAL_ENTITY_V06),
+    HIGHER_EDUCATION_DIPLOMA("urn:de4a-eu:CanonicalEvidenceType::HigherEducationDiploma:1.0", EDE4ACanonicalEvidenceType.T41_HIGHER_EDUCATION_EVIDENCE_2022_06_23),
+    HIGHER_EDUCATION_DIPLOMA_IT2("urn:de4a-eu:CanonicalEvidenceType::HigherEducationDiploma:2.0", EDE4ACanonicalEvidenceType.T41_HIGHER_EDUCATION_EVIDENCE_2022_06_23),
+    
+    SECONDARY_EDUCATION_DIPLOMA("urn:de4a-eu:CanonicalEvidenceType::SecondaryEducationDiploma:1.0", EDE4ACanonicalEvidenceType.T41_SECONDARY_EDUCATION_EVIDENCE_2022_05_12),
+    DISABILITY_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::DisabilityEvidence:1.0", EDE4ACanonicalEvidenceType.T41_DISABILITY_EVIDENCE_2022_05_12),
+	LARGE_FAMILY_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::LargeFamilyEvidence:1.0", EDE4ACanonicalEvidenceType.T41_LARGE_FAMILY_EVIDENCE_2022_05_12),
+	
+	REJECT_EVIDENCE("urn:de4a-eu:CanonicalEvidenceType::RejectEvidence:1.0", EDE4ACanonicalEvidenceType.T41_HIGHER_EDUCATION_EVIDENCE_2022_06_23),
+	TEST_EVIDENCE("CanonicalEvidence-1626562515", EDE4ACanonicalEvidenceType.T43_MARRIAGE_EVIDENCE_V17);
     @Getter
     private final String id;
     @Getter

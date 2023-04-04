@@ -4,29 +4,42 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
-import eu.de4a.iem.jaxb.common.types.*;
-import eu.de4a.iem.xml.de4a.DE4AResponseDocumentHelper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 
+import com.helger.commons.datetime.XMLOffsetDateTime;
+
+import eu.de4a.connector.mock.utils.MessagesHelper;
+import eu.de4a.iem.core.DE4AResponseDocumentHelper;
+//import eu.de4a.iem.jaxb.common.types.*;
+import eu.de4a.iem.core.jaxb.common.ErrorType;
+import eu.de4a.iem.core.jaxb.common.EventNotificationItemType;
+import eu.de4a.iem.core.jaxb.common.EventNotificationType;
+import eu.de4a.iem.core.jaxb.common.EventSubscripRequestItemType;
+import eu.de4a.iem.core.jaxb.common.RequestEventSubscriptionType;
+import eu.de4a.iem.core.jaxb.common.RequestExtractMultiEvidenceType;
+import eu.de4a.iem.core.jaxb.common.ResponseEventSubscriptionItemType;
+import eu.de4a.iem.core.jaxb.common.ResponseEventSubscriptionType;
+import eu.de4a.iem.core.jaxb.common.ResponseExtractMultiEvidenceType;
+
 public class Helper {
-    public static final int ERROR_TEXT_MAX_LENGTH = 4000;
-
-    public static RequestExtractEvidenceType buildDoImRequest(RequestExtractEvidenceType drRequest) {
+    public static RequestExtractMultiEvidenceType buildDoImRequest(RequestExtractMultiEvidenceType drRequest) {
         return drRequest.clone ();
     }
 
-    public static RequestExtractEvidenceType buildDoUsiRequest(RequestExtractEvidenceType drRequest) {
+    public static RequestExtractMultiEvidenceType buildDoUsiRequest(RequestExtractMultiEvidenceType drRequest) {
         return drRequest.clone ();
     }
 
-    public static RequestTransferEvidenceUSIDTType buildDtUsiRequest(RequestExtractEvidenceType doRequest, CanonicalEvidenceType canonicalEvidence, DomesticsEvidencesType domesticEvidences, ErrorListType errorListType) {
-        RequestTransferEvidenceUSIDTType req = new RequestTransferEvidenceUSIDTType();
+  /*  public static RequestExtractMultiEvidenceUSIType buildDtUsiRequest(RequestExtractMultiEvidenceType doRequest, CanonicalEvidenceType canonicalEvidence, DomesticsEvidencesType domesticEvidences, ErrorListType errorListType) {
+    	RequestExtractMultiEvidenceUSIType req = new RequestExtractMultiEvidenceUSIType();
         req.setRequestId(doRequest.getRequestId());
         req.setSpecificationId(doRequest.getSpecificationId());
         req.setTimeStamp(LocalDateTime.now());
@@ -38,17 +51,89 @@ public class Helper {
         req.setDomesticEvidenceList(domesticEvidences);
         req.setErrorList(errorListType);
         return req;
-    }
+    }*/
 
-    public static RequestForwardEvidenceType buildDeUriRequest(RequestTransferEvidenceUSIDTType dtRequest) {
-        RequestForwardEvidenceType req = new RequestForwardEvidenceType();
-        req.setRequestId(dtRequest.getRequestId());
-        req.setTimeStamp(LocalDateTime.now());
-        req.setCanonicalEvidence(dtRequest.getCanonicalEvidence());
+    //public static RequestForwardEvidenceType buildDeUriRequest(RequestTransferEvidenceUSIDTType dtRequest) {
+   /* public static RequestExtractMultiEvidenceUSIType buildDeUriRequest(ResponseExtractMultiEvidenceType dtRequest) {
+    	RequestExtractMultiEvidenceUSIType req = new RequestExtractMultiEvidenceUSIType();
+        //req.setRequestId(dtRequest.getRequestId());
+        //req.setTimeStamp(LocalDateTime.now());
+    	req.setCanonicalEvidence(dtRequest.getCanonicalEvidence());
         req.setDomesticEvidenceList(dtRequest.getDomesticEvidenceList());
         req.setErrorList(dtRequest.getErrorList());
+        
+    	req.setRequestId(dtRequest.getRequestId());
+    	req.setSpecificationId(dtRequest.get);
+        req.setCanonicalEvidenceTypeId(dtRequest.get);
         return req;
+    }*/
+    
+    public static ResponseExtractMultiEvidenceType buildResponseRequest (RequestExtractMultiEvidenceType request) {
+    	ResponseExtractMultiEvidenceType response = new ResponseExtractMultiEvidenceType();
+    	response.setRequestId(request.getRequestId());
+    	response.setTimeStamp(request.getTimeStamp());
+    	response.setDataEvaluator(request.getDataEvaluator());
+    	response.setDataOwner(request.getDataOwner());
+    	return response;
     }
+    
+    public static ResponseEventSubscriptionType buildSubscriptionResponse (RequestEventSubscriptionType request) {
+    	ResponseEventSubscriptionType response = new ResponseEventSubscriptionType();
+    	response.setRequestId(request.getRequestId());
+    	response.setTimeStamp(request.getTimeStamp());
+    	response.setDataEvaluator(request.getDataEvaluator());
+    	response.setDataOwner(request.getDataOwner());
+    	return response;
+    }
+    
+    public static List<ResponseEventSubscriptionItemType> buildSubscriptionItem(List<EventSubscripRequestItemType> eventSubscripRequestItem) {
+    	List<ResponseEventSubscriptionItemType> itemListResponse = new ArrayList<>();
+		for (EventSubscripRequestItemType item : eventSubscripRequestItem) {
+			ResponseEventSubscriptionItemType itemResponse = new ResponseEventSubscriptionItemType();
+			itemResponse.setRequestItemId(item.getRequestItemId());
+			itemResponse.setCanonicalEventCatalogUri(item.getCanonicalEventCatalogUri());
+			itemResponse.setSubscriptionPeriod(item.getSubscriptionPeriod());
+			itemListResponse.add(itemResponse);
+		}
+		return itemListResponse;
+	}
+    
+    public static EventNotificationType buildNotificationFromSubscription(
+			ResponseEventSubscriptionType responseEventSubscriptionType) {
+    	EventNotificationType notification = new EventNotificationType();
+    	notification.setNotificationId(responseEventSubscriptionType.getRequestId());
+    	notification.setSpecificationId(responseEventSubscriptionType.getRequestId());
+    	notification.setTimeStamp(responseEventSubscriptionType.getTimeStamp());
+    	notification.setDataEvaluator(responseEventSubscriptionType.getDataEvaluator());
+    	notification.setDataOwner(responseEventSubscriptionType.getDataOwner());
+		return notification;
+	}
+    
+    public static List<EventNotificationItemType> buidNotificationItemList(List<ResponseEventSubscriptionItemType> list, 
+    		ResponseEventSubscriptionType responseEventSubscriptionType, RequestEventSubscriptionType subscriptionRequest) {
+    	List<EventNotificationItemType> itemListNotification = new ArrayList<>();
+    	
+    	for (int i = 0; i< list.size(); i++) {
+    		ResponseEventSubscriptionItemType item = list.get(i);
+    		EventNotificationItemType notificationItem = new EventNotificationItemType();
+			notificationItem.setNotificationItemId(item.getRequestItemId());
+			if (subscriptionRequest != null && subscriptionRequest.getEventSubscripRequestItemAtIndex(i) != null) {
+				String companyName = subscriptionRequest.getEventSubscripRequestItemAtIndex(i).getDataRequestSubject().getDataSubjectCompany().getLegalNameValue();
+				String company = subscriptionRequest.getEventSubscripRequestItemAtIndex(i).getDataRequestSubject().getDataSubjectCompany().getLegalPersonIdentifier();
+				String event = subscriptionRequest.getEventSubscripRequestItemAtIndex(i).getCanonicalEventCatalogUri();
+				notificationItem.setEventSubject(MessagesHelper._createDRSLegalPerson(companyName, company, event));
+			}else {
+				notificationItem.setEventSubject(MessagesHelper._createDRSLegalPerson());
+			}
+			
+			notificationItem.setEventId(item.getRequestItemId());
+			notificationItem.setCanonicalEventCatalogUri(responseEventSubscriptionType.getResponseEventSubscriptionItem().get(0).getCanonicalEventCatalogUri());
+			notificationItem.setEventDate(XMLOffsetDateTime.now());
+			itemListNotification.add(notificationItem);
+    	}
+    	
+		return itemListNotification;
+	}
 
     public static String getStackTrace(Exception ex) {
         StringWriter stringWriter = new StringWriter();
@@ -81,7 +166,6 @@ public class Helper {
                 "10503",
                 String
                         .format("Connection error with %s - %s", service, explanation)
-                        .substring(0, ERROR_TEXT_MAX_LENGTH)
         );
     }
 
@@ -90,7 +174,6 @@ public class Helper {
                 "10501",
                 String
                         .format("Service requested %s not found", service)
-                        .substring(0, ERROR_TEXT_MAX_LENGTH)
         );
     }
 
@@ -99,7 +182,6 @@ public class Helper {
                 "10506",
                 String
                         .format("Connection error with %s - %s", service, explanation)
-                        .substring(0, ERROR_TEXT_MAX_LENGTH)
         );
     }
 
@@ -108,14 +190,13 @@ public class Helper {
                 "10504",
                 String
                         .format("Error on response from %s - %s", service, explanation)
-                        .substring(0, ERROR_TEXT_MAX_LENGTH)
         );
     }
 
     public static ErrorType doGenericError(String explanation) {
         return DE4AResponseDocumentHelper.createError(
                 "10507",
-                explanation.substring(0, ERROR_TEXT_MAX_LENGTH)
+                explanation
         );
     }
 
@@ -167,5 +248,7 @@ public class Helper {
                 "evidence"
         );
     }
+
+	
 
 }

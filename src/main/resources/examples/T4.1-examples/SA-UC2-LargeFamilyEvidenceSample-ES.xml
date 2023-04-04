@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sauc2:LargeFamily
+        xmlns:edci="http://data.europa.eu/europass/model/credentials#"
+        xmlns:sauc2="urn:eu-de4a:xsd:CanonicalEvidenceType::LargeFamilyEvidence:v1.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:eu-de4a:xsd:CanonicalEvidenceType::LargeFamilyEvidence:v1.0  SA-UC2-LargeFamilyEvidenceType.xsd">
+    <sauc2:beneficiary id="http://tempuri.org">
+        <edci:nationalId spatialID="http://publications.europa.eu/resource/authority/country/SVN">53377873W</edci:nationalId>
+        <edci:givenNames>
+            <edci:text content-type="text/html" lang="sl">Juan</edci:text>
+        </edci:givenNames>
+        <edci:familyName>
+            <edci:text content-type="text/html" lang="sl">Español Madrileño</edci:text>
+        </edci:familyName>
+        <edci:dateOfBirth>1972-04-18</edci:dateOfBirth>
+    </sauc2:beneficiary>
+    <sauc2:largeFamilyCertificate>
+        <sauc2:certificateID>1</sauc2:certificateID>
+        <sauc2:validCertificate>true</sauc2:validCertificate>
+        <sauc2:issuingDate>2020-01-01</sauc2:issuingDate>
+        <sauc2:expiryDate>2030-01-01</sauc2:expiryDate>
+        <sauc2:numberOfChildren>5</sauc2:numberOfChildren>
+    </sauc2:largeFamilyCertificate>
+</sauc2:LargeFamily>
